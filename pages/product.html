@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Photography - AI Studio</title>
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/components.css">
+    <link rel="stylesheet" href="../css/pages.css">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Supabase -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+</head>
+<body>
+    <div class="page-container">
+        <!-- Header -->
+        <header id="mainHeader" class="main-header"></header>
+
+        <!-- Back Navigation -->
+        <nav class="breadcrumb">
+            <a href="../dashboard.html">← Dashboard</a>
+            <span>/</span>
+            <span>Product Photography</span>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="container">
+            <div class="page-header">
+                <h1>📦 Product Photography</h1>
+                <p>Erstelle professionelle Produktfotos mit realistischer Handinteraktion</p>
+            </div>
+
+            <!-- Step Indicator -->
+            <div id="stepIndicator"></div>
+
+            <!-- Form -->
+            <form id="productForm" class="multi-step-form">
+                <!-- Step 1: Upload -->
+                <div class="form-step active" data-step="1">
+                    <h2>Schritt 1: Produkt hochladen</h2>
+                    <div id="imageUpload"></div>
+                    
+                    <div class="form-group">
+                        <label>Produktkategorie</label>
+                        <select id="productCategory" required>
+                            <option value="">Wähle eine Kategorie</option>
+                            <option value="electronics">Elektronik</option>
+                            <option value="cosmetics">Kosmetik</option>
+                            <option value="tools">Werkzeuge</option>
+                            <option value="homegoods">Haushalt</option>
+                            <option value="toys">Spielzeug</option>
+                            <option value="food">Lebensmittel</option>
+                            <option value="other">Andere</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Step 2: Interaction Type -->
+                <div class="form-step" data-step="2">
+                    <h2>Schritt 2: Interaktionstyp</h2>
+                    
+                    <div class="interaction-grid">
+                        <div class="interaction-card" data-interaction="holding">
+                            <div class="card-icon">🤲</div>
+                            <h4>Halten</h4>
+                            <p>Produkt wird in der Hand gehalten</p>
+                        </div>
+                        
+                        <div class="interaction-card" data-interaction="using">
+                            <div class="card-icon">👆</div>
+                            <h4>Benutzen</h4>
+                            <p>Produkt wird aktiv verwendet</p>
+                        </div>
+                        
+                        <div class="interaction-card" data-interaction="applying">
+                            <div class="card-icon">✋</div>
+                            <h4>Anwenden</h4>
+                            <p>Produkt wird aufgetragen/angewendet</p>
+                        </div>
+                        
+                        <div class="interaction-card" data-interaction="displaying">
+                            <div class="card-icon">🎁</div>
+                            <h4>Präsentieren</h4>
+                            <p>Produkt wird präsentiert</p>
+                        </div>
+                    </div>
+                    
+                    <input type="hidden" id="interactionType" required>
+                </div>
+
+                <!-- Step 3: Hand Model -->
+                <div class="form-step" data-step="3">
+                    <h2>Schritt 3: Hand Model Details</h2>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Hand Erscheinung</label>
+                            <select id="handAppearance">
+                                <option value="feminine">Feminin</option>
+                                <option value="masculine">Maskulin</option>
+                                <option value="neutral">Neutral</option>
+                                <option value="diverse">Diverse/Mehrere</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Alter</label>
+                            <select id="handAge">
+                                <option value="young">Jung (18-30)</option>
+                                <option value="middle">Mittel (30-50)</option>
+                                <option value="mature">Reif (50+)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Hautton</label>
+                            <select id="skinTone">
+                                <option value="light">Hell</option>
+                                <option value="medium">Mittel</option>
+                                <option value="dark">Dunkel</option>
+                                <option value="varied">Variiert</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Nagelstyling</label>
+                            <select id="nailStyle">
+                                <option value="natural">Natürlich</option>
+                                <option value="manicured">Manikürt</option>
+                                <option value="colored">Farbig</option>
+                                <option value="short">Kurz/Praktisch</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 4: Scene & Environment -->
+                <div class="form-step" data-step="4">
+                    <h2>Schritt 4: Szene & Umgebung</h2>
+                    
+                    <div class="form-group">
+                        <label>Setting</label>
+                        <select id="setting" required>
+                            <option value="studio">Studio (weißer Hintergrund)</option>
+                            <option value="home">Zuhause</option>
+                            <option value="office">Büro</option>
+                            <option value="outdoor">Outdoor</option>
+                            <option value="workshop">Werkstatt</option>
+                            <option value="kitchen">Küche</option>
+                            <option value="bathroom">Badezimmer</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Beleuchtung</label>
+                        <select id="lighting">
+                            <option value="natural">Natürliches Licht</option>
+                            <option value="studio">Studio Beleuchtung</option>
+                            <option value="dramatic">Dramatisch</option>
+                            <option value="soft">Weich/Diffus</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Zusätzliche Details (optional)</label>
+                        <textarea id="additionalDetails" rows="3" 
+                                  placeholder="z.B. Spray-Effekt sichtbar, Produkt in Aktion..."></textarea>
+                    </div>
+                </div>
+
+                <!-- Step 5: Review & Submit -->
+                <div class="form-step" data-step="5">
+                    <h2>Schritt 5: Überprüfen & Generieren</h2>
+                    
+                    <div id="summaryReview" class="summary-review"></div>
+                    
+                    <div class="form-group">
+                        <label>Anzahl Variationen</label>
+                        <select id="variationCount">
+                            <option value="1">1 Bild (1 Credit)</option>
+                            <option value="2">2 Bilder (2 Credits)</option>
+                            <option value="3">3 Bilder (3 Credits)</option>
+                            <option value="4">4 Bilder (4 Credits)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="credits-info">
+                        <p>Verfügbare Credits: <strong id="availableCredits">0</strong></p>
+                        <p>Benötigte Credits: <strong id="requiredCredits">1</strong></p>
+                    </div>
+                </div>
+
+                <!-- Navigation -->
+                <div class="form-navigation">
+                    <button type="button" class="btn btn-outline" id="prevBtn" style="display: none;">
+                        ← Zurück
+                    </button>
+                    <button type="button" class="btn btn-primary" id="nextBtn">
+                        Weiter →
+                    </button>
+                    <button type="submit" class="btn btn-accent" id="submitBtn" style="display: none;">
+                        🚀 Bilder generieren
+                    </button>
+                </div>
+            </form>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../js/config.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/components.js"></script>
+    <script src="../js/modules/product.js"></script>
+</body>
+</html>
