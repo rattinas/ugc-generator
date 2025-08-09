@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UGC Generator Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #667eea;
+            --primary-dark: #5a67d8;
+            --secondary: #764ba2;
+            --success: #48bb78;
+            --danger: #f56565;
+            --dark: #2d3748;
+            --gray: #718096;
+            --light: #f7fafc;
+            --border: #e2e8f0;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        /* Login Screen */
+        .login-container {
+            max-width: 400px;
+            margin: 100px auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        .login-container h2 {
+            text-align: center;
+            color: var(--dark);
+            margin-bottom: 30px;
+        }
+        
+        .login-form input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            font-size: 14px;
+        }
+        
+        .login-form input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        
+        .login-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .login-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .error-message {
+            background: #fed7d7;
+            color: #c53030;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            display: none;
+        }
+        
+        .error-message.show {
+            display: block;
+        }
+        
+        /* Main App */
+        .app-container {
+            display: none;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .app-container.active {
+            display: block;
+        }
+        
+        .header {
+            background: white;
+            border-radius: 20px 20px 0 0;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .header h1 {
+            color: var(--dark);
+            font-size: 28px;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .user-badge {
+            background: var(--light);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            color: var(--gray);
+        }
+        
+        .logout-btn {
+            padding: 8px 16px;
+            background: var(--danger);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        /* Form Section */
+        .form-container {
+            background: white;
+            padding: 30px;
+            border-radius: 0 0 20px 20px;
+            margin-top: 2px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--dark);
+            font-weight: 500;
+            font-size: 14px;
+        }
+        
+        .required {
+            color: var(--danger);
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        /* Image Upload */
+        .upload-area {
+            border: 3px dashed var(--primary);
+            border-radius: 15px;
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            background: #f8f9ff;
+            transition: all 0.3s;
+            position: relative;
+        }
+        
+        .upload-area:hover {
+            border-color: var(--secondary);
+            background: #f0f2ff;
+        }
+        
+        .upload-area.has-image {
+            border-style: solid;
+            padding: 20px;
+        }
+        
+        .upload-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+        
+        .upload-text {
+            color: var(--primary);
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+        
+        .upload-subtext {
+            color: var(--gray);
+            font-size: 12px;
+        }
+        
+        input[type="file"] {
+            display: none;
+        }
+        
+        .image-preview {
+            display: none;
+            position: relative;
+        }
+        
+        .image-preview.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .preview-img {
+            max-width: 200px;
+            max-height: 200px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .remove-image {
+            position: absolute;
+            top: -10px;
+            right: calc(50% - 110px);
+            background: var(--danger);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        
+        /* Scene Selection */
+        .scene-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+        }
+        
+        .scene-card {
+            padding: 15px 10px;
+            background: var(--light);
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+        
+        .scene-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+        }
+        
+        .scene-card.selected {
+            background: var(--primary);
+            color: white;
+            border-color: var(--secondary);
+        }
+        
+        .scene-icon {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+        
+        .scene-label {
+            font-size: 11px;
+            font-weight: 500;
+        }
+        
+        /* Image Count Selector */
+        .count-selector {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .count-btn {
+            width: 40px;
+            height: 40px;
+            border: 2px solid var(--border);
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 18px;
+        }
+        
+        .count-btn:hover:not(:disabled) {
+            border-color: var(--primary);
+            background: var(--light);
+        }
+        
+        .count-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .count-display {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary);
+            min-width: 30px;
+            text-align: center;
+        }
+        
+        /* Submit Button */
+        .submit-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 30px;
+        }
+        
+        .submit-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+        
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            background: var(--gray);
+        }
+        
+        .submit-btn.loading::after {
+            content: " ⏳";
+        }
+        
+        /* Success Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal.show {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+        }
+        
+        .success-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+        
+        .modal h3 {
+            color: var(--dark);
+            margin-bottom: 10px;
+        }
+        
+        .modal p {
+            color: var(--gray);
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        
+        .modal-btn {
+            padding: 12px 30px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .webhook-info {
+            background: #fffaf0;
+            border: 1px solid #feb2b2;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 13px;
+        }
+        
+        .webhook-info strong {
+            color: var(--danger);
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Screen -->
+    <div class="login-container" id="loginScreen">
+        <h2>🔐 UGC Generator Login</h2>
+        <div class="error-message" id="loginError"></div>
+        <form class="login-form" id="loginForm">
+            <input type="password" id="password" placeholder="Passwort eingeben" required>
+            <input type="text" id="slackUsername" placeholder="Dein Slack Username (ohne @)" required>
+            <button type="submit" class="login-btn">Einloggen</button>
+        </form>
+    </div>
+
+    <!-- Main App -->
+    <div class="app-container" id="appContainer">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-top">
+                <h1>🎨 UGC Generator</h1>
+                <div class="user-info">
+                    <span class="user-badge" id="userBadge">@username</span>
+                    <button class="logout-btn" onclick="logout()">Logout</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Form -->
+        <div class="form-container">
+            <!-- Webhook Info Box -->
+            <div class="webhook-info">
+                <strong>⚠️ Webhook nicht konfiguriert!</strong><br>
+                Ersetze WEBHOOK_URL im Code mit deiner Make.com Webhook URL
+            </div>
+
+            <form id="ugcForm">
+                <!-- Slack Channel -->
+                <div class="form-group">
+                    <label for="slackChannel">Slack Channel <span class="required">*</span></label>
+                    <input type="text" id="slackChannel" placeholder="#general oder #ugc-images" value="ugc-images" required>
+                </div>
+
+                <!-- Image Upload -->
+                <div class="form-group">
+                    <label>Produktbild <span class="required">*</span></label>
+                    <div class="upload-area" id="uploadArea" onclick="document.getElementById('imageInput').click()">
+                        <input type="file" id="imageInput" accept="image/*" required>
+                        <div id="uploadPlaceholder">
+                            <div class="upload-icon">📸</div>
+                            <div class="upload-text">Klicken zum Hochladen</div>
+                            <div class="upload-subtext">PNG, JPG oder WebP • Max. 10MB</div>
+                        </div>
+                        <div class="image-preview" id="imagePreview">
+                            <img id="previewImg" class="preview-img" src="" alt="Preview">
+                            <button type="button" class="remove-image" onclick="removeImage(event)">×</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Scene Selection -->
+                <div class="form-group">
+                    <label>Szene auswählen <span class="required">*</span></label>
+                    <div class="scene-grid">
+                        <div class="scene-card" data-scene="mirror_selfie">
+                            <div class="scene-icon">🤳</div>
+                            <div class="scene-label">Mirror Selfie</div>
+                        </div>
+                        <div class="scene-card" data-scene="outfit">
+                            <div class="scene-icon">👔</div>
+                            <div class="scene-label">Outfit</div>
+                        </div>
+                        <div class="scene-card" data-scene="lifestyle">
+                            <div class="scene-icon">☕</div>
+                            <div class="scene-label">Lifestyle</div>
+                        </div>
+                        <div class="scene-card" data-scene="flat_lay">
+                            <div class="scene-icon">📐</div>
+                            <div class="scene-label">Flat Lay</div>
+                        </div>
+                        <div class="scene-card" data-scene="street">
+                            <div class="scene-icon">🏙️</div>
+                            <div class="scene-label">Street Style</div>
+                        </div>
+                        <div class="scene-card" data-scene="unboxing">
+                            <div class="scene-icon">📦</div>
+                            <div class="scene-label">Unboxing</div>
+                        </div>
+                    </div>
+                    <input type="hidden" id="selectedScene" required>
+                </div>
+
+                <!-- Description -->
+                <div class="form-group">
+                    <label for="description">Details (optional)</label>
+                    <textarea id="description" rows="3" placeholder="z.B. Berlin vibes, golden hour, casual look..."></textarea>
+                </div>
+
+                <!-- Model Selection -->
+                <div class="form-group">
+                    <label for="modelType">Model/Person</label>
+                    <select id="modelType">
+                        <option value="auto">Automatisch wählen</option>
+                        <option value="young_woman">Junge Frau (20-30)</option>
+                        <option value="young_man">Junger Mann (20-30)</option>
+                        <option value="mature_woman">Frau (30-45)</option>
+                        <option value="mature_man">Mann (30-45)</option>
+                        <option value="diverse">Diverse Gruppe</option>
+                        <option value="none">Keine Person</option>
+                    </select>
+                </div>
+
+                <!-- Image Count -->
+                <div class="form-group">
+                    <label>Anzahl Bilder</label>
+                    <div class="count-selector">
+                        <button type="button" class="count-btn" onclick="changeCount(-1)">−</button>
+                        <span class="count-display" id="imageCount">1</span>
+                        <button type="button" class="count-btn" onclick="changeCount(1)">+</button>
+                    </div>
+                </div>
+
+                <!-- Submit -->
+                <button type="submit" class="submit-btn" id="submitBtn">
+                    <span>🚀</span>
+                    <span>Bilder generieren</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div class="modal" id="successModal">
+        <div class="modal-content">
+            <div class="success-icon">✅</div>
+            <h3>Erfolgreich gesendet!</h3>
+            <p>Deine Bilder werden generiert und in Slack gepostet.</p>
+            <button class="modal-btn" onclick="closeModal()">Weitere Bilder erstellen</button>
+        </div>
+    </div>
+
+    <script>
+        // ⚠️ WICHTIG: Ersetze diese URL mit deiner Make.com Webhook URL!
+        const WEBHOOK_URL = 'https://hook.eu1.make.com/DEINE_WEBHOOK_URL_HIER';
+        
+        // Passwort (ändere das!)
+        const PASSWORD = 'ugc2024';
+        
+        let currentUser = null;
+        let imageCount = 1;
+        let selectedScene = '';
+        let hasImage = false;
+
+        // Check if webhook is configured
+        window.onload = function() {
+            if (WEBHOOK_URL.includes('DEINE_WEBHOOK_URL_HIER')) {
+                console.warn('⚠️ Webhook URL noch nicht konfiguriert!');
+            }
+            
+            const storedUser = localStorage.getItem('ugc_user');
+            if (storedUser) {
+                currentUser = storedUser;
+                document.getElementById('userBadge').textContent = '@' + storedUser;
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('appContainer').classList.add('active');
+            }
+        };
+
+        // Login
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const password = document.getElementById('password').value;
+            const username = document.getElementById('slackUsername').value.replace('@', '');
+            
+            if (password === PASSWORD) {
+                currentUser = username;
+                localStorage.setItem('ugc_user', username);
+                document.getElementById('userBadge').textContent = '@' + username;
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('appContainer').classList.add('active');
+            } else {
+                const error = document.getElementById('loginError');
+                error.textContent = 'Falsches Passwort!';
+                error.classList.add('show');
+            }
+        });
+
+        // Logout
+        function logout() {
+            localStorage.removeItem('ugc_user');
+            location.reload();
+        }
+
+        // Image Upload
+        document.getElementById('imageInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                if (file.size > 10 * 1024 * 1024) {
+                    alert('Bild ist zu groß! Max. 10MB erlaubt.');
+                    return;
+                }
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('previewImg').src = e.target.result;
+                    document.getElementById('uploadPlaceholder').style.display = 'none';
+                    document.getElementById('imagePreview').classList.add('show');
+                    document.getElementById('uploadArea').classList.add('has-image');
+                    hasImage = true;
+                    checkFormValidity();
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        function removeImage(e) {
+            e.stopPropagation();
+            document.getElementById('imageInput').value = '';
+            document.getElementById('uploadPlaceholder').style.display = 'block';
+            document.getElementById('imagePreview').classList.remove('show');
+            document.getElementById('uploadArea').classList.remove('has-image');
+            hasImage = false;
+            checkFormValidity();
+        }
+
+        // Scene Selection
+        document.querySelectorAll('.scene-card').forEach(card => {
+            card.addEventListener('click', function() {
+                document.querySelectorAll('.scene-card').forEach(c => c.classList.remove('selected'));
+                this.classList.add('selected');
+                selectedScene = this.dataset.scene;
+                document.getElementById('selectedScene').value = selectedScene;
+                checkFormValidity();
+            });
+        });
+
+        // Image Count
+        function changeCount(delta) {
+            imageCount = Math.max(1, Math.min(5, imageCount + delta));
+            document.getElementById('imageCount').textContent = imageCount;
+        }
+
+        // Form Validation
+        function checkFormValidity() {
+            const submitBtn = document.getElementById('submitBtn');
+            if (hasImage && selectedScene) {
+                submitBtn.disabled = false;
+            } else {
+                submitBtn.disabled = true;
+            }
+        }
+
+        // Form Submit
+        document.getElementById('ugcForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            if (WEBHOOK_URL.includes('DEINE_WEBHOOK_URL_HIER')) {
+                alert('⚠️ Bitte konfiguriere zuerst die Webhook URL im Code!');
+                return;
+            }
+            
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.classList.add('loading');
+            submitBtn.disabled = true;
+
+            const imageFile = document.getElementById('imageInput').files[0];
+            
+            // Convert image to base64
+            const base64 = await toBase64(imageFile);
+            
+            // Prepare webhook data
+            const webhookData = {
+                user: currentUser,
+                channel: document.getElementById('slackChannel').value.replace('#', ''),
+                scene: selectedScene,
+                description: document.getElementById('description').value,
+                model: document.getElementById('modelType').value,
+                imageCount: imageCount,
+                image: base64,
+                timestamp: new Date().toISOString()
+            };
+
+            // Send to Make.com webhook
+            try {
+                const response = await fetch(WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(webhookData)
+                });
+
+                if (response.ok) {
+                    // Show success modal
+                    document.getElementById('successModal').classList.add('show');
+                    
+                    // Reset form
+                    resetForm();
+                } else {
+                    alert('Fehler beim Senden! Bitte versuche es erneut.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Netzwerkfehler! Bitte überprüfe deine Verbindung.');
+            } finally {
+                submitBtn.classList.remove('loading');
+                submitBtn.disabled = false;
+                checkFormValidity();
+            }
+        });
+
+        // Helper Functions
+        function toBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = error => reject(error);
+            });
+        }
+
+        function closeModal() {
+            document.getElementById('successModal').classList.remove('show');
+        }
+
+        function resetForm() {
+            document.getElementById('ugcForm').reset();
+            removeImage({ stopPropagation: () => {} });
+            document.querySelectorAll('.scene-card').forEach(c => c.classList.remove('selected'));
+            selectedScene = '';
+            imageCount = 1;
+            document.getElementById('imageCount').textContent = '1';
+            checkFormValidity();
+        }
+    </script>
+</body>
+</html>
