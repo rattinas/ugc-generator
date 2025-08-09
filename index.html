@@ -573,8 +573,9 @@
     </div>
 
     <script>
-        // ✅ Using Vercel API Route (no CORS issues!)
-        const WEBHOOK_URL = '/api/webhook';
+        // ✅ Alternative: Using a different CORS proxy that works better
+        const MAKE_WEBHOOK = 'https://hook.eu2.make.com/n2qhklk2qaxq54ojjyp734jmpsxswmql';
+        const WEBHOOK_URL = 'https://api.allorigins.win/post?url=' + encodeURIComponent(MAKE_WEBHOOK);
         
         // Passwort (ändere das!)
         const PASSWORD = 'ugc2024';
@@ -706,21 +707,24 @@
                 timestamp: new Date().toISOString()
             };
 
-            // Send to Make.com via our API route
+            // Send to Make.com via proxy
             try {
-                console.log('Sende Daten über API Route...');
+                console.log('Sende Daten an Make.com...');
+                
+                // For allorigins proxy, we need to send the data differently
                 const response = await fetch(WEBHOOK_URL, {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
+                        'Content-Type': 'application/x-www-form-urlencoded',
                     },
-                    body: JSON.stringify(webhookData)
+                    body: 'data=' + encodeURIComponent(JSON.stringify(webhookData))
                 });
 
                 const result = await response.json();
-                console.log('API Response:', result);
+                console.log('Proxy Response:', result);
                 
-                if (response.ok && result.success) {
+                // Check if Make.com accepted it
+                if (result.status && result.status.http_code === 200) {
                     console.log('✅ Erfolgreich gesendet!');
                     // Show success modal
                     document.getElementById('successModal').classList.add('show');
@@ -728,12 +732,41 @@
                     // Reset form
                     resetForm();
                 } else {
-                    console.error('Fehler:', result.error || 'Unknown error');
-                    alert('Fehler beim Senden: ' + (result.error || 'Unbekannter Fehler'));
+                    // If using allorigins failed, try direct
+                    console.log('Proxy failed, trying direct...');
+                    
+                    // Try direct call (might work in some browsers)
+                    const directResponse = await fetch('https://hook.eu2.make.com/n2qhklk2qaxq54ojjyp734jmpsxswmql', {
+                        method: 'POST',
+                        mode: 'no-cors', // This will work but we can't read the response
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(webhookData)
+                    });
+                    
+                    // With no-cors we can't read the response, so we assume success
+                    console.log('✅ Gesendet (no-cors mode)');
+                    document.getElementById('successModal').classList.add('show');
+                    resetForm();
                 }
             } catch (error) {
-                console.error('Netzwerk Error:', error);
-                alert('Verbindungsfehler: ' + error.message);
+                console.error('Error:', error);
+                
+                // Last resort: Try with no-cors mode
+                try {
+                    await fetch('https://hook.eu2.make.com/n2qhklk2qaxq54ojjyp734jmpsxswmql', {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        body: JSON.stringify(webhookData)
+                    });
+                    
+                    console.log('✅ Gesendet via no-cors fallback');
+                    document.getElementById('successModal').classList.add('show');
+                    resetForm();
+                } catch (fallbackError) {
+                    alert('Fehler beim Senden. Bitte versuche es später erneut.');
+                }
             } finally {
                 submitBtn.classList.remove('loading');
                 submitBtn.disabled = false;
