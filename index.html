@@ -573,8 +573,8 @@
     </div>
 
     <script>
-        // ✅ Webhook URL konfiguriert!
-        const WEBHOOK_URL = 'https://hook.eu2.make.com/n2qhklk2qaxq54ojjyp734jmpsxswmql';
+        // ✅ Webhook URL mit CORS Proxy
+        const WEBHOOK_URL = 'https://corsproxy.io/?' + encodeURIComponent('https://hook.eu2.make.com/n2qhklk2qaxq54ojjyp734jmpsxswmql');
         
         // Passwort (ändere das!)
         const PASSWORD = 'ugc2024';
@@ -706,8 +706,9 @@
                 timestamp: new Date().toISOString()
             };
 
-            // Send to Make.com webhook
+            // Send to Make.com webhook via CORS proxy
             try {
+                console.log('Sende Daten an Make.com...');
                 const response = await fetch(WEBHOOK_URL, {
                     method: 'POST',
                     headers: {
@@ -716,18 +717,23 @@
                     body: JSON.stringify(webhookData)
                 });
 
-                if (response.ok) {
+                console.log('Response Status:', response.status);
+                
+                // Make.com gibt "Accepted" zurück auch ohne response.ok
+                if (response.ok || response.status === 200 || response.status === 202) {
+                    console.log('✅ Erfolgreich gesendet!');
                     // Show success modal
                     document.getElementById('successModal').classList.add('show');
                     
                     // Reset form
                     resetForm();
                 } else {
-                    alert('Fehler beim Senden! Bitte versuche es erneut.');
+                    console.error('Fehler Status:', response.status);
+                    alert('Fehler beim Senden! Status: ' + response.status);
                 }
             } catch (error) {
-                console.error('Error:', error);
-                alert('Netzwerkfehler! Bitte überprüfe deine Verbindung.');
+                console.error('Netzwerk Error:', error);
+                alert('Verbindungsfehler: ' + error.message);
             } finally {
                 submitBtn.classList.remove('loading');
                 submitBtn.disabled = false;
