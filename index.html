@@ -706,10 +706,42 @@
                 timestamp: new Date().toISOString()
             };
 
-            // Send to Make.com via Vercel API Route
+            // Upload image first and get URL
             try {
-                console.log('Sende Daten an API Route...');
+                console.log('Lade Bild hoch...');
                 
+                // First upload the image to get a temporary URL
+                const uploadResponse = await fetch('/api/upload', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ image: base64 })
+                });
+                
+                const uploadResult = await uploadResponse.json();
+                
+                if (!uploadResult.success) {
+                    throw new Error('Bild-Upload fehlgeschlagen');
+                }
+                
+                console.log('Bild-URL erhalten:', uploadResult.imageUrl);
+                
+                // Prepare webhook data with image URL instead of base64
+                const webhookData = {
+                    user: currentUser,
+                    channel: document.getElementById('slackChannel').value.replace('#', ''),
+                    scene: selectedScene,
+                    description: document.getElementById('description').value,
+                    model: document.getElementById('modelType').value,
+                    imageCount: imageCount,
+                    imageUrl: uploadResult.imageUrl,  // URL statt Base64!
+                    timestamp: new Date().toISOString()
+                };
+                
+                console.log('Sende Daten an Make.com...');
+                
+                // Send to Make.com via API Route
                 const response = await fetch(WEBHOOK_URL, {
                     method: 'POST',
                     headers: {
