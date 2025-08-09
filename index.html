@@ -3,339 +3,151 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Go2Flow Fashion Photography AI Platform</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>E-Commerce AI Photography Platform</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/components.css">
 </head>
 <body>
     <!-- Login Screen -->
     <div class="login-container" id="loginScreen">
-        <h2>GO2FLOW AI</h2>
-        <form class="login-form" id="loginForm">
-            <input type="password" id="password" placeholder="Passwort" required>
-            <input type="text" id="slackUsername" placeholder="Slack Username (ohne @)" required>
-            <button type="submit" class="login-btn">EINLOGGEN</button>
-        </form>
-    </div>
-    <!-- Main App -->
-    <div class="app-container" id="appContainer">
-        <!-- Header -->
-        <div class="header">
-            <div class="header-top">
-                <img src="https://go2flow.ch/logo.png" alt="Go2Flow Logo" class="logo">
-                <h1>GO2FLOW <span>AI</span> PLATFORM</h1>
-                <div class="user-controls">
-                    <span class="user-badge" id="userBadge">@user</span>
-                    <button class="logout-btn" onclick="logout()">Logout</button>
-                </div>
-            </div>
-        </div>
-        <!-- Form Container -->
-        <div class="form-container">
-            <!-- Step Indicator -->
-            <div class="step-indicator">
-                <div class="step active" data-step="1">
-                    <div class="step-circle">1</div>
-                    <div class="step-label">Upload</div>
-                </div>
-                <div class="step" data-step="2">
-                    <div class="step-circle">2</div>
-                    <div class="step-label">Style</div>
-                </div>
-                <div class="step" data-step="3">
-                    <div class="step-circle">3</div>
-                    <div class="step-label">Scene</div>
-                </div>
-                <div class="step" data-step="4">
-                    <div class="step-circle">4</div>
-                    <div class="step-label">Model</div>
-                </div>
-                <div class="step" data-step="5">
-                    <div class="step-circle">5</div>
-                    <div class="step-label">Technical</div>
-                </div>
-            </div>
-            <form id="fashionForm">
-                <!-- Step 1: Upload -->
-                <div class="form-section active" data-section="1">
-                    <h2 class="section-title">Produkt hochladen</h2>
-                    <div class="upload-area" id="uploadArea" onclick="document.getElementById('imageInput').click()">
-                        <input type="file" id="imageInput" accept="image/*" required>
-                        <div id="uploadPlaceholder">
-                            <div class="upload-icon">📸</div>
-                            <div>Klicken zum Hochladen</div>
-                            <div style="font-size: 12px; margin-top: 10px; opacity: 0.6;">
-                                Idealerweise Freisteller auf weißem/transparentem Hintergrund
-                            </div>
-                        </div>
-                        <div class="image-preview" id="imagePreview">
-                            <img id="previewImg" class="preview-img" src="" alt="Preview">
-                            <button type="button" class="remove-image" onclick="removeImage(event)">×</button>
-                        </div>
-                    </div>
-                   
-                    <div class="form-group" style="margin-top: 20px;">
-                        <label>Slack Channel für Ergebnis</label>
-                        <input type="text" id="slackChannel" placeholder="#fashion-output" value="fashion-output">
-                    </div>
-                </div>
-                <!-- Step 2: Style Category -->
-                <div class="form-section" data-section="2">
-                    <h2 class="section-title">Wähle den Fotografie-Stil</h2>
-                    <div class="style-categories">
-                        <div class="style-card" data-style="ecommerce">
-                            <div class="style-icon">🛍️</div>
-                            <div class="style-name">E-Commerce</div>
-                            <div class="style-description">Clean product shots</div>
-                        </div>
-                        <div class="style-card" data-style="lifestyle">
-                            <div class="style-icon">☕</div>
-                            <div class="style-name">Lifestyle</div>
-                            <div class="style-description">Real-life scenarios</div>
-                        </div>
-                        <div class="style-card" data-style="editorial">
-                            <div class="style-icon">✨</div>
-                            <div class="style-name">Editorial</div>
-                            <div class="style-description">High fashion & artistic</div>
-                        </div>
-                        <div class="style-card" data-style="commercial">
-                            <div class="style-icon">📱</div>
-                            <div class="style-name">Commercial</div>
-                            <div class="style-description">Marketing & campaigns</div>
-                        </div>
-                        <div class="style-card" data-style="ugc">
-                            <div class="style-icon">🤳</div>
-                            <div class="style-name">UGC/Authentic</div>
-                            <div class="style-description">User-generated content</div>
-                        </div>
-                    </div>
-                    <input type="hidden" id="selectedStyle" required>
-                </div>
-                <!-- Step 3: Scene Selection -->
-                <div class="form-section" data-section="3">
-                    <h2 class="section-title">Wähle die Szene</h2>
-                    <div id="sceneContainer">
-                        <!-- Wird dynamisch basierend auf Style gefüllt -->
-                    </div>
-                    <input type="hidden" id="selectedScene" required>
-                </div>
-                <!-- Step 4: Model Configuration -->
-                <div class="form-section" data-section="4">
-                    <h2 class="section-title">Model & Styling konfigurieren</h2>
-                   
-                    <div class="preset-buttons">
-                        <button type="button" class="preset-btn" onclick="applyPreset('young_casual')">Young Casual</button>
-                        <button type="button" class="preset-btn" onclick="applyPreset('business')">Business Professional</button>
-                        <button type="button" class="preset-btn" onclick="applyPreset('high_fashion')">High Fashion Model</button>
-                        <button type="button" class="preset-btn" onclick="applyPreset('diverse_group')">Diverse Group</button>
-                        <button type="button" class="preset-btn" onclick="applyPreset('mature_elegant')">Mature Elegant</button>
-                    </div>
-                   
-                    <div class="model-config">
-                        <div class="form-group">
-                            <label>Alter</label>
-                            <select id="modelAge">
-                                <option value="18-25">18-25 Jahre</option>
-                                <option value="25-35">25-35 Jahre</option>
-                                <option value="35-45">35-45 Jahre</option>
-                                <option value="45-55">45-55 Jahre</option>
-                                <option value="55+">55+ Jahre</option>
-                                <option value="mixed">Gemischte Gruppe</option>
-                            </select>
-                        </div>
-                       
-                        <div class="form-group">
-                            <label>Geschlecht</label>
-                            <select id="modelGender">
-                                <option value="female">Weiblich</option>
-                                <option value="male">Männlich</option>
-                                <option value="non-binary">Non-Binary</option>
-                                <option value="mixed">Gemischt</option>
-                            </select>
-                        </div>
-                       
-                        <div class="form-group">
-                            <label>Ethnizität</label>
-                            <select id="modelEthnicity">
-                                <option value="caucasian">Kaukasisch</option>
-                                <option value="african">Afrikanisch</option>
-                                <option value="asian">Asiatisch</option>
-                                <option value="latin">Lateinamerikanisch</option>
-                                <option value="middle-eastern">Nahöstlich</option>
-                                <option value="south-asian">Südasiatisch</option>
-                                <option value="mixed">Gemischt/Divers</option>
-                            </select>
-                        </div>
-                       
-                        <div class="form-group">
-                            <label>Körpertyp</label>
-                            <select id="modelBody">
-                                <option value="slim">Schlank</option>
-                                <option value="athletic">Athletisch</option>
-                                <option value="average">Durchschnittlich</option>
-                                <option value="curvy">Kurvig</option>
-                                <option value="plus-size">Plus Size</option>
-                                <option value="varied">Variiert (Gruppe)</option>
-                            </select>
-                        </div>
-                       
-                        <div class="form-group">
-                            <label>Haarstyling</label>
-                            <select id="modelHair">
-                                <option value="natural">Natürlich</option>
-                                <option value="styled">Gestylt</option>
-                                <option value="messy">Unordentlich</option>
-                                <option value="professional">Professionell</option>
-                                <option value="editorial">Editorial/Kreativ</option>
-                                <option value="wet-look">Wet Look</option>
-                            </select>
-                        </div>
-                       
-                        <div class="form-group">
-                            <label>Makeup</label>
-                            <select id="modelMakeup">
-                                <option value="no-makeup">Kein Makeup</option>
-                                <option value="natural">Natürlich</option>
-                                <option value="everyday">Alltags-Look</option>
-                                <option value="glamour">Glamour</option>
-                                <option value="editorial">Editorial/Künstlerisch</option>
-                                <option value="bold">Bold/Dramatic</option>
-                            </select>
-                        </div>
-                       
-                        <div class="form-group">
-                            <label>Ausdruck</label>
-                            <select id="modelExpression">
-                                <option value="neutral">Neutral</option>
-                                <option value="smile">Lächeln</option>
-                                <option value="laugh">Lachen</option>
-                                <option value="serious">Ernst</option>
-                                <option value="confident">Selbstbewusst</option>
-                                <option value="candid">Candid/Natürlich</option>
-                                <option value="fierce">Fierce/Intensiv</option>
-                            </select>
-                        </div>
-                       
-                        <div class="form-group">
-                            <label>Pose</label>
-                            <select id="modelPose">
-                                <option value="standing">Stehend</option>
-                                <option value="walking">Gehend</option>
-                                <option value="sitting">Sitzend</option>
-                                <option value="leaning">Angelehnt</option>
-                                <option value="dynamic">Dynamisch/Bewegung</option>
-                                <option value="relaxed">Entspannt</option>
-                                <option value="editorial">Editorial Pose</option>
-                            </select>
-                        </div>
-                    </div>
-                   
-                    <div class="form-group">
-                        <label>Zusätzliche Styling-Details</label>
-                        <textarea id="stylingDetails" rows="3" placeholder="z.B. Accessoires, besondere Wünsche..."></textarea>
-                    </div>
-                </div>
-                <!-- Step 5: Technical Settings -->
-                <div class="form-section" data-section="5">
-                    <h2 class="section-title">Technische Einstellungen</h2>
-                   
-                    <div class="tech-settings">
-                        <div class="form-group">
-                            <label>Kamera-Typ</label>
-                            <select id="cameraType">
-                                <option value="iphone-pro">iPhone Pro (Mobile)</option>
-                                <option value="dslr">DSLR Professional</option>
-                                <option value="mirrorless">Mirrorless High-End</option>
-                                <option value="medium-format">Medium Format</option>
-                                <option value="film">Analog Film</option>
-                                <option value="smartphone">Standard Smartphone</option>
-                            </select>
-                        </div>
-                       
-                        <div class="form-group">
-                            <label>Objektiv</label>
-                            <select id="lensType">
-                                <option value="24mm">24mm Wide</option>
-                                <option value="35mm">35mm Standard</option>
-                                <option value="50mm">50mm Portrait</option>
-                                <option value="85mm">85mm Portrait Pro</option>
-                                <option value="135mm">135mm Tele</option>
-                                <option value="zoom">Zoom Variabel</option>
-                            </select>
-                        </div>
-                       
-                        <div class="form-group">
-                            <label>Beleuchtung</label>
-                            <select id="lightingType">
-                                <option value="natural">Natürliches Licht</option>
-                                <option value="studio">Studio Strobe</option>
-                                <option value="golden-hour">Golden Hour</option>
-                                <option value="overcast">Bewölkt/Diffus</option>
-                                <option value="harsh-sun">Hartes Sonnenlicht</option>
-                                <option value="neon">Neon/Urban</option>
-                                <option value="mixed">Gemischt</option>
-                            </select>
-                        </div>
-                    </div>
-                   
-                    <div class="slider-group">
-                        <div class="slider-header">
-                            <span class="slider-label">Bildqualität</span>
-                            <span class="slider-value" id="qualityValue">Hoch</span>
-                        </div>
-                        <input type="range" id="imageQuality" min="1" max="5" value="4">
-                    </div>
-                   
-                    <div class="slider-group">
-                        <div class="slider-header">
-                            <span class="slider-label">Authentizität</span>
-                            <span class="slider-value" id="authenticityValue">Balanced</span>
-                        </div>
-                        <input type="range" id="authenticity" min="1" max="5" value="3">
-                    </div>
-                   
-                    <div class="slider-group">
-                        <div class="slider-header">
-                            <span class="slider-label">Post-Processing</span>
-                            <span class="slider-value" id="postValue">Medium</span>
-                        </div>
-                        <input type="range" id="postProcessing" min="1" max="5" value="3">
-                    </div>
-                   
-                    <div class="form-group">
-                        <label>Anzahl Variationen</label>
-                        <select id="imageCount">
-                            <option value="1">1 Bild</option>
-                            <option value="2">2 Bilder</option>
-                            <option value="3">3 Bilder</option>
-                            <option value="4">4 Bilder</option>
-                            <option value="5">5 Bilder</option>
-                        </select>
-                    </div>
-                </div>
-                <!-- Navigation -->
-                <div class="form-navigation">
-                    <button type="button" class="nav-btn btn-prev" onclick="previousStep()" id="prevBtn" style="display: none;">
-                        ← Zurück
-                    </button>
-                    <button type="button" class="nav-btn btn-next" onclick="nextStep()" id="nextBtn">
-                        Weiter →
-                    </button>
-                    <button type="submit" class="nav-btn btn-submit" id="submitBtn" style="display: none;">
-                        🚀 Bilder generieren
-                    </button>
-                </div>
+        <div class="login-box">
+            <h1 class="logo">AI<span>STUDIO</span></h1>
+            <p class="tagline">Professional E-Commerce Photography</p>
+            <form id="loginForm">
+                <input type="password" id="password" placeholder="Passwort" required>
+                <input type="text" id="slackUsername" placeholder="Slack Username" required>
+                <button type="submit" class="btn btn-primary">Einloggen</button>
             </form>
         </div>
     </div>
-    <!-- Success Modal -->
-    <div class="modal" id="successModal">
-        <div class="modal-content">
-            <div class="success-icon">✅</div>
-            <h3>Erfolgreich gesendet!</h3>
-            <p>Deine Bilder werden generiert und in Slack gepostet.</p>
-            <button class="nav-btn btn-next" onclick="closeModal()">Neue Bilder erstellen</button>
-        </div>
+
+    <!-- Main Dashboard -->
+    <div class="dashboard" id="dashboard" style="display: none;">
+        <!-- Header -->
+        <header class="main-header">
+            <div class="header-content">
+                <h1 class="logo">AI<span>STUDIO</span></h1>
+                <div class="user-menu">
+                    <span class="user-badge" id="userBadge">@user</span>
+                    <button class="btn btn-small" onclick="logout()">Logout</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Use Case Selection -->
+        <main class="container">
+            <div class="section-header">
+                <h2>Was möchtest du heute fotografieren?</h2>
+                <p>Wähle deinen Use Case für spezialisierte AI-Fotografie</p>
+            </div>
+
+            <div class="use-case-grid">
+                <!-- Fashion -->
+                <div class="use-case-card" onclick="navigateTo('fashion')">
+                    <div class="card-icon">👗</div>
+                    <h3>Fashion & Apparel</h3>
+                    <p>Kleidung, Schuhe, Accessoires auf Models</p>
+                    <ul class="feature-list">
+                        <li>Model-Konfiguration</li>
+                        <li>Outfit Styling</li>
+                        <li>Lifestyle Scenes</li>
+                    </ul>
+                    <span class="card-badge">Beliebt</span>
+                </div>
+
+                <!-- Product -->
+                <div class="use-case-card" onclick="navigateTo('product')">
+                    <div class="card-icon">📦</div>
+                    <h3>Product Photography</h3>
+                    <p>Objekte, Elektronik, Home & Living</p>
+                    <ul class="feature-list">
+                        <li>360° Ansichten</li>
+                        <li>In-Use Demos</li>
+                        <li>Detail Shots</li>
+                    </ul>
+                </div>
+
+                <!-- Beauty -->
+                <div class="use-case-card" onclick="navigateTo('beauty')">
+                    <div class="card-icon">💄</div>
+                    <h3>Beauty & Cosmetics</h3>
+                    <p>Makeup, Skincare, Haircare in Aktion</p>
+                    <ul class="feature-list">
+                        <li>Application Shots</li>
+                        <li>Before/After</li>
+                        <li>Texture Close-ups</li>
+                    </ul>
+                    <span class="card-badge">Neu</span>
+                </div>
+
+                <!-- Food -->
+                <div class="use-case-card" onclick="navigateTo('food')">
+                    <div class="card-icon">🍔</div>
+                    <h3>Food & Beverage</h3>
+                    <p>Restaurant-Style, Verpackungen, Zubereitung</p>
+                    <ul class="feature-list">
+                        <li>Styled Shots</li>
+                        <li>Action Cooking</li>
+                        <li>Packaging Hero</li>
+                    </ul>
+                </div>
+
+                <!-- Jewelry -->
+                <div class="use-case-card" onclick="navigateTo('jewelry')">
+                    <div class="card-icon">💎</div>
+                    <h3>Jewelry & Watches</h3>
+                    <p>Schmuck, Uhren, Luxury Items</p>
+                    <ul class="feature-list">
+                        <li>Macro Details</li>
+                        <li>Worn Shots</li>
+                        <li>Luxury Staging</li>
+                    </ul>
+                </div>
+
+                <!-- Sports -->
+                <div class="use-case-card" onclick="navigateTo('sports')">
+                    <div class="card-icon">⚽</div>
+                    <h3>Sports & Fitness</h3>
+                    <p>Equipment, Activewear, Supplements</p>
+                    <ul class="feature-list">
+                        <li>Action Shots</li>
+                        <li>Equipment Demo</li>
+                        <li>Lifestyle Active</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <h3>Schnellzugriff</h3>
+                <div class="action-buttons">
+                    <button class="btn btn-outline" onclick="navigateTo('fashion', 'quickshot')">
+                        <span>📸</span> Quick Fashion Shot
+                    </button>
+                    <button class="btn btn-outline" onclick="navigateTo('product', 'packshot')">
+                        <span>📦</span> Packshot erstellen
+                    </button>
+                    <button class="btn btn-outline" onclick="navigateTo('beauty', 'swatch')">
+                        <span>🎨</span> Beauty Swatch
+                    </button>
+                    <button class="btn btn-outline" onclick="openBulkUpload()">
+                        <span>📁</span> Bulk Upload
+                    </button>
+                </div>
+            </div>
+
+            <!-- Recent Projects -->
+            <div class="recent-projects">
+                <h3>Letzte Projekte</h3>
+                <div class="project-list" id="recentProjects">
+                    <!-- Wird dynamisch geladen -->
+                </div>
+            </div>
+        </main>
     </div>
-    <script src="script.js"></script>
+
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/main.js"></script>
 </body>
 </html>
