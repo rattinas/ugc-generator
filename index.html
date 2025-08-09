@@ -573,9 +573,8 @@
     </div>
 
     <script>
-        // ✅ Alternative: Using a different CORS proxy that works better
-        const MAKE_WEBHOOK = 'https://hook.eu2.make.com/n2qhklk2qaxq54ojjyp734jmpsxswmql';
-        const WEBHOOK_URL = 'https://api.allorigins.win/post?url=' + encodeURIComponent(MAKE_WEBHOOK);
+        // ✅ RICHTIG: Nutze die Vercel API Route!
+        const WEBHOOK_URL = '/api/webhook';
         
         // Passwort (ändere das!)
         const PASSWORD = 'ugc2024';
@@ -707,66 +706,31 @@
                 timestamp: new Date().toISOString()
             };
 
-            // Send to Make.com via proxy
+            // Send to Make.com via Vercel API Route
             try {
-                console.log('Sende Daten an Make.com...');
+                console.log('Sende Daten an API Route...');
                 
-                // For allorigins proxy, we need to send the data differently
                 const response = await fetch(WEBHOOK_URL, {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'Content-Type': 'application/json',
                     },
-                    body: 'data=' + encodeURIComponent(JSON.stringify(webhookData))
+                    body: JSON.stringify(webhookData)
                 });
-
-                const result = await response.json();
-                console.log('Proxy Response:', result);
                 
-                // Check if Make.com accepted it
-                if (result.status && result.status.http_code === 200) {
+                const result = await response.json();
+                console.log('API Response:', result);
+                
+                if (result.success) {
                     console.log('✅ Erfolgreich gesendet!');
-                    // Show success modal
                     document.getElementById('successModal').classList.add('show');
-                    
-                    // Reset form
                     resetForm();
                 } else {
-                    // If using allorigins failed, try direct
-                    console.log('Proxy failed, trying direct...');
-                    
-                    // Try direct call (might work in some browsers)
-                    const directResponse = await fetch('https://hook.eu2.make.com/n2qhklk2qaxq54ojjyp734jmpsxswmql', {
-                        method: 'POST',
-                        mode: 'no-cors', // This will work but we can't read the response
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(webhookData)
-                    });
-                    
-                    // With no-cors we can't read the response, so we assume success
-                    console.log('✅ Gesendet (no-cors mode)');
-                    document.getElementById('successModal').classList.add('show');
-                    resetForm();
+                    throw new Error(result.error || 'Unbekannter Fehler');
                 }
             } catch (error) {
                 console.error('Error:', error);
-                
-                // Last resort: Try with no-cors mode
-                try {
-                    await fetch('https://hook.eu2.make.com/n2qhklk2qaxq54ojjyp734jmpsxswmql', {
-                        method: 'POST',
-                        mode: 'no-cors',
-                        body: JSON.stringify(webhookData)
-                    });
-                    
-                    console.log('✅ Gesendet via no-cors fallback');
-                    document.getElementById('successModal').classList.add('show');
-                    resetForm();
-                } catch (fallbackError) {
-                    alert('Fehler beim Senden. Bitte versuche es später erneut.');
-                }
+                alert('Fehler beim Senden: ' + error.message);
             } finally {
                 submitBtn.classList.remove('loading');
                 submitBtn.disabled = false;
