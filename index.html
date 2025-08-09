@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fashion Photography AI Platform</title>
+    <title>Go2Flow Fashion Photography AI Platform</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        
+       
         :root {
             --primary: #1a1a1a;
             --accent: #ff6b6b;
@@ -22,14 +22,14 @@
             --success: #4caf50;
             --error: #f44336;
         }
-        
+       
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
             min-height: 100vh;
             color: var(--gray-dark);
         }
-        
+       
         /* Login Screen */
         .login-container {
             max-width: 400px;
@@ -39,7 +39,7 @@
             padding: 40px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
         }
-        
+       
         .login-container h2 {
             text-align: center;
             color: var(--primary);
@@ -47,7 +47,7 @@
             font-weight: 300;
             letter-spacing: 2px;
         }
-        
+       
         .login-form input {
             width: 100%;
             padding: 12px;
@@ -57,13 +57,13 @@
             font-size: 14px;
             transition: all 0.3s;
         }
-        
+       
         .login-form input:focus {
             outline: none;
             border-color: var(--accent);
             box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
         }
-        
+       
         .login-btn {
             width: 100%;
             padding: 14px;
@@ -77,13 +77,13 @@
             cursor: pointer;
             transition: all 0.3s;
         }
-        
+       
         .login-btn:hover {
             background: var(--accent);
             transform: translateY(-2px);
             box-shadow: 0 10px 20px rgba(255, 107, 107, 0.3);
         }
-        
+       
         /* Main App */
         .app-container {
             display: none;
@@ -91,11 +91,11 @@
             margin: 0 auto;
             padding: 20px;
         }
-        
+       
         .app-container.active {
             display: block;
         }
-        
+       
         /* Header */
         .header {
             background: var(--white);
@@ -104,37 +104,37 @@
             margin-bottom: 30px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
-        
+       
         .header-top {
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
-        
+       
         .header h1 {
             font-size: 28px;
             font-weight: 300;
             letter-spacing: 2px;
             color: var(--primary);
         }
-        
+       
         .header h1 span {
             color: var(--accent);
         }
-        
+       
         .user-controls {
             display: flex;
             gap: 15px;
             align-items: center;
         }
-        
+       
         .user-badge {
             background: var(--gray-light);
             padding: 8px 16px;
             border-radius: 20px;
             font-size: 13px;
         }
-        
+       
         .logout-btn {
             padding: 8px 16px;
             background: var(--primary);
@@ -145,7 +145,7 @@
             font-size: 13px;
             transition: all 0.3s;
         }
-        
+       
         /* Main Form Container */
         .form-container {
             background: var(--white);
@@ -153,7 +153,7 @@
             padding: 40px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
-        
+       
         /* Step Indicator */
         .step-indicator {
             display: flex;
@@ -161,7 +161,7 @@
             margin-bottom: 40px;
             position: relative;
         }
-        
+       
         .step-indicator::before {
             content: '';
             position: absolute;
@@ -172,7 +172,7 @@
             background: var(--gray-light);
             z-index: 0;
         }
-        
+       
         .step {
             background: var(--white);
             position: relative;
@@ -182,7 +182,7 @@
             align-items: center;
             cursor: pointer;
         }
-        
+       
         .step-circle {
             width: 40px;
             height: 40px;
@@ -195,50 +195,50 @@
             transition: all 0.3s;
             border: 2px solid var(--white);
         }
-        
+       
         .step.active .step-circle {
             background: var(--accent);
             color: var(--white);
         }
-        
+       
         .step.completed .step-circle {
             background: var(--success);
             color: var(--white);
         }
-        
+       
         .step-label {
             margin-top: 10px;
             font-size: 12px;
             color: var(--gray-medium);
         }
-        
+       
         .step.active .step-label {
             color: var(--primary);
             font-weight: 500;
         }
-        
+       
         /* Form Sections */
         .form-section {
             display: none;
         }
-        
+       
         .form-section.active {
             display: block;
             animation: fadeIn 0.3s ease;
         }
-        
+       
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        
+       
         .section-title {
             font-size: 20px;
             margin-bottom: 25px;
             color: var(--primary);
             font-weight: 400;
         }
-        
+       
         /* Image Upload */
         .upload-area {
             border: 2px dashed var(--gray-medium);
@@ -249,46 +249,46 @@
             transition: all 0.3s;
             background: var(--gray-light);
         }
-        
+       
         .upload-area:hover {
             border-color: var(--accent);
             background: #fff5f5;
         }
-        
+       
         .upload-area.has-image {
             padding: 20px;
             border-style: solid;
             border-color: var(--success);
             background: var(--white);
         }
-        
+       
         .upload-icon {
             font-size: 48px;
             margin-bottom: 15px;
         }
-        
+       
         input[type="file"] {
             display: none;
         }
-        
+       
         .image-preview {
             display: none;
         }
-        
+       
         .image-preview.show {
             display: flex;
             align-items: center;
             justify-content: center;
             position: relative;
         }
-        
+       
         .preview-img {
             max-width: 300px;
             max-height: 300px;
             border-radius: 8px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
-        
+       
         .remove-image {
             position: absolute;
             top: -10px;
@@ -305,7 +305,7 @@
             align-items: center;
             justify-content: center;
         }
-        
+       
         /* Style Categories */
         .style-categories {
             display: grid;
@@ -313,7 +313,7 @@
             gap: 15px;
             margin-bottom: 30px;
         }
-        
+       
         .style-card {
             padding: 20px;
             background: var(--gray-light);
@@ -323,33 +323,33 @@
             transition: all 0.3s;
             text-align: center;
         }
-        
+       
         .style-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 10px 20px rgba(0,0,0,0.1);
         }
-        
+       
         .style-card.selected {
             background: var(--primary);
             color: var(--white);
             border-color: var(--accent);
         }
-        
+       
         .style-icon {
             font-size: 32px;
             margin-bottom: 10px;
         }
-        
+       
         .style-name {
             font-weight: 500;
             margin-bottom: 5px;
         }
-        
+       
         .style-description {
             font-size: 11px;
             opacity: 0.8;
         }
-        
+       
         /* Scene Selection */
         .scene-grid {
             display: grid;
@@ -361,7 +361,7 @@
             background: var(--gray-light);
             border-radius: 12px;
         }
-        
+       
         .scene-item {
             padding: 15px;
             background: var(--white);
@@ -372,28 +372,28 @@
             text-align: center;
             font-size: 13px;
         }
-        
+       
         .scene-item:hover {
             border-color: var(--accent);
             transform: scale(1.05);
         }
-        
+       
         .scene-item.selected {
             background: var(--accent);
             color: var(--white);
         }
-        
+       
         /* Model Configuration */
         .model-config {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 20px;
         }
-        
+       
         .form-group {
             margin-bottom: 20px;
         }
-        
+       
         .form-group label {
             display: block;
             margin-bottom: 8px;
@@ -401,7 +401,7 @@
             font-weight: 500;
             color: var(--gray-dark);
         }
-        
+       
         .form-group select,
         .form-group input,
         .form-group textarea {
@@ -412,7 +412,7 @@
             font-size: 14px;
             transition: all 0.3s;
         }
-        
+       
         .form-group select:focus,
         .form-group input:focus,
         .form-group textarea:focus {
@@ -420,29 +420,29 @@
             border-color: var(--accent);
             box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
         }
-        
+       
         /* Slider Inputs */
         .slider-group {
             margin-bottom: 20px;
         }
-        
+       
         .slider-header {
             display: flex;
             justify-content: space-between;
             margin-bottom: 8px;
         }
-        
+       
         .slider-label {
             font-size: 13px;
             font-weight: 500;
         }
-        
+       
         .slider-value {
             font-size: 13px;
             color: var(--accent);
             font-weight: 500;
         }
-        
+       
         input[type="range"] {
             width: 100%;
             height: 6px;
@@ -451,7 +451,7 @@
             outline: none;
             -webkit-appearance: none;
         }
-        
+       
         input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
             appearance: none;
@@ -461,7 +461,7 @@
             background: var(--accent);
             cursor: pointer;
         }
-        
+       
         input[type="range"]::-moz-range-thumb {
             width: 18px;
             height: 18px;
@@ -469,14 +469,14 @@
             background: var(--accent);
             cursor: pointer;
         }
-        
+       
         /* Technical Settings */
         .tech-settings {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 15px;
         }
-        
+       
         /* Navigation Buttons */
         .form-navigation {
             display: flex;
@@ -485,7 +485,7 @@
             padding-top: 30px;
             border-top: 1px solid var(--gray-light);
         }
-        
+       
         .nav-btn {
             padding: 12px 30px;
             border: none;
@@ -495,33 +495,33 @@
             cursor: pointer;
             transition: all 0.3s;
         }
-        
+       
         .btn-prev {
             background: var(--gray-light);
             color: var(--gray-dark);
         }
-        
+       
         .btn-next {
             background: var(--accent);
             color: var(--white);
         }
-        
+       
         .btn-submit {
             background: var(--success);
             color: var(--white);
             min-width: 200px;
         }
-        
+       
         .nav-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
-        
+       
         .nav-btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
         }
-        
+       
         /* Quick Presets */
         .preset-buttons {
             display: flex;
@@ -529,7 +529,7 @@
             margin-bottom: 20px;
             flex-wrap: wrap;
         }
-        
+       
         .preset-btn {
             padding: 8px 16px;
             background: var(--gray-light);
@@ -539,17 +539,17 @@
             cursor: pointer;
             transition: all 0.2s;
         }
-        
+       
         .preset-btn:hover {
             border-color: var(--accent);
             background: var(--white);
         }
-        
+       
         .preset-btn.active {
             background: var(--accent);
             color: var(--white);
         }
-        
+       
         /* Success Modal */
         .modal {
             display: none;
@@ -563,11 +563,11 @@
             align-items: center;
             justify-content: center;
         }
-        
+       
         .modal.show {
             display: flex;
         }
-        
+       
         .modal-content {
             background: var(--white);
             border-radius: 20px;
@@ -576,53 +576,58 @@
             width: 90%;
             text-align: center;
         }
-        
+       
         .success-icon {
             font-size: 64px;
             color: var(--success);
             margin-bottom: 20px;
         }
-        
+       
         /* Responsive */
         @media (max-width: 768px) {
             .style-categories {
                 grid-template-columns: 1fr;
             }
-            
+           
             .model-config {
                 grid-template-columns: 1fr;
             }
-            
+           
             .step-label {
                 display: none;
             }
+        }
+
+        /* Logo Style */
+        .logo {
+            max-height: 50px;
+            margin-right: 10px;
         }
     </style>
 </head>
 <body>
     <!-- Login Screen -->
     <div class="login-container" id="loginScreen">
-        <h2>FASHION AI</h2>
+        <h2>GO2FLOW AI</h2>
         <form class="login-form" id="loginForm">
             <input type="password" id="password" placeholder="Passwort" required>
             <input type="text" id="slackUsername" placeholder="Slack Username (ohne @)" required>
             <button type="submit" class="login-btn">EINLOGGEN</button>
         </form>
     </div>
-
     <!-- Main App -->
     <div class="app-container" id="appContainer">
         <!-- Header -->
         <div class="header">
             <div class="header-top">
-                <h1>FASHION <span>AI</span> PLATFORM</h1>
+                <img src="https://go2flow.ch/logo.png" alt="Go2Flow Logo" class="logo">
+                <h1>GO2FLOW <span>AI</span> PLATFORM</h1>
                 <div class="user-controls">
                     <span class="user-badge" id="userBadge">@user</span>
                     <button class="logout-btn" onclick="logout()">Logout</button>
                 </div>
             </div>
         </div>
-
         <!-- Form Container -->
         <div class="form-container">
             <!-- Step Indicator -->
@@ -648,7 +653,6 @@
                     <div class="step-label">Technical</div>
                 </div>
             </div>
-
             <form id="fashionForm">
                 <!-- Step 1: Upload -->
                 <div class="form-section active" data-section="1">
@@ -667,13 +671,12 @@
                             <button type="button" class="remove-image" onclick="removeImage(event)">×</button>
                         </div>
                     </div>
-                    
+                   
                     <div class="form-group" style="margin-top: 20px;">
                         <label>Slack Channel für Ergebnis</label>
                         <input type="text" id="slackChannel" placeholder="#fashion-output" value="fashion-output">
                     </div>
                 </div>
-
                 <!-- Step 2: Style Category -->
                 <div class="form-section" data-section="2">
                     <h2 class="section-title">Wähle den Fotografie-Stil</h2>
@@ -706,7 +709,6 @@
                     </div>
                     <input type="hidden" id="selectedStyle" required>
                 </div>
-
                 <!-- Step 3: Scene Selection -->
                 <div class="form-section" data-section="3">
                     <h2 class="section-title">Wähle die Szene</h2>
@@ -715,11 +717,10 @@
                     </div>
                     <input type="hidden" id="selectedScene" required>
                 </div>
-
                 <!-- Step 4: Model Configuration -->
                 <div class="form-section" data-section="4">
                     <h2 class="section-title">Model & Styling konfigurieren</h2>
-                    
+                   
                     <div class="preset-buttons">
                         <button type="button" class="preset-btn" onclick="applyPreset('young_casual')">Young Casual</button>
                         <button type="button" class="preset-btn" onclick="applyPreset('business')">Business Professional</button>
@@ -727,7 +728,7 @@
                         <button type="button" class="preset-btn" onclick="applyPreset('diverse_group')">Diverse Group</button>
                         <button type="button" class="preset-btn" onclick="applyPreset('mature_elegant')">Mature Elegant</button>
                     </div>
-                    
+                   
                     <div class="model-config">
                         <div class="form-group">
                             <label>Alter</label>
@@ -740,7 +741,7 @@
                                 <option value="mixed">Gemischte Gruppe</option>
                             </select>
                         </div>
-                        
+                       
                         <div class="form-group">
                             <label>Geschlecht</label>
                             <select id="modelGender">
@@ -750,7 +751,7 @@
                                 <option value="mixed">Gemischt</option>
                             </select>
                         </div>
-                        
+                       
                         <div class="form-group">
                             <label>Ethnizität</label>
                             <select id="modelEthnicity">
@@ -763,7 +764,7 @@
                                 <option value="mixed">Gemischt/Divers</option>
                             </select>
                         </div>
-                        
+                       
                         <div class="form-group">
                             <label>Körpertyp</label>
                             <select id="modelBody">
@@ -775,7 +776,7 @@
                                 <option value="varied">Variiert (Gruppe)</option>
                             </select>
                         </div>
-                        
+                       
                         <div class="form-group">
                             <label>Haarstyling</label>
                             <select id="modelHair">
@@ -787,7 +788,7 @@
                                 <option value="wet-look">Wet Look</option>
                             </select>
                         </div>
-                        
+                       
                         <div class="form-group">
                             <label>Makeup</label>
                             <select id="modelMakeup">
@@ -799,7 +800,7 @@
                                 <option value="bold">Bold/Dramatic</option>
                             </select>
                         </div>
-                        
+                       
                         <div class="form-group">
                             <label>Ausdruck</label>
                             <select id="modelExpression">
@@ -812,7 +813,7 @@
                                 <option value="fierce">Fierce/Intensiv</option>
                             </select>
                         </div>
-                        
+                       
                         <div class="form-group">
                             <label>Pose</label>
                             <select id="modelPose">
@@ -826,17 +827,16 @@
                             </select>
                         </div>
                     </div>
-                    
+                   
                     <div class="form-group">
                         <label>Zusätzliche Styling-Details</label>
                         <textarea id="stylingDetails" rows="3" placeholder="z.B. Accessoires, besondere Wünsche..."></textarea>
                     </div>
                 </div>
-
                 <!-- Step 5: Technical Settings -->
                 <div class="form-section" data-section="5">
                     <h2 class="section-title">Technische Einstellungen</h2>
-                    
+                   
                     <div class="tech-settings">
                         <div class="form-group">
                             <label>Kamera-Typ</label>
@@ -849,7 +849,7 @@
                                 <option value="smartphone">Standard Smartphone</option>
                             </select>
                         </div>
-                        
+                       
                         <div class="form-group">
                             <label>Objektiv</label>
                             <select id="lensType">
@@ -861,7 +861,7 @@
                                 <option value="zoom">Zoom Variabel</option>
                             </select>
                         </div>
-                        
+                       
                         <div class="form-group">
                             <label>Beleuchtung</label>
                             <select id="lightingType">
@@ -875,7 +875,7 @@
                             </select>
                         </div>
                     </div>
-                    
+                   
                     <div class="slider-group">
                         <div class="slider-header">
                             <span class="slider-label">Bildqualität</span>
@@ -883,7 +883,7 @@
                         </div>
                         <input type="range" id="imageQuality" min="1" max="5" value="4">
                     </div>
-                    
+                   
                     <div class="slider-group">
                         <div class="slider-header">
                             <span class="slider-label">Authentizität</span>
@@ -891,7 +891,7 @@
                         </div>
                         <input type="range" id="authenticity" min="1" max="5" value="3">
                     </div>
-                    
+                   
                     <div class="slider-group">
                         <div class="slider-header">
                             <span class="slider-label">Post-Processing</span>
@@ -899,7 +899,7 @@
                         </div>
                         <input type="range" id="postProcessing" min="1" max="5" value="3">
                     </div>
-                    
+                   
                     <div class="form-group">
                         <label>Anzahl Variationen</label>
                         <select id="imageCount">
@@ -911,7 +911,6 @@
                         </select>
                     </div>
                 </div>
-
                 <!-- Navigation -->
                 <div class="form-navigation">
                     <button type="button" class="nav-btn btn-prev" onclick="previousStep()" id="prevBtn" style="display: none;">
@@ -927,7 +926,6 @@
             </form>
         </div>
     </div>
-
     <!-- Success Modal -->
     <div class="modal" id="successModal">
         <div class="modal-content">
@@ -937,19 +935,18 @@
             <button class="nav-btn btn-next" onclick="closeModal()">Neue Bilder erstellen</button>
         </div>
     </div>
-
     <script>
         // Constants
         const WEBHOOK_URL = '/api/webhook';
         const PASSWORD = 'fashion2024';
-        
+       
         // State
         let currentStep = 1;
         let currentUser = null;
         let hasImage = false;
         let selectedStyle = '';
         let selectedScene = '';
-        
+       
         // Scene definitions per style
         const scenes = {
             ecommerce: [
@@ -1007,7 +1004,7 @@
                 'Friend Photo'
             ]
         };
-        
+       
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
             const storedUser = localStorage.getItem('fashion_user');
@@ -1017,17 +1014,17 @@
                 document.getElementById('loginScreen').style.display = 'none';
                 document.getElementById('appContainer').classList.add('active');
             }
-            
+           
             initializeEventListeners();
             initializeSliders();
         });
-        
+       
         // Login
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const password = document.getElementById('password').value;
             const username = document.getElementById('slackUsername').value.replace('@', '');
-            
+           
             if (password === PASSWORD) {
                 currentUser = username;
                 localStorage.setItem('fashion_user', username);
@@ -1038,12 +1035,12 @@
                 alert('Falsches Passwort!');
             }
         });
-        
+       
         function logout() {
             localStorage.removeItem('fashion_user');
             location.reload();
         }
-        
+       
         // Navigation
         function nextStep() {
             if (validateCurrentStep()) {
@@ -1054,37 +1051,37 @@
                 }
             }
         }
-        
+       
         function previousStep() {
             if (currentStep > 1) {
                 currentStep--;
                 showStep(currentStep);
             }
         }
-        
+       
         function showStep(step) {
             // Update sections
             document.querySelectorAll('.form-section').forEach(section => {
                 section.classList.remove('active');
             });
             document.querySelector(`[data-section="${step}"]`).classList.add('active');
-            
+           
             // Update indicators
             document.querySelectorAll('.step').forEach(stepEl => {
                 stepEl.classList.remove('active');
             });
             document.querySelector(`[data-step="${step}"]`).classList.add('active');
-            
+           
             // Update navigation
             document.getElementById('prevBtn').style.display = step === 1 ? 'none' : 'block';
             document.getElementById('nextBtn').style.display = step === 5 ? 'none' : 'block';
             document.getElementById('submitBtn').style.display = step === 5 ? 'block' : 'none';
         }
-        
+       
         function completeStep(step) {
             document.querySelector(`[data-step="${step}"]`).classList.add('completed');
         }
-        
+       
         function validateCurrentStep() {
             switch(currentStep) {
                 case 1:
@@ -1109,7 +1106,7 @@
                     return true;
             }
         }
-        
+       
         // Image Upload
         document.getElementById('imageInput').addEventListener('change', function(e) {
             const file = e.target.files[0];
@@ -1118,7 +1115,7 @@
                     alert('Bild ist zu groß! Max. 10MB');
                     return;
                 }
-                
+               
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     document.getElementById('previewImg').src = e.target.result;
@@ -1130,7 +1127,7 @@
                 reader.readAsDataURL(file);
             }
         });
-        
+       
         function removeImage(e) {
             e.stopPropagation();
             document.getElementById('imageInput').value = '';
@@ -1139,7 +1136,7 @@
             document.getElementById('uploadArea').classList.remove('has-image');
             hasImage = false;
         }
-        
+       
         // Style Selection
         function initializeEventListeners() {
             // Style cards
@@ -1153,12 +1150,12 @@
                 });
             });
         }
-        
+       
         // Load scenes based on style
         function loadScenes(style) {
             const container = document.getElementById('sceneContainer');
             const sceneList = scenes[style] || [];
-            
+           
             container.innerHTML = '<div class="scene-grid">' +
                 sceneList.map(scene => `
                     <div class="scene-item" data-scene="${scene}">
@@ -1166,7 +1163,7 @@
                     </div>
                 `).join('') +
             '</div>';
-            
+           
             // Add click handlers
             document.querySelectorAll('.scene-item').forEach(item => {
                 item.addEventListener('click', function() {
@@ -1177,7 +1174,7 @@
                 });
             });
         }
-        
+       
         // Model Presets
         function applyPreset(preset) {
             const presets = {
@@ -1232,7 +1229,7 @@
                     pose: 'standing'
                 }
             };
-            
+           
             const settings = presets[preset];
             if (settings) {
                 document.getElementById('modelAge').value = settings.age;
@@ -1243,13 +1240,13 @@
                 document.getElementById('modelMakeup').value = settings.makeup;
                 document.getElementById('modelExpression').value = settings.expression;
                 document.getElementById('modelPose').value = settings.pose;
-                
+               
                 // Visual feedback
                 document.querySelectorAll('.preset-btn').forEach(btn => btn.classList.remove('active'));
                 event.target.classList.add('active');
             }
         }
-        
+       
         // Sliders
         function initializeSliders() {
             // Quality slider
@@ -1257,45 +1254,45 @@
                 const labels = ['Sehr niedrig', 'Niedrig', 'Mittel', 'Hoch', 'Ultra'];
                 document.getElementById('qualityValue').textContent = labels[this.value - 1];
             });
-            
+           
             // Authenticity slider
             document.getElementById('authenticity').addEventListener('input', function() {
                 const labels = ['Perfekt', 'Polished', 'Balanced', 'Natürlich', 'Raw'];
                 document.getElementById('authenticityValue').textContent = labels[this.value - 1];
             });
-            
+           
             // Post-processing slider
             document.getElementById('postProcessing').addEventListener('input', function() {
                 const labels = ['None', 'Minimal', 'Medium', 'Heavy', 'Extreme'];
                 document.getElementById('postValue').textContent = labels[this.value - 1];
             });
         }
-        
+       
         // Form submission
         document.getElementById('fashionForm').addEventListener('submit', async function(e) {
             e.preventDefault();
-            
+           
             const submitBtn = document.getElementById('submitBtn');
             submitBtn.disabled = true;
             submitBtn.textContent = 'Wird gesendet...';
-            
+           
             try {
                 // First upload image
                 const imageFile = document.getElementById('imageInput').files[0];
                 const base64 = await toBase64(imageFile);
-                
+               
                 const uploadResponse = await fetch('/api/upload', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ image: base64 })
                 });
-                
+               
                 const uploadResult = await uploadResponse.json();
-                
+               
                 if (!uploadResult.success) {
                     throw new Error('Bild-Upload fehlgeschlagen');
                 }
-                
+               
                 // Prepare complete data
                 const formData = {
                     user: currentUser,
@@ -1325,23 +1322,23 @@
                     stylingDetails: document.getElementById('stylingDetails').value,
                     timestamp: new Date().toISOString()
                 };
-                
+               
                 // Send to webhook
                 const response = await fetch(WEBHOOK_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(formData)
                 });
-                
+               
                 const result = await response.json();
-                
+               
                 if (result.success) {
                     document.getElementById('successModal').classList.add('show');
                     resetForm();
                 } else {
                     throw new Error(result.error || 'Unbekannter Fehler');
                 }
-                
+               
             } catch (error) {
                 alert('Fehler: ' + error.message);
             } finally {
@@ -1349,7 +1346,7 @@
                 submitBtn.textContent = '🚀 Bilder generieren';
             }
         });
-        
+       
         // Helper functions
         function toBase64(file) {
             return new Promise((resolve, reject) => {
@@ -1359,11 +1356,11 @@
                 reader.onerror = error => reject(error);
             });
         }
-        
+       
         function closeModal() {
             document.getElementById('successModal').classList.remove('show');
         }
-        
+       
         function resetForm() {
             document.getElementById('fashionForm').reset();
             currentStep = 1;
