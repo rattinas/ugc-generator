@@ -465,14 +465,8 @@
             </div>
         </div>
 
-        <!-- Form -->
+                    <!-- Form -->
         <div class="form-container">
-            <!-- Webhook Info Box -->
-            <div class="webhook-info">
-                <strong>⚠️ Webhook nicht konfiguriert!</strong><br>
-                Ersetze WEBHOOK_URL im Code mit deiner Make.com Webhook URL
-            </div>
-
             <form id="ugcForm">
                 <!-- Slack Channel -->
                 <div class="form-group">
@@ -579,7 +573,7 @@
     </div>
 
     <script>
-        // ⚠️ WICHTIG: Ersetze diese URL mit deiner Make.com Webhook URL!
+        // ✅ Webhook URL konfiguriert!
         const WEBHOOK_URL = 'https://hook.eu2.make.com/n2qhklk2qaxq54ojjyp734jmpsxswmql';
         
         // Passwort (ändere das!)
@@ -592,9 +586,7 @@
 
         // Check if webhook is configured
         window.onload = function() {
-            if (WEBHOOK_URL.includes('https://hook.eu2.make.com/n2qhklk2qaxq54ojjyp734jmpsxswmql')) {
-                console.warn('⚠️ Webhook URL noch nicht konfiguriert!');
-            }
+            console.log('✅ App bereit! Webhook konfiguriert.');
             
             const storedUser = localStorage.getItem('ugc_user');
             if (storedUser) {
@@ -692,11 +684,6 @@
         // Form Submit
         document.getElementById('ugcForm').addEventListener('submit', async function(e) {
             e.preventDefault();
-            
-            if (WEBHOOK_URL.includes('https://hook.eu2.make.com/n2qhklk2qaxq54ojjyp734jmpsxswmql')) {
-                alert('⚠️ Bitte konfiguriere zuerst die Webhook URL im Code!');
-                return;
-            }
             
             const submitBtn = document.getElementById('submitBtn');
             submitBtn.classList.add('loading');
