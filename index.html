@@ -3,151 +3,94 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-Commerce AI Photography Platform</title>
+    <title>AI Studio - Professional E-Commerce Photography</title>
+    
+    <!-- CSS -->
     <link rel="stylesheet" href="css/styles.css">
-    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/auth.css">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=Sora:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Supabase -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 </head>
 <body>
+    <!-- Loading Screen -->
+    <div id="loadingScreen" class="loading-screen">
+        <div class="spinner"></div>
+        <p>Initialisiere AI Studio...</p>
+    </div>
+
     <!-- Login Screen -->
-    <div class="login-container" id="loginScreen">
-        <div class="login-box">
-            <h1 class="logo">AI<span>STUDIO</span></h1>
-            <p class="tagline">Professional E-Commerce Photography</p>
-            <form id="loginForm">
-                <input type="password" id="password" placeholder="Passwort" required>
-                <input type="text" id="slackUsername" placeholder="Slack Username" required>
-                <button type="submit" class="btn btn-primary">Einloggen</button>
-            </form>
+    <div id="loginScreen" class="login-screen" style="display: none;">
+        <div class="login-container">
+            <div class="login-box">
+                <!-- Logo -->
+                <div class="logo-section">
+                    <h1 class="logo">AI<span>STUDIO</span></h1>
+                    <p class="tagline">Professional E-Commerce Photography powered by AI</p>
+                </div>
+
+                <!-- Google Sign In -->
+                <div class="auth-section">
+                    <button id="googleSignIn" class="btn-google">
+                        <img src="assets/icons/google.svg" alt="Google" width="20" height="20">
+                        Mit Google anmelden
+                    </button>
+
+                    <div class="auth-divider">
+                        <span>Schnell & Sicher</span>
+                    </div>
+
+                    <!-- Features -->
+                    <div class="feature-list">
+                        <div class="feature-item">
+                            <span class="feature-icon">✨</span>
+                            <span>100 kostenlose Credits zum Start</span>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">🚀</span>
+                            <span>6 spezialisierte AI Agents</span>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">📸</span>
+                            <span>Professionelle Produktfotografie</span>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">⚡</span>
+                            <span>Ergebnisse in 2-3 Minuten</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer -->
+                <div class="login-footer">
+                    <p>Mit der Anmeldung akzeptierst du unsere <a href="#">Nutzungsbedingungen</a></p>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- Main Dashboard -->
-    <div class="dashboard" id="dashboard" style="display: none;">
-        <!-- Header -->
-        <header class="main-header">
-            <div class="header-content">
-                <h1 class="logo">AI<span>STUDIO</span></h1>
-                <div class="user-menu">
-                    <span class="user-badge" id="userBadge">@user</span>
-                    <button class="btn btn-small" onclick="logout()">Logout</button>
-                </div>
-            </div>
-        </header>
-
-        <!-- Use Case Selection -->
-        <main class="container">
-            <div class="section-header">
-                <h2>Was möchtest du heute fotografieren?</h2>
-                <p>Wähle deinen Use Case für spezialisierte AI-Fotografie</p>
-            </div>
-
-            <div class="use-case-grid">
-                <!-- Fashion -->
-                <div class="use-case-card" onclick="navigateTo('fashion')">
-                    <div class="card-icon">👗</div>
-                    <h3>Fashion & Apparel</h3>
-                    <p>Kleidung, Schuhe, Accessoires auf Models</p>
-                    <ul class="feature-list">
-                        <li>Model-Konfiguration</li>
-                        <li>Outfit Styling</li>
-                        <li>Lifestyle Scenes</li>
-                    </ul>
-                    <span class="card-badge">Beliebt</span>
-                </div>
-
-                <!-- Product -->
-                <div class="use-case-card" onclick="navigateTo('product')">
-                    <div class="card-icon">📦</div>
-                    <h3>Product Photography</h3>
-                    <p>Objekte, Elektronik, Home & Living</p>
-                    <ul class="feature-list">
-                        <li>360° Ansichten</li>
-                        <li>In-Use Demos</li>
-                        <li>Detail Shots</li>
-                    </ul>
-                </div>
-
-                <!-- Beauty -->
-                <div class="use-case-card" onclick="navigateTo('beauty')">
-                    <div class="card-icon">💄</div>
-                    <h3>Beauty & Cosmetics</h3>
-                    <p>Makeup, Skincare, Haircare in Aktion</p>
-                    <ul class="feature-list">
-                        <li>Application Shots</li>
-                        <li>Before/After</li>
-                        <li>Texture Close-ups</li>
-                    </ul>
-                    <span class="card-badge">Neu</span>
-                </div>
-
-                <!-- Food -->
-                <div class="use-case-card" onclick="navigateTo('food')">
-                    <div class="card-icon">🍔</div>
-                    <h3>Food & Beverage</h3>
-                    <p>Restaurant-Style, Verpackungen, Zubereitung</p>
-                    <ul class="feature-list">
-                        <li>Styled Shots</li>
-                        <li>Action Cooking</li>
-                        <li>Packaging Hero</li>
-                    </ul>
-                </div>
-
-                <!-- Jewelry -->
-                <div class="use-case-card" onclick="navigateTo('jewelry')">
-                    <div class="card-icon">💎</div>
-                    <h3>Jewelry & Watches</h3>
-                    <p>Schmuck, Uhren, Luxury Items</p>
-                    <ul class="feature-list">
-                        <li>Macro Details</li>
-                        <li>Worn Shots</li>
-                        <li>Luxury Staging</li>
-                    </ul>
-                </div>
-
-                <!-- Sports -->
-                <div class="use-case-card" onclick="navigateTo('sports')">
-                    <div class="card-icon">⚽</div>
-                    <h3>Sports & Fitness</h3>
-                    <p>Equipment, Activewear, Supplements</p>
-                    <ul class="feature-list">
-                        <li>Action Shots</li>
-                        <li>Equipment Demo</li>
-                        <li>Lifestyle Active</li>
-                    </ul>
-                </div>
-            </div>
-
-            <!-- Quick Actions -->
-            <div class="quick-actions">
-                <h3>Schnellzugriff</h3>
-                <div class="action-buttons">
-                    <button class="btn btn-outline" onclick="navigateTo('fashion', 'quickshot')">
-                        <span>📸</span> Quick Fashion Shot
-                    </button>
-                    <button class="btn btn-outline" onclick="navigateTo('product', 'packshot')">
-                        <span>📦</span> Packshot erstellen
-                    </button>
-                    <button class="btn btn-outline" onclick="navigateTo('beauty', 'swatch')">
-                        <span>🎨</span> Beauty Swatch
-                    </button>
-                    <button class="btn btn-outline" onclick="openBulkUpload()">
-                        <span>📁</span> Bulk Upload
-                    </button>
-                </div>
-            </div>
-
-            <!-- Recent Projects -->
-            <div class="recent-projects">
-                <h3>Letzte Projekte</h3>
-                <div class="project-list" id="recentProjects">
-                    <!-- Wird dynamisch geladen -->
-                </div>
-            </div>
-        </main>
-    </div>
-
+    <!-- Scripts -->
     <script src="js/config.js"></script>
-    <script src="js/api.js"></script>
-    <script src="js/main.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        // Initialize auth on page load
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Check if already authenticated
+            if (window.auth && await window.auth.isAuthenticated()) {
+                window.location.href = '/dashboard.html';
+            } else {
+                document.getElementById('loadingScreen').style.display = 'none';
+                document.getElementById('loginScreen').style.display = 'flex';
+            }
+            
+            // Google Sign In Button
+            document.getElementById('googleSignIn').addEventListener('click', async () => {
+                await window.auth.signInWithProvider('google');
+            });
+        });
+    </script>
 </body>
 </html>
