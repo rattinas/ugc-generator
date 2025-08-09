@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UGC Generator Platform</title>
+    <title>Fashion Photography AI Platform</title>
     <style>
         * {
             margin: 0;
@@ -12,29 +12,29 @@
         }
         
         :root {
-            --primary: #667eea;
-            --primary-dark: #5a67d8;
-            --secondary: #764ba2;
-            --success: #48bb78;
-            --danger: #f56565;
-            --dark: #2d3748;
-            --gray: #718096;
-            --light: #f7fafc;
-            --border: #e2e8f0;
+            --primary: #1a1a1a;
+            --accent: #ff6b6b;
+            --gold: #d4af37;
+            --white: #ffffff;
+            --gray-light: #f5f5f5;
+            --gray-medium: #888;
+            --gray-dark: #333;
+            --success: #4caf50;
+            --error: #f44336;
         }
         
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
             min-height: 100vh;
-            padding: 20px;
+            color: var(--gray-dark);
         }
         
         /* Login Screen */
         .login-container {
             max-width: 400px;
             margin: 100px auto;
-            background: white;
+            background: var(--white);
             border-radius: 20px;
             padding: 40px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
@@ -42,185 +42,229 @@
         
         .login-container h2 {
             text-align: center;
-            color: var(--dark);
+            color: var(--primary);
             margin-bottom: 30px;
+            font-weight: 300;
+            letter-spacing: 2px;
         }
         
         .login-form input {
             width: 100%;
             padding: 12px;
             margin-bottom: 15px;
-            border: 2px solid var(--border);
-            border-radius: 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
             font-size: 14px;
+            transition: all 0.3s;
         }
         
         .login-form input:focus {
             outline: none;
-            border-color: var(--primary);
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
         }
         
         .login-btn {
             width: 100%;
             padding: 14px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white;
+            background: var(--primary);
+            color: var(--white);
             border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 600;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            letter-spacing: 1px;
             cursor: pointer;
-            transition: transform 0.2s;
+            transition: all 0.3s;
         }
         
         .login-btn:hover {
+            background: var(--accent);
             transform: translateY(-2px);
-        }
-        
-        .error-message {
-            background: #fed7d7;
-            color: #c53030;
-            padding: 10px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            font-size: 14px;
-            display: none;
-        }
-        
-        .error-message.show {
-            display: block;
+            box-shadow: 0 10px 20px rgba(255, 107, 107, 0.3);
         }
         
         /* Main App */
         .app-container {
             display: none;
-            max-width: 800px;
+            max-width: 1400px;
             margin: 0 auto;
+            padding: 20px;
         }
         
         .app-container.active {
             display: block;
         }
         
+        /* Header */
         .header {
-            background: white;
-            border-radius: 20px 20px 0 0;
+            background: var(--white);
+            border-radius: 20px;
             padding: 30px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
         
         .header-top {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
         }
         
         .header h1 {
-            color: var(--dark);
             font-size: 28px;
+            font-weight: 300;
+            letter-spacing: 2px;
+            color: var(--primary);
         }
         
-        .user-info {
+        .header h1 span {
+            color: var(--accent);
+        }
+        
+        .user-controls {
             display: flex;
-            align-items: center;
             gap: 15px;
+            align-items: center;
         }
         
         .user-badge {
-            background: var(--light);
+            background: var(--gray-light);
             padding: 8px 16px;
             border-radius: 20px;
-            font-size: 14px;
-            color: var(--gray);
+            font-size: 13px;
         }
         
         .logout-btn {
             padding: 8px 16px;
-            background: var(--danger);
-            color: white;
+            background: var(--primary);
+            color: var(--white);
             border: none;
             border-radius: 8px;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 13px;
+            transition: all 0.3s;
         }
         
-        /* Form Section */
+        /* Main Form Container */
         .form-container {
-            background: white;
-            padding: 30px;
-            border-radius: 0 0 20px 20px;
-            margin-top: 2px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            background: var(--white);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
         
-        .form-group {
-            margin-bottom: 25px;
+        /* Step Indicator */
+        .step-indicator {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 40px;
+            position: relative;
         }
         
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: var(--dark);
+        .step-indicator::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--gray-light);
+            z-index: 0;
+        }
+        
+        .step {
+            background: var(--white);
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+        }
+        
+        .step-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--gray-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
             font-weight: 500;
-            font-size: 14px;
+            transition: all 0.3s;
+            border: 2px solid var(--white);
         }
         
-        .required {
-            color: var(--danger);
+        .step.active .step-circle {
+            background: var(--accent);
+            color: var(--white);
         }
         
-        input, select, textarea {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid var(--border);
-            border-radius: 10px;
-            font-size: 14px;
-            transition: border-color 0.3s;
+        .step.completed .step-circle {
+            background: var(--success);
+            color: var(--white);
         }
         
-        input:focus, select:focus, textarea:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        .step-label {
+            margin-top: 10px;
+            font-size: 12px;
+            color: var(--gray-medium);
+        }
+        
+        .step.active .step-label {
+            color: var(--primary);
+            font-weight: 500;
+        }
+        
+        /* Form Sections */
+        .form-section {
+            display: none;
+        }
+        
+        .form-section.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .section-title {
+            font-size: 20px;
+            margin-bottom: 25px;
+            color: var(--primary);
+            font-weight: 400;
         }
         
         /* Image Upload */
         .upload-area {
-            border: 3px dashed var(--primary);
-            border-radius: 15px;
-            padding: 40px 20px;
+            border: 2px dashed var(--gray-medium);
+            border-radius: 12px;
+            padding: 60px 20px;
             text-align: center;
             cursor: pointer;
-            background: #f8f9ff;
             transition: all 0.3s;
-            position: relative;
+            background: var(--gray-light);
         }
         
         .upload-area:hover {
-            border-color: var(--secondary);
-            background: #f0f2ff;
+            border-color: var(--accent);
+            background: #fff5f5;
         }
         
         .upload-area.has-image {
-            border-style: solid;
             padding: 20px;
+            border-style: solid;
+            border-color: var(--success);
+            background: var(--white);
         }
         
         .upload-icon {
             font-size: 48px;
             margin-bottom: 15px;
-        }
-        
-        .upload-text {
-            color: var(--primary);
-            font-weight: 500;
-            margin-bottom: 5px;
-        }
-        
-        .upload-subtext {
-            color: var(--gray);
-            font-size: 12px;
         }
         
         input[type="file"] {
@@ -229,28 +273,28 @@
         
         .image-preview {
             display: none;
-            position: relative;
         }
         
         .image-preview.show {
             display: flex;
             align-items: center;
             justify-content: center;
+            position: relative;
         }
         
         .preview-img {
-            max-width: 200px;
-            max-height: 200px;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            max-width: 300px;
+            max-height: 300px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
         
         .remove-image {
             position: absolute;
             top: -10px;
-            right: calc(50% - 110px);
-            background: var(--danger);
-            color: white;
+            right: -10px;
+            background: var(--error);
+            color: var(--white);
             border: none;
             border-radius: 50%;
             width: 30px;
@@ -260,116 +304,250 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        
+        /* Style Categories */
+        .style-categories {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .style-card {
+            padding: 20px;
+            background: var(--gray-light);
+            border: 2px solid transparent;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+        
+        .style-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        
+        .style-card.selected {
+            background: var(--primary);
+            color: var(--white);
+            border-color: var(--accent);
+        }
+        
+        .style-icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        
+        .style-name {
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+        
+        .style-description {
+            font-size: 11px;
+            opacity: 0.8;
         }
         
         /* Scene Selection */
         .scene-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 10px;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 10px;
+            background: var(--gray-light);
+            border-radius: 12px;
         }
         
-        .scene-card {
-            padding: 15px 10px;
-            background: var(--light);
-            border: 2px solid var(--border);
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-align: center;
-        }
-        
-        .scene-card:hover {
-            border-color: var(--primary);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
-        }
-        
-        .scene-card.selected {
-            background: var(--primary);
-            color: white;
-            border-color: var(--secondary);
-        }
-        
-        .scene-icon {
-            font-size: 24px;
-            margin-bottom: 5px;
-        }
-        
-        .scene-label {
-            font-size: 11px;
-            font-weight: 500;
-        }
-        
-        /* Image Count Selector */
-        .count-selector {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-        
-        .count-btn {
-            width: 40px;
-            height: 40px;
-            border: 2px solid var(--border);
-            background: white;
+        .scene-item {
+            padding: 15px;
+            background: var(--white);
+            border: 2px solid transparent;
             border-radius: 8px;
             cursor: pointer;
             transition: all 0.2s;
-            font-size: 18px;
+            text-align: center;
+            font-size: 13px;
         }
         
-        .count-btn:hover:not(:disabled) {
-            border-color: var(--primary);
-            background: var(--light);
+        .scene-item:hover {
+            border-color: var(--accent);
+            transform: scale(1.05);
         }
         
-        .count-btn:disabled {
+        .scene-item.selected {
+            background: var(--accent);
+            color: var(--white);
+        }
+        
+        /* Model Configuration */
+        .model-config {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--gray-dark);
+        }
+        
+        .form-group select,
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        .form-group select:focus,
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
+        }
+        
+        /* Slider Inputs */
+        .slider-group {
+            margin-bottom: 20px;
+        }
+        
+        .slider-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        
+        .slider-label {
+            font-size: 13px;
+            font-weight: 500;
+        }
+        
+        .slider-value {
+            font-size: 13px;
+            color: var(--accent);
+            font-weight: 500;
+        }
+        
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: var(--gray-light);
+            outline: none;
+            -webkit-appearance: none;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--accent);
+            cursor: pointer;
+        }
+        
+        input[type="range"]::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--accent);
+            cursor: pointer;
+        }
+        
+        /* Technical Settings */
+        .tech-settings {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        /* Navigation Buttons */
+        .form-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid var(--gray-light);
+        }
+        
+        .nav-btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-prev {
+            background: var(--gray-light);
+            color: var(--gray-dark);
+        }
+        
+        .btn-next {
+            background: var(--accent);
+            color: var(--white);
+        }
+        
+        .btn-submit {
+            background: var(--success);
+            color: var(--white);
+            min-width: 200px;
+        }
+        
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .nav-btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
         }
         
-        .count-display {
-            font-size: 24px;
-            font-weight: bold;
-            color: var(--primary);
-            min-width: 30px;
-            text-align: center;
-        }
-        
-        /* Submit Button */
-        .submit-btn {
-            width: 100%;
-            padding: 16px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
+        /* Quick Presets */
+        .preset-buttons {
             display: flex;
-            align-items: center;
-            justify-content: center;
             gap: 10px;
-            margin-top: 30px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
         }
         
-        .submit-btn:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        .preset-btn {
+            padding: 8px 16px;
+            background: var(--gray-light);
+            border: 1px solid transparent;
+            border-radius: 20px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
         }
         
-        .submit-btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            background: var(--gray);
+        .preset-btn:hover {
+            border-color: var(--accent);
+            background: var(--white);
         }
         
-        .submit-btn.loading::after {
-            content: " ⏳";
+        .preset-btn.active {
+            background: var(--accent);
+            color: var(--white);
         }
         
         /* Success Modal */
@@ -380,7 +558,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0,0,0,0.5);
+            background: rgba(0,0,0,0.8);
             z-index: 1000;
             align-items: center;
             justify-content: center;
@@ -391,7 +569,7 @@
         }
         
         .modal-content {
-            background: white;
+            background: var(--white);
             border-radius: 20px;
             padding: 40px;
             max-width: 500px;
@@ -401,54 +579,34 @@
         
         .success-icon {
             font-size: 64px;
+            color: var(--success);
             margin-bottom: 20px;
         }
         
-        .modal h3 {
-            color: var(--dark);
-            margin-bottom: 10px;
-        }
-        
-        .modal p {
-            color: var(--gray);
-            margin-bottom: 20px;
-            font-size: 14px;
-        }
-        
-        .modal-btn {
-            padding: 12px 30px;
-            background: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 600;
-        }
-        
-        .webhook-info {
-            background: #fffaf0;
-            border: 1px solid #feb2b2;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            font-size: 13px;
-        }
-        
-        .webhook-info strong {
-            color: var(--danger);
+        /* Responsive */
+        @media (max-width: 768px) {
+            .style-categories {
+                grid-template-columns: 1fr;
+            }
+            
+            .model-config {
+                grid-template-columns: 1fr;
+            }
+            
+            .step-label {
+                display: none;
+            }
         }
     </style>
 </head>
 <body>
     <!-- Login Screen -->
     <div class="login-container" id="loginScreen">
-        <h2>🔐 UGC Generator Login</h2>
-        <div class="error-message" id="loginError"></div>
+        <h2>FASHION AI</h2>
         <form class="login-form" id="loginForm">
-            <input type="password" id="password" placeholder="Passwort eingeben" required>
-            <input type="text" id="slackUsername" placeholder="Dein Slack Username (ohne @)" required>
-            <button type="submit" class="login-btn">Einloggen</button>
+            <input type="password" id="password" placeholder="Passwort" required>
+            <input type="text" id="slackUsername" placeholder="Slack Username (ohne @)" required>
+            <button type="submit" class="login-btn">EINLOGGEN</button>
         </form>
     </div>
 
@@ -457,107 +615,315 @@
         <!-- Header -->
         <div class="header">
             <div class="header-top">
-                <h1>🎨 UGC Generator</h1>
-                <div class="user-info">
-                    <span class="user-badge" id="userBadge">@username</span>
+                <h1>FASHION <span>AI</span> PLATFORM</h1>
+                <div class="user-controls">
+                    <span class="user-badge" id="userBadge">@user</span>
                     <button class="logout-btn" onclick="logout()">Logout</button>
                 </div>
             </div>
         </div>
 
-                    <!-- Form -->
+        <!-- Form Container -->
         <div class="form-container">
-            <form id="ugcForm">
-                <!-- Slack Channel -->
-                <div class="form-group">
-                    <label for="slackChannel">Slack Channel <span class="required">*</span></label>
-                    <input type="text" id="slackChannel" placeholder="#general oder #ugc-images" value="ugc-images" required>
+            <!-- Step Indicator -->
+            <div class="step-indicator">
+                <div class="step active" data-step="1">
+                    <div class="step-circle">1</div>
+                    <div class="step-label">Upload</div>
                 </div>
+                <div class="step" data-step="2">
+                    <div class="step-circle">2</div>
+                    <div class="step-label">Style</div>
+                </div>
+                <div class="step" data-step="3">
+                    <div class="step-circle">3</div>
+                    <div class="step-label">Scene</div>
+                </div>
+                <div class="step" data-step="4">
+                    <div class="step-circle">4</div>
+                    <div class="step-label">Model</div>
+                </div>
+                <div class="step" data-step="5">
+                    <div class="step-circle">5</div>
+                    <div class="step-label">Technical</div>
+                </div>
+            </div>
 
-                <!-- Image Upload -->
-                <div class="form-group">
-                    <label>Produktbild <span class="required">*</span></label>
+            <form id="fashionForm">
+                <!-- Step 1: Upload -->
+                <div class="form-section active" data-section="1">
+                    <h2 class="section-title">Produkt hochladen</h2>
                     <div class="upload-area" id="uploadArea" onclick="document.getElementById('imageInput').click()">
                         <input type="file" id="imageInput" accept="image/*" required>
                         <div id="uploadPlaceholder">
                             <div class="upload-icon">📸</div>
-                            <div class="upload-text">Klicken zum Hochladen</div>
-                            <div class="upload-subtext">PNG, JPG oder WebP • Max. 10MB</div>
+                            <div>Klicken zum Hochladen</div>
+                            <div style="font-size: 12px; margin-top: 10px; opacity: 0.6;">
+                                Idealerweise Freisteller auf weißem/transparentem Hintergrund
+                            </div>
                         </div>
                         <div class="image-preview" id="imagePreview">
                             <img id="previewImg" class="preview-img" src="" alt="Preview">
                             <button type="button" class="remove-image" onclick="removeImage(event)">×</button>
                         </div>
                     </div>
+                    
+                    <div class="form-group" style="margin-top: 20px;">
+                        <label>Slack Channel für Ergebnis</label>
+                        <input type="text" id="slackChannel" placeholder="#fashion-output" value="fashion-output">
+                    </div>
                 </div>
 
-                <!-- Scene Selection -->
-                <div class="form-group">
-                    <label>Szene auswählen <span class="required">*</span></label>
-                    <div class="scene-grid">
-                        <div class="scene-card" data-scene="mirror_selfie">
-                            <div class="scene-icon">🤳</div>
-                            <div class="scene-label">Mirror Selfie</div>
+                <!-- Step 2: Style Category -->
+                <div class="form-section" data-section="2">
+                    <h2 class="section-title">Wähle den Fotografie-Stil</h2>
+                    <div class="style-categories">
+                        <div class="style-card" data-style="ecommerce">
+                            <div class="style-icon">🛍️</div>
+                            <div class="style-name">E-Commerce</div>
+                            <div class="style-description">Clean product shots</div>
                         </div>
-                        <div class="scene-card" data-scene="outfit">
-                            <div class="scene-icon">👔</div>
-                            <div class="scene-label">Outfit</div>
+                        <div class="style-card" data-style="lifestyle">
+                            <div class="style-icon">☕</div>
+                            <div class="style-name">Lifestyle</div>
+                            <div class="style-description">Real-life scenarios</div>
                         </div>
-                        <div class="scene-card" data-scene="lifestyle">
-                            <div class="scene-icon">☕</div>
-                            <div class="scene-label">Lifestyle</div>
+                        <div class="style-card" data-style="editorial">
+                            <div class="style-icon">✨</div>
+                            <div class="style-name">Editorial</div>
+                            <div class="style-description">High fashion & artistic</div>
                         </div>
-                        <div class="scene-card" data-scene="flat_lay">
-                            <div class="scene-icon">📐</div>
-                            <div class="scene-label">Flat Lay</div>
+                        <div class="style-card" data-style="commercial">
+                            <div class="style-icon">📱</div>
+                            <div class="style-name">Commercial</div>
+                            <div class="style-description">Marketing & campaigns</div>
                         </div>
-                        <div class="scene-card" data-scene="street">
-                            <div class="scene-icon">🏙️</div>
-                            <div class="scene-label">Street Style</div>
+                        <div class="style-card" data-style="ugc">
+                            <div class="style-icon">🤳</div>
+                            <div class="style-name">UGC/Authentic</div>
+                            <div class="style-description">User-generated content</div>
                         </div>
-                        <div class="scene-card" data-scene="unboxing">
-                            <div class="scene-icon">📦</div>
-                            <div class="scene-label">Unboxing</div>
-                        </div>
+                    </div>
+                    <input type="hidden" id="selectedStyle" required>
+                </div>
+
+                <!-- Step 3: Scene Selection -->
+                <div class="form-section" data-section="3">
+                    <h2 class="section-title">Wähle die Szene</h2>
+                    <div id="sceneContainer">
+                        <!-- Wird dynamisch basierend auf Style gefüllt -->
                     </div>
                     <input type="hidden" id="selectedScene" required>
                 </div>
 
-                <!-- Description -->
-                <div class="form-group">
-                    <label for="description">Details (optional)</label>
-                    <textarea id="description" rows="3" placeholder="z.B. Berlin vibes, golden hour, casual look..."></textarea>
-                </div>
-
-                <!-- Model Selection -->
-                <div class="form-group">
-                    <label for="modelType">Model/Person</label>
-                    <select id="modelType">
-                        <option value="auto">Automatisch wählen</option>
-                        <option value="young_woman">Junge Frau (20-30)</option>
-                        <option value="young_man">Junger Mann (20-30)</option>
-                        <option value="mature_woman">Frau (30-45)</option>
-                        <option value="mature_man">Mann (30-45)</option>
-                        <option value="diverse">Diverse Gruppe</option>
-                        <option value="none">Keine Person</option>
-                    </select>
-                </div>
-
-                <!-- Image Count -->
-                <div class="form-group">
-                    <label>Anzahl Bilder</label>
-                    <div class="count-selector">
-                        <button type="button" class="count-btn" onclick="changeCount(-1)">−</button>
-                        <span class="count-display" id="imageCount">1</span>
-                        <button type="button" class="count-btn" onclick="changeCount(1)">+</button>
+                <!-- Step 4: Model Configuration -->
+                <div class="form-section" data-section="4">
+                    <h2 class="section-title">Model & Styling konfigurieren</h2>
+                    
+                    <div class="preset-buttons">
+                        <button type="button" class="preset-btn" onclick="applyPreset('young_casual')">Young Casual</button>
+                        <button type="button" class="preset-btn" onclick="applyPreset('business')">Business Professional</button>
+                        <button type="button" class="preset-btn" onclick="applyPreset('high_fashion')">High Fashion Model</button>
+                        <button type="button" class="preset-btn" onclick="applyPreset('diverse_group')">Diverse Group</button>
+                        <button type="button" class="preset-btn" onclick="applyPreset('mature_elegant')">Mature Elegant</button>
+                    </div>
+                    
+                    <div class="model-config">
+                        <div class="form-group">
+                            <label>Alter</label>
+                            <select id="modelAge">
+                                <option value="18-25">18-25 Jahre</option>
+                                <option value="25-35">25-35 Jahre</option>
+                                <option value="35-45">35-45 Jahre</option>
+                                <option value="45-55">45-55 Jahre</option>
+                                <option value="55+">55+ Jahre</option>
+                                <option value="mixed">Gemischte Gruppe</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Geschlecht</label>
+                            <select id="modelGender">
+                                <option value="female">Weiblich</option>
+                                <option value="male">Männlich</option>
+                                <option value="non-binary">Non-Binary</option>
+                                <option value="mixed">Gemischt</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Ethnizität</label>
+                            <select id="modelEthnicity">
+                                <option value="caucasian">Kaukasisch</option>
+                                <option value="african">Afrikanisch</option>
+                                <option value="asian">Asiatisch</option>
+                                <option value="latin">Lateinamerikanisch</option>
+                                <option value="middle-eastern">Nahöstlich</option>
+                                <option value="south-asian">Südasiatisch</option>
+                                <option value="mixed">Gemischt/Divers</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Körpertyp</label>
+                            <select id="modelBody">
+                                <option value="slim">Schlank</option>
+                                <option value="athletic">Athletisch</option>
+                                <option value="average">Durchschnittlich</option>
+                                <option value="curvy">Kurvig</option>
+                                <option value="plus-size">Plus Size</option>
+                                <option value="varied">Variiert (Gruppe)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Haarstyling</label>
+                            <select id="modelHair">
+                                <option value="natural">Natürlich</option>
+                                <option value="styled">Gestylt</option>
+                                <option value="messy">Unordentlich</option>
+                                <option value="professional">Professionell</option>
+                                <option value="editorial">Editorial/Kreativ</option>
+                                <option value="wet-look">Wet Look</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Makeup</label>
+                            <select id="modelMakeup">
+                                <option value="no-makeup">Kein Makeup</option>
+                                <option value="natural">Natürlich</option>
+                                <option value="everyday">Alltags-Look</option>
+                                <option value="glamour">Glamour</option>
+                                <option value="editorial">Editorial/Künstlerisch</option>
+                                <option value="bold">Bold/Dramatic</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Ausdruck</label>
+                            <select id="modelExpression">
+                                <option value="neutral">Neutral</option>
+                                <option value="smile">Lächeln</option>
+                                <option value="laugh">Lachen</option>
+                                <option value="serious">Ernst</option>
+                                <option value="confident">Selbstbewusst</option>
+                                <option value="candid">Candid/Natürlich</option>
+                                <option value="fierce">Fierce/Intensiv</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Pose</label>
+                            <select id="modelPose">
+                                <option value="standing">Stehend</option>
+                                <option value="walking">Gehend</option>
+                                <option value="sitting">Sitzend</option>
+                                <option value="leaning">Angelehnt</option>
+                                <option value="dynamic">Dynamisch/Bewegung</option>
+                                <option value="relaxed">Entspannt</option>
+                                <option value="editorial">Editorial Pose</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Zusätzliche Styling-Details</label>
+                        <textarea id="stylingDetails" rows="3" placeholder="z.B. Accessoires, besondere Wünsche..."></textarea>
                     </div>
                 </div>
 
-                <!-- Submit -->
-                <button type="submit" class="submit-btn" id="submitBtn">
-                    <span>🚀</span>
-                    <span>Bilder generieren</span>
-                </button>
+                <!-- Step 5: Technical Settings -->
+                <div class="form-section" data-section="5">
+                    <h2 class="section-title">Technische Einstellungen</h2>
+                    
+                    <div class="tech-settings">
+                        <div class="form-group">
+                            <label>Kamera-Typ</label>
+                            <select id="cameraType">
+                                <option value="iphone-pro">iPhone Pro (Mobile)</option>
+                                <option value="dslr">DSLR Professional</option>
+                                <option value="mirrorless">Mirrorless High-End</option>
+                                <option value="medium-format">Medium Format</option>
+                                <option value="film">Analog Film</option>
+                                <option value="smartphone">Standard Smartphone</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Objektiv</label>
+                            <select id="lensType">
+                                <option value="24mm">24mm Wide</option>
+                                <option value="35mm">35mm Standard</option>
+                                <option value="50mm">50mm Portrait</option>
+                                <option value="85mm">85mm Portrait Pro</option>
+                                <option value="135mm">135mm Tele</option>
+                                <option value="zoom">Zoom Variabel</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Beleuchtung</label>
+                            <select id="lightingType">
+                                <option value="natural">Natürliches Licht</option>
+                                <option value="studio">Studio Strobe</option>
+                                <option value="golden-hour">Golden Hour</option>
+                                <option value="overcast">Bewölkt/Diffus</option>
+                                <option value="harsh-sun">Hartes Sonnenlicht</option>
+                                <option value="neon">Neon/Urban</option>
+                                <option value="mixed">Gemischt</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="slider-group">
+                        <div class="slider-header">
+                            <span class="slider-label">Bildqualität</span>
+                            <span class="slider-value" id="qualityValue">Hoch</span>
+                        </div>
+                        <input type="range" id="imageQuality" min="1" max="5" value="4">
+                    </div>
+                    
+                    <div class="slider-group">
+                        <div class="slider-header">
+                            <span class="slider-label">Authentizität</span>
+                            <span class="slider-value" id="authenticityValue">Balanced</span>
+                        </div>
+                        <input type="range" id="authenticity" min="1" max="5" value="3">
+                    </div>
+                    
+                    <div class="slider-group">
+                        <div class="slider-header">
+                            <span class="slider-label">Post-Processing</span>
+                            <span class="slider-value" id="postValue">Medium</span>
+                        </div>
+                        <input type="range" id="postProcessing" min="1" max="5" value="3">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Anzahl Variationen</label>
+                        <select id="imageCount">
+                            <option value="1">1 Bild</option>
+                            <option value="2">2 Bilder</option>
+                            <option value="3">3 Bilder</option>
+                            <option value="4">4 Bilder</option>
+                            <option value="5">5 Bilder</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Navigation -->
+                <div class="form-navigation">
+                    <button type="button" class="nav-btn btn-prev" onclick="previousStep()" id="prevBtn" style="display: none;">
+                        ← Zurück
+                    </button>
+                    <button type="button" class="nav-btn btn-next" onclick="nextStep()" id="nextBtn">
+                        Weiter →
+                    </button>
+                    <button type="submit" class="nav-btn btn-submit" id="submitBtn" style="display: none;">
+                        🚀 Bilder generieren
+                    </button>
+                </div>
             </form>
         </div>
     </div>
@@ -568,35 +934,94 @@
             <div class="success-icon">✅</div>
             <h3>Erfolgreich gesendet!</h3>
             <p>Deine Bilder werden generiert und in Slack gepostet.</p>
-            <button class="modal-btn" onclick="closeModal()">Weitere Bilder erstellen</button>
+            <button class="nav-btn btn-next" onclick="closeModal()">Neue Bilder erstellen</button>
         </div>
     </div>
 
     <script>
-        // ✅ RICHTIG: Nutze die Vercel API Route!
+        // Constants
         const WEBHOOK_URL = '/api/webhook';
+        const PASSWORD = 'fashion2024';
         
-        // Passwort (ändere das!)
-        const PASSWORD = 'ugc2024';
-        
+        // State
+        let currentStep = 1;
         let currentUser = null;
-        let imageCount = 1;
-        let selectedScene = '';
         let hasImage = false;
-
-        // Check if webhook is configured
-        window.onload = function() {
-            console.log('✅ App bereit! Webhook konfiguriert.');
-            
-            const storedUser = localStorage.getItem('ugc_user');
+        let selectedStyle = '';
+        let selectedScene = '';
+        
+        // Scene definitions per style
+        const scenes = {
+            ecommerce: [
+                'Freisteller weiß',
+                'Ghost Mannequin',
+                'Flat Lay',
+                'Detail Shot',
+                'Hanging',
+                '360 View'
+            ],
+            lifestyle: [
+                'Street Casual',
+                'Café',
+                'Home Cozy',
+                'Park',
+                'Shopping',
+                'Travel',
+                'Office',
+                'Date Night',
+                'Weekend',
+                'Sport Activity'
+            ],
+            editorial: [
+                'High Fashion Studio',
+                'Avant-garde',
+                'Minimalist',
+                'Dramatic Lighting',
+                'Outdoor Editorial',
+                'Urban Editorial',
+                'Nature Editorial',
+                'Vintage Style',
+                'Futuristic',
+                'Artistic Abstract'
+            ],
+            commercial: [
+                'Lookbook Clean',
+                'Campaign Hero',
+                'Social Media',
+                'Billboard Style',
+                'E-commerce Premium',
+                'Catalog',
+                'Website Banner',
+                'Instagram Ad',
+                'Influencer Style'
+            ],
+            ugc: [
+                'Mirror Selfie',
+                'OOTD',
+                'Haul/Unboxing',
+                'Real Life',
+                'BeReal Style',
+                'TikTok Style',
+                'Instagram Story',
+                'Casual Snap',
+                'Friend Photo'
+            ]
+        };
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            const storedUser = localStorage.getItem('fashion_user');
             if (storedUser) {
                 currentUser = storedUser;
                 document.getElementById('userBadge').textContent = '@' + storedUser;
                 document.getElementById('loginScreen').style.display = 'none';
                 document.getElementById('appContainer').classList.add('active');
             }
-        };
-
+            
+            initializeEventListeners();
+            initializeSliders();
+        });
+        
         // Login
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
@@ -605,29 +1030,92 @@
             
             if (password === PASSWORD) {
                 currentUser = username;
-                localStorage.setItem('ugc_user', username);
+                localStorage.setItem('fashion_user', username);
                 document.getElementById('userBadge').textContent = '@' + username;
                 document.getElementById('loginScreen').style.display = 'none';
                 document.getElementById('appContainer').classList.add('active');
             } else {
-                const error = document.getElementById('loginError');
-                error.textContent = 'Falsches Passwort!';
-                error.classList.add('show');
+                alert('Falsches Passwort!');
             }
         });
-
-        // Logout
+        
         function logout() {
-            localStorage.removeItem('ugc_user');
+            localStorage.removeItem('fashion_user');
             location.reload();
         }
-
+        
+        // Navigation
+        function nextStep() {
+            if (validateCurrentStep()) {
+                if (currentStep < 5) {
+                    completeStep(currentStep);
+                    currentStep++;
+                    showStep(currentStep);
+                }
+            }
+        }
+        
+        function previousStep() {
+            if (currentStep > 1) {
+                currentStep--;
+                showStep(currentStep);
+            }
+        }
+        
+        function showStep(step) {
+            // Update sections
+            document.querySelectorAll('.form-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.querySelector(`[data-section="${step}"]`).classList.add('active');
+            
+            // Update indicators
+            document.querySelectorAll('.step').forEach(stepEl => {
+                stepEl.classList.remove('active');
+            });
+            document.querySelector(`[data-step="${step}"]`).classList.add('active');
+            
+            // Update navigation
+            document.getElementById('prevBtn').style.display = step === 1 ? 'none' : 'block';
+            document.getElementById('nextBtn').style.display = step === 5 ? 'none' : 'block';
+            document.getElementById('submitBtn').style.display = step === 5 ? 'block' : 'none';
+        }
+        
+        function completeStep(step) {
+            document.querySelector(`[data-step="${step}"]`).classList.add('completed');
+        }
+        
+        function validateCurrentStep() {
+            switch(currentStep) {
+                case 1:
+                    if (!hasImage) {
+                        alert('Bitte lade ein Bild hoch!');
+                        return false;
+                    }
+                    return true;
+                case 2:
+                    if (!selectedStyle) {
+                        alert('Bitte wähle einen Stil!');
+                        return false;
+                    }
+                    return true;
+                case 3:
+                    if (!selectedScene) {
+                        alert('Bitte wähle eine Szene!');
+                        return false;
+                    }
+                    return true;
+                default:
+                    return true;
+            }
+        }
+        
         // Image Upload
         document.getElementById('imageInput').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (file) {
                 if (file.size > 10 * 1024 * 1024) {
-                    alert('Bild ist zu groß! Max. 10MB erlaubt.');
+                    alert('Bild ist zu groß! Max. 10MB');
                     return;
                 }
                 
@@ -638,12 +1126,11 @@
                     document.getElementById('imagePreview').classList.add('show');
                     document.getElementById('uploadArea').classList.add('has-image');
                     hasImage = true;
-                    checkFormValidity();
                 };
                 reader.readAsDataURL(file);
             }
         });
-
+        
         function removeImage(e) {
             e.stopPropagation();
             document.getElementById('imageInput').value = '';
@@ -651,71 +1138,155 @@
             document.getElementById('imagePreview').classList.remove('show');
             document.getElementById('uploadArea').classList.remove('has-image');
             hasImage = false;
-            checkFormValidity();
         }
-
-        // Scene Selection
-        document.querySelectorAll('.scene-card').forEach(card => {
-            card.addEventListener('click', function() {
-                document.querySelectorAll('.scene-card').forEach(c => c.classList.remove('selected'));
-                this.classList.add('selected');
-                selectedScene = this.dataset.scene;
-                document.getElementById('selectedScene').value = selectedScene;
-                checkFormValidity();
+        
+        // Style Selection
+        function initializeEventListeners() {
+            // Style cards
+            document.querySelectorAll('.style-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    document.querySelectorAll('.style-card').forEach(c => c.classList.remove('selected'));
+                    this.classList.add('selected');
+                    selectedStyle = this.dataset.style;
+                    document.getElementById('selectedStyle').value = selectedStyle;
+                    loadScenes(selectedStyle);
+                });
             });
-        });
-
-        // Image Count
-        function changeCount(delta) {
-            imageCount = Math.max(1, Math.min(5, imageCount + delta));
-            document.getElementById('imageCount').textContent = imageCount;
         }
-
-        // Form Validation
-        function checkFormValidity() {
-            const submitBtn = document.getElementById('submitBtn');
-            if (hasImage && selectedScene) {
-                submitBtn.disabled = false;
-            } else {
-                submitBtn.disabled = true;
+        
+        // Load scenes based on style
+        function loadScenes(style) {
+            const container = document.getElementById('sceneContainer');
+            const sceneList = scenes[style] || [];
+            
+            container.innerHTML = '<div class="scene-grid">' +
+                sceneList.map(scene => `
+                    <div class="scene-item" data-scene="${scene}">
+                        ${scene}
+                    </div>
+                `).join('') +
+            '</div>';
+            
+            // Add click handlers
+            document.querySelectorAll('.scene-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    document.querySelectorAll('.scene-item').forEach(i => i.classList.remove('selected'));
+                    this.classList.add('selected');
+                    selectedScene = this.dataset.scene;
+                    document.getElementById('selectedScene').value = selectedScene;
+                });
+            });
+        }
+        
+        // Model Presets
+        function applyPreset(preset) {
+            const presets = {
+                young_casual: {
+                    age: '18-25',
+                    gender: 'mixed',
+                    ethnicity: 'mixed',
+                    body: 'varied',
+                    hair: 'natural',
+                    makeup: 'natural',
+                    expression: 'smile',
+                    pose: 'relaxed'
+                },
+                business: {
+                    age: '25-35',
+                    gender: 'mixed',
+                    ethnicity: 'mixed',
+                    body: 'average',
+                    hair: 'professional',
+                    makeup: 'natural',
+                    expression: 'confident',
+                    pose: 'standing'
+                },
+                high_fashion: {
+                    age: '18-25',
+                    gender: 'female',
+                    ethnicity: 'mixed',
+                    body: 'slim',
+                    hair: 'editorial',
+                    makeup: 'editorial',
+                    expression: 'fierce',
+                    pose: 'editorial'
+                },
+                diverse_group: {
+                    age: 'mixed',
+                    gender: 'mixed',
+                    ethnicity: 'mixed',
+                    body: 'varied',
+                    hair: 'varied',
+                    makeup: 'varied',
+                    expression: 'candid',
+                    pose: 'dynamic'
+                },
+                mature_elegant: {
+                    age: '45-55',
+                    gender: 'female',
+                    ethnicity: 'caucasian',
+                    body: 'average',
+                    hair: 'styled',
+                    makeup: 'glamour',
+                    expression: 'confident',
+                    pose: 'standing'
+                }
+            };
+            
+            const settings = presets[preset];
+            if (settings) {
+                document.getElementById('modelAge').value = settings.age;
+                document.getElementById('modelGender').value = settings.gender;
+                document.getElementById('modelEthnicity').value = settings.ethnicity;
+                document.getElementById('modelBody').value = settings.body;
+                document.getElementById('modelHair').value = settings.hair;
+                document.getElementById('modelMakeup').value = settings.makeup;
+                document.getElementById('modelExpression').value = settings.expression;
+                document.getElementById('modelPose').value = settings.pose;
+                
+                // Visual feedback
+                document.querySelectorAll('.preset-btn').forEach(btn => btn.classList.remove('active'));
+                event.target.classList.add('active');
             }
         }
-
-        // Form Submit
-        document.getElementById('ugcForm').addEventListener('submit', async function(e) {
+        
+        // Sliders
+        function initializeSliders() {
+            // Quality slider
+            document.getElementById('imageQuality').addEventListener('input', function() {
+                const labels = ['Sehr niedrig', 'Niedrig', 'Mittel', 'Hoch', 'Ultra'];
+                document.getElementById('qualityValue').textContent = labels[this.value - 1];
+            });
+            
+            // Authenticity slider
+            document.getElementById('authenticity').addEventListener('input', function() {
+                const labels = ['Perfekt', 'Polished', 'Balanced', 'Natürlich', 'Raw'];
+                document.getElementById('authenticityValue').textContent = labels[this.value - 1];
+            });
+            
+            // Post-processing slider
+            document.getElementById('postProcessing').addEventListener('input', function() {
+                const labels = ['None', 'Minimal', 'Medium', 'Heavy', 'Extreme'];
+                document.getElementById('postValue').textContent = labels[this.value - 1];
+            });
+        }
+        
+        // Form submission
+        document.getElementById('fashionForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
             const submitBtn = document.getElementById('submitBtn');
-            submitBtn.classList.add('loading');
             submitBtn.disabled = true;
-
-            const imageFile = document.getElementById('imageInput').files[0];
+            submitBtn.textContent = 'Wird gesendet...';
             
-            // Convert image to base64
-            const base64 = await toBase64(imageFile);
-            
-            // Prepare webhook data
-            const webhookData = {
-                user: currentUser,
-                channel: document.getElementById('slackChannel').value.replace('#', ''),
-                scene: selectedScene,
-                description: document.getElementById('description').value,
-                model: document.getElementById('modelType').value,
-                imageCount: imageCount,
-                image: base64,
-                timestamp: new Date().toISOString()
-            };
-
-            // Upload image first and get URL
             try {
-                console.log('Lade Bild hoch...');
+                // First upload image
+                const imageFile = document.getElementById('imageInput').files[0];
+                const base64 = await toBase64(imageFile);
                 
-                // First upload the image to get a temporary URL
                 const uploadResponse = await fetch('/api/upload', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ image: base64 })
                 });
                 
@@ -725,52 +1296,61 @@
                     throw new Error('Bild-Upload fehlgeschlagen');
                 }
                 
-                console.log('Bild-URL erhalten:', uploadResult.imageUrl);
-                
-                // Prepare webhook data with image URL instead of base64
-                const webhookData = {
+                // Prepare complete data
+                const formData = {
                     user: currentUser,
                     channel: document.getElementById('slackChannel').value.replace('#', ''),
+                    imageUrl: uploadResult.imageUrl,
+                    style: selectedStyle,
                     scene: selectedScene,
-                    description: document.getElementById('description').value,
-                    model: document.getElementById('modelType').value,
-                    imageCount: imageCount,
-                    imageUrl: uploadResult.imageUrl,  // URL statt Base64!
+                    modelSpecs: {
+                        age: document.getElementById('modelAge').value,
+                        gender: document.getElementById('modelGender').value,
+                        ethnicity: document.getElementById('modelEthnicity').value,
+                        body: document.getElementById('modelBody').value,
+                        hair: document.getElementById('modelHair').value,
+                        makeup: document.getElementById('modelMakeup').value,
+                        expression: document.getElementById('modelExpression').value,
+                        pose: document.getElementById('modelPose').value
+                    },
+                    technical: {
+                        camera: document.getElementById('cameraType').value,
+                        lens: document.getElementById('lensType').value,
+                        lighting: document.getElementById('lightingType').value,
+                        quality: document.getElementById('imageQuality').value,
+                        authenticity: document.getElementById('authenticity').value,
+                        postProcessing: document.getElementById('postProcessing').value
+                    },
+                    imageCount: document.getElementById('imageCount').value,
+                    stylingDetails: document.getElementById('stylingDetails').value,
                     timestamp: new Date().toISOString()
                 };
                 
-                console.log('Sende Daten an Make.com...');
-                
-                // Send to Make.com via API Route
+                // Send to webhook
                 const response = await fetch(WEBHOOK_URL, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(webhookData)
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
                 });
                 
                 const result = await response.json();
-                console.log('API Response:', result);
                 
                 if (result.success) {
-                    console.log('✅ Erfolgreich gesendet!');
                     document.getElementById('successModal').classList.add('show');
                     resetForm();
                 } else {
                     throw new Error(result.error || 'Unbekannter Fehler');
                 }
+                
             } catch (error) {
-                console.error('Error:', error);
-                alert('Fehler beim Senden: ' + error.message);
+                alert('Fehler: ' + error.message);
             } finally {
-                submitBtn.classList.remove('loading');
                 submitBtn.disabled = false;
-                checkFormValidity();
+                submitBtn.textContent = '🚀 Bilder generieren';
             }
         });
-
-        // Helper Functions
+        
+        // Helper functions
         function toBase64(file) {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
@@ -779,19 +1359,25 @@
                 reader.onerror = error => reject(error);
             });
         }
-
+        
         function closeModal() {
             document.getElementById('successModal').classList.remove('show');
         }
-
+        
         function resetForm() {
-            document.getElementById('ugcForm').reset();
-            removeImage({ stopPropagation: () => {} });
-            document.querySelectorAll('.scene-card').forEach(c => c.classList.remove('selected'));
+            document.getElementById('fashionForm').reset();
+            currentStep = 1;
+            showStep(1);
+            hasImage = false;
+            selectedStyle = '';
             selectedScene = '';
-            imageCount = 1;
-            document.getElementById('imageCount').textContent = '1';
-            checkFormValidity();
+            document.querySelectorAll('.step').forEach(step => {
+                step.classList.remove('completed');
+            });
+            document.querySelectorAll('.selected').forEach(el => {
+                el.classList.remove('selected');
+            });
+            removeImage({ stopPropagation: () => {} });
         }
     </script>
 </body>
