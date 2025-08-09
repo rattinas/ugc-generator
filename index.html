@@ -580,7 +580,7 @@
 
     <script>
         // ⚠️ WICHTIG: Ersetze diese URL mit deiner Make.com Webhook URL!
-        const WEBHOOK_URL = 'https://hook.eu1.make.com/DEINE_WEBHOOK_URL_HIER';
+        const WEBHOOK_URL = 'https://hook.eu2.make.com/n2qhklk2qaxq54ojjyp734jmpsxswmql';
         
         // Passwort (ändere das!)
         const PASSWORD = 'ugc2024';
@@ -592,7 +592,7 @@
 
         // Check if webhook is configured
         window.onload = function() {
-            if (WEBHOOK_URL.includes('DEINE_WEBHOOK_URL_HIER')) {
+            if (WEBHOOK_URL.includes('https://hook.eu2.make.com/n2qhklk2qaxq54ojjyp734jmpsxswmql')) {
                 console.warn('⚠️ Webhook URL noch nicht konfiguriert!');
             }
             
@@ -693,7 +693,7 @@
         document.getElementById('ugcForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
-            if (WEBHOOK_URL.includes('DEINE_WEBHOOK_URL_HIER')) {
+            if (WEBHOOK_URL.includes('https://hook.eu2.make.com/n2qhklk2qaxq54ojjyp734jmpsxswmql')) {
                 alert('⚠️ Bitte konfiguriere zuerst die Webhook URL im Code!');
                 return;
             }
