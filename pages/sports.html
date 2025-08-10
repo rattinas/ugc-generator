@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sports Photography - AI Studio</title>
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/components.css">
+    <link rel="stylesheet" href="../css/pages.css">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Supabase -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+</head>
+<body data-page="sports">
+    <div class="page-container">
+        <!-- Header -->
+        <header id="mainHeader" class="main-header"></header>
+
+        <!-- Breadcrumb -->
+        <nav class="breadcrumb">
+            <a href="../dashboard.html">← Dashboard</a>
+            <span>/</span>
+            <span>Sports Photography</span>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="container">
+            <div class="page-header">
+                <h1>⚽ Sports & Fitness</h1>
+                <p>Erstelle dynamische Sport- und Fitness-Fotografie</p>
+            </div>
+
+            <!-- Step Indicator -->
+            <div id="stepIndicator"></div>
+
+            <!-- Form -->
+            <form id="sportsForm" class="multi-step-form">
+                <!-- Step 1: Upload -->
+                <div class="form-step active" data-step="1">
+                    <h2>Schritt 1: Sport-Equipment hochladen</h2>
+                    <div id="imageUpload"></div>
+                    
+                    <div class="form-group">
+                        <label>Sport-Kategorie</label>
+                        <select id="sportsCategory" required>
+                            <option value="">Wähle eine Kategorie</option>
+                            <option value="activewear">Sportkleidung</option>
+                            <option value="shoes">Sportschuhe</option>
+                            <option value="equipment">Equipment/Geräte</option>
+                            <option value="accessories">Zubehör</option>
+                            <option value="nutrition">Ernährung/Supplements</option>
+                            <option value="tech">Fitness-Tech</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Sportart</label>
+                        <select id="sportType">
+                            <option value="running">Laufen</option>
+                            <option value="gym">Fitness/Gym</option>
+                            <option value="yoga">Yoga</option>
+                            <option value="cycling">Radfahren</option>
+                            <option value="swimming">Schwimmen</option>
+                            <option value="team">Teamsport</option>
+                            <option value="outdoor">Outdoor</option>
+                            <option value="combat">Kampfsport</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Step 2: Action Type -->
+                <div class="form-step" data-step="2">
+                    <h2>Schritt 2: Action-Typ</h2>
+                    
+                    <div class="style-grid">
+                        <div class="style-card" data-action="static">
+                            <div class="style-icon">📸</div>
+                            <h4>Statisch</h4>
+                            <p>Produkt-Hero Shot</p>
+                        </div>
+                        
+                        <div class="style-card" data-action="action">
+                            <div class="style-icon">🏃</div>
+                            <h4>In Action</h4>
+                            <p>Bewegung & Dynamik</p>
+                        </div>
+                        
+                        <div class="style-card" data-action="training">
+                            <div class="style-icon">💪</div>
+                            <h4>Training</h4>
+                            <p>Workout-Szene</p>
+                        </div>
+                        
+                        <div class="style-card" data-action="lifestyle">
+                            <div class="style-icon">🌟</div>
+                            <h4>Lifestyle</h4>
+                            <p>Sport-Lifestyle</p>
+                        </div>
+                        
+                        <div class="style-card" data-action="competition">
+                            <div class="style-icon">🏆</div>
+                            <h4>Wettkampf</h4>
+                            <p>Competition-Moment</p>
+                        </div>
+                        
+                        <div class="style-card" data-action="results">
+                            <div class="style-icon">📊</div>
+                            <h4>Results</h4>
+                            <p>Transformation/Erfolg</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3: Athlete Configuration -->
+                <div class="form-step" data-step="3">
+                    <h2>Schritt 3: Athlet konfigurieren</h2>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Körpertyp</label>
+                            <select id="bodyType">
+                                <option value="lean">Schlank/Definiert</option>
+                                <option value="athletic">Athletisch</option>
+                                <option value="muscular">Muskulös</option>
+                                <option value="average">Durchschnittlich</option>
+                                <option value="diverse">Diverse</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Geschlecht</label>
+                            <select id="gender">
+                                <option value="female">Weiblich</option>
+                                <option value="male">Männlich</option>
+                                <option value="mixed">Gemischt</option>
+                                <option value="non-binary">Non-Binary</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Alter</label>
+                            <select id="age">
+                                <option value="young">18-25</option>
+                                <option value="adult">25-35</option>
+                                <option value="mature">35-45</option>
+                                <option value="senior">45+</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Intensität</label>
+                            <select id="intensity">
+                                <option value="relaxed">Entspannt</option>
+                                <option value="moderate">Moderat</option>
+                                <option value="intense">Intensiv</option>
+                                <option value="extreme">Extrem</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 4: Environment & Setting -->
+                <div class="form-step" data-step="4">
+                    <h2>Schritt 4: Umgebung & Setting</h2>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Location</label>
+                            <select id="location">
+                                <option value="gym">Fitnessstudio</option>
+                                <option value="outdoor">Outdoor</option>
+                                <option value="track">Laufbahn</option>
+                                <option value="home">Home Gym</option>
+                                <option value="studio">Studio</option>
+                                <option value="field">Sportplatz</option>
+                                <option value="urban">Urban/Stadt</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Tageszeit</label>
+                            <select id="timeOfDay">
+                                <option value="morning">Morgen</option>
+                                <option value="day">Tag</option>
+                                <option value="golden">Golden Hour</option>
+                                <option value="evening">Abend</option>
+                                <option value="night">Nacht</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Wetter/Bedingungen</label>
+                            <select id="weather">
+                                <option value="clear">Klar</option>
+                                <option value="cloudy">Bewölkt</option>
+                                <option value="rain">Regen</option>
+                                <option value="snow">Schnee</option>
+                                <option value="indoor">Indoor</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Stimmung</label>
+                            <select id="mood">
+                                <option value="energetic">Energiegeladen</option>
+                                <option value="focused">Fokussiert</option>
+                                <option value="fun">Spaß</option>
+                                <option value="serious">Ernst</option>
+                                <option value="victorious">Siegreich</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Spezielle Effekte (optional)</label>
+                        <textarea id="specialEffects" rows="3" 
+                                  placeholder="z.B. Schweiß sichtbar, Staub aufwirbeln, Wassertropfen..."></textarea>
+                    </div>
+                </div>
+
+                <!-- Step 5: Review & Submit -->
+                <div class="form-step" data-step="5">
+                    <h2>Schritt 5: Überprüfen & Generieren</h2>
+                    
+                    <div id="summaryReview" class="summary-review"></div>
+                    
+                    <div class="form-group">
+                        <label>Anzahl Variationen</label>
+                        <select id="variationCount">
+                            <option value="1">1 Bild (2 Credits)</option>
+                            <option value="2">2 Bilder (4 Credits)</option>
+                            <option value="3">3 Bilder (6 Credits)</option>
+                            <option value="4">4 Bilder (8 Credits)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="credits-info">
+                        <p>Verfügbare Credits: <strong id="availableCredits">0</strong></p>
+                        <p>Benötigte Credits: <strong id="requiredCredits">2</strong></p>
+                    </div>
+                </div>
+
+                <!-- Navigation -->
+                <div class="form-navigation">
+                    <button type="button" class="btn btn-outline" id="prevBtn" style="display: none;">
+                        ← Zurück
+                    </button>
+                    <button type="button" class="btn btn-primary" id="nextBtn">
+                        Weiter →
+                    </button>
+                    <button type="submit" class="btn btn-accent" id="submitBtn" style="display: none;">
+                        🚀 Bilder generieren
+                    </button>
+                </div>
+            </form>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../js/config.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/components.js"></script>
+    <script src="../js/modules/sports.js"></script>
+</body>
+</html>

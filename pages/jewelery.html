@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jewelry Photography - AI Studio</title>
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/components.css">
+    <link rel="stylesheet" href="../css/pages.css">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Supabase -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+</head>
+<body data-page="jewelry">
+    <div class="page-container">
+        <!-- Header -->
+        <header id="mainHeader" class="main-header"></header>
+
+        <!-- Breadcrumb -->
+        <nav class="breadcrumb">
+            <a href="../dashboard.html">← Dashboard</a>
+            <span>/</span>
+            <span>Jewelry Photography</span>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="container">
+            <div class="page-header">
+                <h1>💎 Jewelry & Luxury</h1>
+                <p>Erstelle hochwertige Schmuck- und Luxusfotografie</p>
+            </div>
+
+            <!-- Step Indicator -->
+            <div id="stepIndicator"></div>
+
+            <!-- Form -->
+            <form id="jewelryForm" class="multi-step-form">
+                <!-- Step 1: Upload -->
+                <div class="form-step active" data-step="1">
+                    <h2>Schritt 1: Schmuckstück hochladen</h2>
+                    <div id="imageUpload"></div>
+                    
+                    <div class="form-group">
+                        <label>Schmuck-Kategorie</label>
+                        <select id="jewelryCategory" required>
+                            <option value="">Wähle eine Kategorie</option>
+                            <option value="ring">Ring</option>
+                            <option value="necklace">Halskette</option>
+                            <option value="bracelet">Armband</option>
+                            <option value="earrings">Ohrringe</option>
+                            <option value="watch">Uhr</option>
+                            <option value="brooch">Brosche</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Material</label>
+                        <select id="material">
+                            <option value="gold">Gold</option>
+                            <option value="silver">Silber</option>
+                            <option value="platinum">Platin</option>
+                            <option value="diamond">Diamant</option>
+                            <option value="gemstone">Edelstein</option>
+                            <option value="pearl">Perle</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Step 2: Presentation Style -->
+                <div class="form-step" data-step="2">
+                    <h2>Schritt 2: Präsentationsstil</h2>
+                    
+                    <div class="style-grid">
+                        <div class="style-card" data-style="hero">
+                            <div class="style-icon">✨</div>
+                            <h4>Hero Shot</h4>
+                            <p>Einzelstück perfekt inszeniert</p>
+                        </div>
+                        
+                        <div class="style-card" data-style="worn">
+                            <div class="style-icon">👤</div>
+                            <h4>Getragen</h4>
+                            <p>Am Model präsentiert</p>
+                        </div>
+                        
+                        <div class="style-card" data-style="macro">
+                            <div class="style-icon">🔍</div>
+                            <h4>Macro Detail</h4>
+                            <p>Extreme Nahaufnahme</p>
+                        </div>
+                        
+                        <div class="style-card" data-style="lifestyle">
+                            <div class="style-icon">🌟</div>
+                            <h4>Lifestyle</h4>
+                            <p>Luxus-Kontext</p>
+                        </div>
+                        
+                        <div class="style-card" data-style="display">
+                            <div class="style-icon">💼</div>
+                            <h4>Display</h4>
+                            <p>Schmuckschatulle/Vitrine</p>
+                        </div>
+                        
+                        <div class="style-card" data-style="collection">
+                            <div class="style-icon">💍</div>
+                            <h4>Kollektion</h4>
+                            <p>Mehrere Stücke zusammen</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3: Technical Details -->
+                <div class="form-step" data-step="3">
+                    <h2>Schritt 3: Technische Details</h2>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Fokus</label>
+                            <select id="focus">
+                                <option value="overall">Gesamtansicht</option>
+                                <option value="detail">Detail/Gravur</option>
+                                <option value="gemstone">Edelstein</option>
+                                <option value="mechanism">Mechanik (Uhr)</option>
+                                <option value="craftsmanship">Handwerkskunst</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Beleuchtung</label>
+                            <select id="lighting">
+                                <option value="soft">Weiches Licht</option>
+                                <option value="dramatic">Dramatisch</option>
+                                <option value="sparkle">Funkeln/Brillanz</option>
+                                <option value="natural">Natürlich</option>
+                                <option value="studio">Studio Multi-Light</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Hintergrund</label>
+                            <select id="background">
+                                <option value="black">Schwarz</option>
+                                <option value="white">Weiß</option>
+                                <option value="gradient">Gradient</option>
+                                <option value="velvet">Samt</option>
+                                <option value="marble">Marmor</option>
+                                <option value="mirror">Spiegel/Reflektion</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Reflexionen</label>
+                            <select id="reflections">
+                                <option value="controlled">Kontrolliert</option>
+                                <option value="enhanced">Verstärkt</option>
+                                <option value="minimal">Minimal</option>
+                                <option value="mirror">Spiegelung</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 4: Model & Styling (if worn) -->
+                <div class="form-step" data-step="4">
+                    <h2>Schritt 4: Model & Styling</h2>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Model Sichtbarkeit</label>
+                            <select id="modelVisibility">
+                                <option value="hands-only">Nur Hände</option>
+                                <option value="neck-area">Halsbereich</option>
+                                <option value="partial">Teilweise</option>
+                                <option value="full">Ganzer Körper</option>
+                                <option value="none">Kein Model</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Styling</label>
+                            <select id="styling">
+                                <option value="elegant">Elegant</option>
+                                <option value="casual">Casual</option>
+                                <option value="formal">Formal/Abend</option>
+                                <option value="business">Business</option>
+                                <option value="minimal">Minimalistisch</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Hand Styling</label>
+                            <select id="handStyling">
+                                <option value="manicured">Manikürt</option>
+                                <option value="natural">Natürlich</option>
+                                <option value="elegant">Elegant</option>
+                                <option value="masculine">Maskulin</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Props</label>
+                            <select id="props">
+                                <option value="none">Keine</option>
+                                <option value="flowers">Blumen</option>
+                                <option value="champagne">Champagner</option>
+                                <option value="box">Schmuckschatulle</option>
+                                <option value="fabric">Edle Stoffe</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 5: Review & Submit -->
+                <div class="form-step" data-step="5">
+                    <h2>Schritt 5: Überprüfen & Generieren</h2>
+                    
+                    <div id="summaryReview" class="summary-review"></div>
+                    
+                    <div class="form-group">
+                        <label>Anzahl Variationen</label>
+                        <select id="variationCount">
+                            <option value="1">1 Bild (2 Credits)</option>
+                            <option value="2">2 Bilder (4 Credits)</option>
+                            <option value="3">3 Bilder (6 Credits)</option>
+                            <option value="4">4 Bilder (8 Credits)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="credits-info">
+                        <p>Verfügbare Credits: <strong id="availableCredits">0</strong></p>
+                        <p>Benötigte Credits: <strong id="requiredCredits">2</strong></p>
+                    </div>
+                </div>
+
+                <!-- Navigation -->
+                <div class="form-navigation">
+                    <button type="button" class="btn btn-outline" id="prevBtn" style="display: none;">
+                        ← Zurück
+                    </button>
+                    <button type="button" class="btn btn-primary" id="nextBtn">
+                        Weiter →
+                    </button>
+                    <button type="submit" class="btn btn-accent" id="submitBtn" style="display: none;">
+                        🚀 Bilder generieren
+                    </button>
+                </div>
+            </form>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../js/config.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/components.js"></script>
+    <script src="../js/modules/jewelry.js"></script>
+</body>
+</html>

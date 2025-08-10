@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fashion Photography - AI Studio</title>
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/components.css">
+    <link rel="stylesheet" href="../css/pages.css">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Supabase -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+</head>
+<body>
+    <div class="page-container">
+        <!-- Header -->
+        <header id="mainHeader" class="main-header"></header>
+
+        <!-- Breadcrumb -->
+        <nav class="breadcrumb">
+            <a href="../dashboard.html">← Dashboard</a>
+            <span>/</span>
+            <span>Fashion Photography</span>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="container">
+            <div class="page-header">
+                <h1>👗 Fashion & Apparel</h1>
+                <p>Erstelle professionelle Fashion-Fotografie mit AI Models</p>
+            </div>
+
+            <!-- Step Indicator -->
+            <div id="stepIndicator"></div>
+
+            <!-- Form -->
+            <form id="fashionForm" class="multi-step-form">
+                <!-- Step 1: Upload -->
+                <div class="form-step active" data-step="1">
+                    <h2>Schritt 1: Fashion-Produkt hochladen</h2>
+                    <div id="imageUpload"></div>
+                    
+                    <div class="form-group">
+                        <label>Produkttyp</label>
+                        <select id="productType">
+                            <option value="clothing">Kleidung</option>
+                            <option value="shoes">Schuhe</option>
+                            <option value="accessories">Accessoires</option>
+                            <option value="bags">Taschen</option>
+                            <option value="jewelry">Schmuck</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Step 2: Style Selection -->
+                <div class="form-step" data-step="2">
+                    <h2>Schritt 2: Fotografie-Style</h2>
+                    
+                    <div class="style-grid">
+                        <div class="style-card" data-style="ecommerce">
+                            <div class="style-icon">🛍️</div>
+                            <h4>E-Commerce</h4>
+                            <p>Clean, weißer Hintergrund</p>
+                        </div>
+                        
+                        <div class="style-card" data-style="editorial">
+                            <div class="style-icon">📸</div>
+                            <h4>Editorial</h4>
+                            <p>Künstlerisch, Magazine-Style</p>
+                        </div>
+                        
+                        <div class="style-card" data-style="lifestyle">
+                            <div class="style-icon">☕</div>
+                            <h4>Lifestyle</h4>
+                            <p>Natürlich, Alltags-Szenen</p>
+                        </div>
+                        
+                        <div class="style-card" data-style="lookbook">
+                            <div class="style-icon">📖</div>
+                            <h4>Lookbook</h4>
+                            <p>Kollektion, Brand-Focus</p>
+                        </div>
+                        
+                        <div class="style-card" data-style="runway">
+                            <div class="style-icon">✨</div>
+                            <h4>Runway</h4>
+                            <p>Catwalk, High Fashion</p>
+                        </div>
+                        
+                        <div class="style-card" data-style="street">
+                            <div class="style-icon">🏙️</div>
+                            <h4>Street Style</h4>
+                            <p>Urban, Trendy</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3: Scene Selection -->
+                <div class="form-step" data-step="3">
+                    <h2>Schritt 3: Szene & Location</h2>
+                    
+                    <div class="scene-grid">
+                        <div class="scene-card" data-scene="studio">Studio</div>
+                        <div class="scene-card" data-scene="outdoor">Outdoor</div>
+                        <div class="scene-card" data-scene="urban">Urban/Stadt</div>
+                        <div class="scene-card" data-scene="nature">Natur</div>
+                        <div class="scene-card" data-scene="beach">Strand</div>
+                        <div class="scene-card" data-scene="cafe">Café</div>
+                        <div class="scene-card" data-scene="home">Zuhause</div>
+                        <div class="scene-card" data-scene="office">Büro</div>
+                        <div class="scene-card" data-scene="party">Event/Party</div>
+                        <div class="scene-card" data-scene="gym">Fitness</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Tageszeit</label>
+                        <select id="timeOfDay">
+                            <option value="morning">Morgen</option>
+                            <option value="noon">Mittag</option>
+                            <option value="golden">Golden Hour</option>
+                            <option value="evening">Abend</option>
+                            <option value="night">Nacht</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Step 4: Model Configuration -->
+                <div class="form-step" data-step="4">
+                    <h2>Schritt 4: Model konfigurieren</h2>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Alter</label>
+                            <select id="modelAge">
+                                <option value="18-25">18-25 Jahre</option>
+                                <option value="25-35">25-35 Jahre</option>
+                                <option value="35-45">35-45 Jahre</option>
+                                <option value="45+">45+ Jahre</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Geschlecht</label>
+                            <select id="modelGender">
+                                <option value="female">Weiblich</option>
+                                <option value="male">Männlich</option>
+                                <option value="non-binary">Non-Binary</option>
+                                <option value="diverse">Diverse Gruppe</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Ethnizität</label>
+                            <select id="modelEthnicity">
+                                <option value="caucasian">Kaukasisch</option>
+                                <option value="african">Afrikanisch</option>
+                                <option value="asian">Asiatisch</option>
+                                <option value="latin">Lateinamerikanisch</option>
+                                <option value="middle-eastern">Nahöstlich</option>
+                                <option value="mixed">Gemischt/Divers</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Körpertyp</label>
+                            <select id="modelBody">
+                                <option value="slim">Schlank</option>
+                                <option value="athletic">Athletisch</option>
+                                <option value="average">Durchschnittlich</option>
+                                <option value="curvy">Kurvig</option>
+                                <option value="plus">Plus Size</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Haarstyling</label>
+                            <select id="modelHair">
+                                <option value="natural">Natürlich</option>
+                                <option value="styled">Gestylt</option>
+                                <option value="messy">Casual/Messy</option>
+                                <option value="professional">Business</option>
+                                <option value="editorial">Editorial/Kreativ</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Makeup</label>
+                            <select id="modelMakeup">
+                                <option value="no-makeup">No-Makeup Look
