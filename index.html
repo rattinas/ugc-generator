@@ -95,104 +95,69 @@
     <script src="js/auth.js"></script>
     <script src="js/api.js"></script>
     <script src="js/components.js"></script>
-    <!-- Scripts in richtiger Reihenfolge -->
+    <!-- Supabase MUSS ZUERST geladen werden -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    
+    <!-- Dann unsere Scripts in der richtigen Reihenfolge -->
     <script src="js/config.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/api.js"></script>
     <script src="js/components.js"></script>
+    
+    <!-- Inline Script für Initialisierung -->
     <script>
-        // Debugging helper
-        console.log('📱 AI Studio starting...');
-        console.log('Supabase loaded?', typeof window.supabase !== 'undefined');
-        
-        // Wait for everything to be loaded
-        window.addEventListener('DOMContentLoaded', async () => {
-            console.log('🚀 DOM Content Loaded');
-            console.log('Auth object exists?', typeof window.auth !== 'undefined');
+        // Warte bis alles geladen ist
+        window.addEventListener('load', async () => {
+            console.log('🚀 Page fully loaded');
             
-            // Give auth time to initialize
-            await new Promise(resolve => setTimeout(resolve, 500));
+            // Warte kurz damit auth.js Zeit hat zu initialisieren
+            await new Promise(resolve => setTimeout(resolve, 1000));
             
+            // Jetzt erst Auth prüfen
             try {
-                // Check if auth is available and initialized
-                if (!window.auth) {
-                    console.error('❌ window.auth not found');
-                    throw new Error('Auth system not available');
+                if (window.auth && window.auth.initialized) {
+                    const isAuth = await window.auth.isAuthenticated();
+                    if (isAuth) {
+                        window.location.href = '/dashboard.html';
+                        return;
+                    }
                 }
-                
-                if (!window.auth.initialized) {
-                    console.log('⏳ Auth not initialized yet, waiting...');
-                    // Try to initialize manually
-                    await window.auth.init();
-                }
-                
-                console.log('✅ Auth initialized:', window.auth.initialized);
-                console.log('Supabase client:', window.auth.supabase);
-                
-                // Check if already authenticated
-                const isAuth = await window.auth.isAuthenticated();
-                console.log('User authenticated?', isAuth);
-                
-                if (isAuth) {
-                    // Already logged in, redirect to dashboard
-                    window.location.href = '/dashboard.html';
-                    return;
-                }
-                
-                // Show login screen
-                document.getElementById('loadingScreen').style.display = 'none';
-                document.getElementById('loginScreen').style.display = 'flex';
-                
             } catch (error) {
-                console.error('❌ Error during initialization:', error);
-                document.getElementById('loadingScreen').style.display = 'none';
-                document.getElementById('loginScreen').style.display = 'flex';
-                
-                // Show warning but allow login attempt
-                const warningDiv = document.createElement('div');
-                warningDiv.style.cssText = 'background: #ff6b6b; color: white; padding: 10px; text-align: center; position: fixed; top: 0; left: 0; right: 0; z-index: 1000;';
-                warningDiv.innerHTML = '⚠️ Auth System Initialisierungsfehler - Bitte Console prüfen';
-                document.body.appendChild(warningDiv);
+                console.error('Auth check error:', error);
             }
+            
+            // Login Screen anzeigen
+            document.getElementById('loadingScreen').style.display = 'none';
+            document.getElementById('loginScreen').style.display = 'flex';
             
             // Google Sign In Button
             document.getElementById('googleSignIn').addEventListener('click', async () => {
-                console.log('🔘 Google Sign In clicked');
+                console.log('Google Sign In clicked');
                 const button = document.getElementById('googleSignIn');
                 
                 try {
-                    // Try to ensure auth is initialized
-                    if (!window.auth) {
-                        throw new Error('Auth system not available');
-                    }
-                    
-                    if (!window.auth.initialized) {
-                        console.log('Attempting to initialize auth...');
-                        await window.auth.init();
-                    }
-                    
-                    if (!window.auth.supabase) {
-                        throw new Error('Supabase client not available');
+                    if (!window.auth || !window.auth.supabase) {
+                        // Versuche auth nochmal zu initialisieren
+                        if (window.auth && !window.auth.initialized) {
+                            await window.auth.init();
+                        }
+                        
+                        if (!window.auth.supabase) {
+                            throw new Error('Supabase Client nicht verfügbar');
+                        }
                     }
                     
                     button.disabled = true;
                     button.innerHTML = '<div class="spinner" style="width: 20px; height: 20px;"></div> Anmelden...';
                     
-                    console.log('📤 Calling signInWithProvider...');
                     const result = await window.auth.signInWithProvider('google');
-                    console.log('📥 Sign in result:', result);
                     
                     if (!result.success) {
                         throw new Error(result.error || 'Anmeldung fehlgeschlagen');
                     }
                     
-                    // Success - Supabase will handle the redirect
-                    console.log('✅ Sign in initiated, redirecting...');
-                    
                 } catch (error) {
-                    console.error('❌ Sign in error:', error);
-                    
-                    // Reset button
+                    console.error('Sign in error:', error);
                     button.disabled = false;
                     button.innerHTML = `
                         <svg width="20" height="20" viewBox="0 0 24 24">
@@ -204,22 +169,16 @@
                         Mit Google anmelden
                     `;
                     
-                    // Show error
                     document.getElementById('errorMessage').textContent = error.message;
                     document.getElementById('errorModal').classList.add('show');
                 }
             });
-        });
-
-        // Handle OAuth callback
-        window.addEventListener('load', async () => {
-            // Check if this is a callback from OAuth
+            
+            // OAuth Callback Handler
             const hashParams = new URLSearchParams(window.location.hash.substring(1));
             const accessToken = hashParams.get('access_token');
-            
             if (accessToken) {
-                console.log('🔑 OAuth callback detected with access token');
-                // OAuth callback successful, redirect to dashboard
+                console.log('OAuth callback detected');
                 window.location.href = '/dashboard.html';
             }
         });
