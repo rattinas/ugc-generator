@@ -101,6 +101,14 @@
         async function initializeApp() {
             console.log('🚀 Initializing AI Studio...');
             
+            // Prevent redirect loops
+            const isRedirecting = sessionStorage.getItem('redirecting');
+            if (isRedirecting) {
+                console.log('⚠️ Redirect in progress, waiting...');
+                sessionStorage.removeItem('redirecting');
+                return;
+            }
+            
             try {
                 // Create Supabase client with auto session detection
                 if (typeof window.supabase !== 'undefined') {
@@ -127,8 +135,14 @@
                             email: session.user.email,
                             id: session.user.id
                         }));
+                        
+                        // Set flag to prevent loop
+                        sessionStorage.setItem('redirecting', 'true');
+                        
                         // Redirect to dashboard
-                        window.location.href = '/dashboard.html';
+                        setTimeout(() => {
+                            window.location.href = '/dashboard.html';
+                        }, 500);
                     } else if (event === 'SIGNED_OUT') {
                         console.log('👋 Signed out');
                         localStorage.removeItem('ai_studio_user');
@@ -140,8 +154,20 @@
                 
                 if (session) {
                     console.log('✅ Existing session found:', session.user.email);
-                    // User is already logged in
-                    window.location.href = '/dashboard.html';
+                    
+                    // Store user info
+                    localStorage.setItem('ai_studio_user', JSON.stringify({
+                        email: session.user.email,
+                        id: session.user.id
+                    }));
+                    
+                    // Set flag to prevent loop
+                    sessionStorage.setItem('redirecting', 'true');
+                    
+                    // User is already logged in - redirect to dashboard
+                    setTimeout(() => {
+                        window.location.href = '/dashboard.html';
+                    }, 500);
                 } else {
                     console.log('👤 No active session');
                     // Show login screen
