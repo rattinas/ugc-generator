@@ -14,12 +14,24 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
     
     <!-- Supabase -->
-    <script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-<body>
+<body data-page="fashion">
     <div class="page-container">
         <!-- Header -->
-        <header id="mainHeader" class="main-header"></header>
+        <header id="mainHeader" class="main-header">
+            <div class="header-content">
+                <h1 class="logo" onclick="window.location.href='/dashboard.html'">
+                    AI<span>STUDIO</span>
+                </h1>
+                <div class="user-menu">
+                    <div class="credits-display">
+                        <span class="credits-icon">💳</span>
+                        <span id="creditsAmount">100</span> Credits
+                    </div>
+                </div>
+            </div>
+        </header>
 
         <!-- Breadcrumb -->
         <nav class="breadcrumb">
@@ -36,14 +48,47 @@
             </div>
 
             <!-- Step Indicator -->
-            <div id="stepIndicator"></div>
+            <div id="stepIndicator" class="step-indicator">
+                <div class="step active" data-step="1">
+                    <div class="step-circle">1</div>
+                    <div class="step-label">Upload</div>
+                </div>
+                <div class="step" data-step="2">
+                    <div class="step-circle">2</div>
+                    <div class="step-label">Style</div>
+                </div>
+                <div class="step" data-step="3">
+                    <div class="step-circle">3</div>
+                    <div class="step-label">Scene</div>
+                </div>
+                <div class="step" data-step="4">
+                    <div class="step-circle">4</div>
+                    <div class="step-label">Model</div>
+                </div>
+                <div class="step" data-step="5">
+                    <div class="step-circle">5</div>
+                    <div class="step-label">Review</div>
+                </div>
+            </div>
 
             <!-- Form -->
             <form id="fashionForm" class="multi-step-form">
                 <!-- Step 1: Upload -->
                 <div class="form-step active" data-step="1">
                     <h2>Schritt 1: Fashion-Produkt hochladen</h2>
-                    <div id="imageUpload"></div>
+                    
+                    <div class="upload-area" id="uploadArea">
+                        <input type="file" id="fashionImage" accept="image/*" style="display: none;">
+                        <div id="uploadPlaceholder">
+                            <div class="upload-icon">📸</div>
+                            <div class="upload-text">Klicken zum Hochladen</div>
+                            <div class="upload-subtext">PNG, JPG oder WebP • Max. 10MB</div>
+                        </div>
+                        <div id="imagePreview" style="display: none;">
+                            <img id="previewImg" class="preview-img" style="max-width: 100%; max-height: 400px; border-radius: 8px;">
+                            <button type="button" class="remove-image" onclick="removeImage()">×</button>
+                        </div>
+                    </div>
                     
                     <div class="form-group">
                         <label>Produkttyp</label>
@@ -191,4 +236,533 @@
                         <div class="form-group">
                             <label>Makeup</label>
                             <select id="modelMakeup">
-                                <option value="no-makeup">No-Makeup Look
+                                <option value="natural">No-Makeup Look</option>
+                                <option value="light">Leichtes Makeup</option>
+                                <option value="medium">Normales Makeup</option>
+                                <option value="full">Full Glam</option>
+                                <option value="editorial">Editorial/Artistic</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Expression</label>
+                            <select id="modelExpression">
+                                <option value="neutral">Neutral</option>
+                                <option value="smile">Lächeln</option>
+                                <option value="serious">Ernst</option>
+                                <option value="confident">Selbstbewusst</option>
+                                <option value="playful">Verspielt</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Pose</label>
+                            <select id="modelPose">
+                                <option value="standing">Stehend</option>
+                                <option value="walking">Gehend</option>
+                                <option value="sitting">Sitzend</option>
+                                <option value="dynamic">Dynamisch</option>
+                                <option value="casual">Lässig</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 5: Review & Submit -->
+                <div class="form-step" data-step="5">
+                    <h2>Schritt 5: Überprüfen & Generieren</h2>
+                    
+                    <div id="summaryReview" class="summary-review"></div>
+                    
+                    <div class="form-group">
+                        <label>Anzahl Variationen</label>
+                        <select id="variationCount">
+                            <option value="1">1 Bild (2 Credits)</option>
+                            <option value="2">2 Bilder (4 Credits)</option>
+                            <option value="3">3 Bilder (6 Credits)</option>
+                            <option value="4">4 Bilder (8 Credits)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="credits-info">
+                        <p>Verfügbare Credits: <strong id="availableCredits">100</strong></p>
+                        <p>Benötigte Credits: <strong id="requiredCredits">2</strong></p>
+                    </div>
+                </div>
+
+                <!-- Navigation -->
+                <div class="form-navigation">
+                    <button type="button" class="btn btn-outline" id="prevBtn" style="display: none;">
+                        ← Zurück
+                    </button>
+                    <button type="button" class="btn btn-primary" id="nextBtn">
+                        Weiter →
+                    </button>
+                    <button type="button" class="btn btn-accent" id="submitBtn" style="display: none;">
+                        🚀 Bilder generieren
+                    </button>
+                </div>
+            </form>
+        </main>
+    </div>
+
+    <script>
+        // ============================================
+        // FASHION PHOTOGRAPHY MODULE - COMPLETE
+        // ============================================
+        
+        let currentStep = 1;
+        const totalSteps = 5;
+        let uploadedImageBase64 = null;
+        
+        // Form Data Object für Make.com
+        let formData = {
+            agent: 'fashion',
+            projectType: 'fashion',
+            image: null,
+            imageUrl: null,
+            productType: '',
+            style: '',
+            scene: '',
+            timeOfDay: '',
+            model: {
+                age: '',
+                gender: '',
+                ethnicity: '',
+                body: '',
+                hair: '',
+                makeup: '',
+                expression: '',
+                pose: ''
+            },
+            variations: 1,
+            prompt_instructions: {}
+        };
+
+        // ============================================
+        // INITIALIZATION
+        // ============================================
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('✅ Fashion Module Loaded');
+            initializeModule();
+        });
+
+        function initializeModule() {
+            setupImageUpload();
+            setupStyleSelection();
+            setupSceneSelection();
+            setupNavigation();
+            setupVariationControl();
+            updateStepIndicator();
+        }
+
+        // ============================================
+        // IMAGE UPLOAD
+        // ============================================
+        function setupImageUpload() {
+            const uploadArea = document.getElementById('uploadArea');
+            const fileInput = document.getElementById('fashionImage');
+            
+            uploadArea.addEventListener('click', (e) => {
+                if (e.target.closest('.remove-image')) return;
+                fileInput.click();
+            });
+            
+            fileInput.addEventListener('change', handleImageUpload);
+        }
+
+        async function handleImageUpload(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            // Validate file
+            if (!file.type.startsWith('image/')) {
+                alert('Bitte nur Bilder hochladen');
+                return;
+            }
+            
+            if (file.size > 10 * 1024 * 1024) {
+                alert('Datei zu groß (max. 10MB)');
+                return;
+            }
+            
+            console.log('📸 Image selected:', file.name);
+            
+            // Convert to base64
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                uploadedImageBase64 = e.target.result;
+                formData.image = uploadedImageBase64;
+                
+                // Show preview
+                document.getElementById('previewImg').src = uploadedImageBase64;
+                document.getElementById('uploadPlaceholder').style.display = 'none';
+                document.getElementById('imagePreview').style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function removeImage() {
+            uploadedImageBase64 = null;
+            formData.image = null;
+            document.getElementById('fashionImage').value = '';
+            document.getElementById('uploadPlaceholder').style.display = 'block';
+            document.getElementById('imagePreview').style.display = 'none';
+        }
+
+        // ============================================
+        // STYLE & SCENE SELECTION
+        // ============================================
+        function setupStyleSelection() {
+            document.querySelectorAll('.style-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    document.querySelectorAll('.style-card').forEach(c => c.classList.remove('selected'));
+                    this.classList.add('selected');
+                    formData.style = this.dataset.style;
+                    console.log('Style selected:', formData.style);
+                });
+            });
+        }
+
+        function setupSceneSelection() {
+            document.querySelectorAll('.scene-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    document.querySelectorAll('.scene-card').forEach(c => c.classList.remove('selected'));
+                    this.classList.add('selected');
+                    formData.scene = this.dataset.scene;
+                    console.log('Scene selected:', formData.scene);
+                });
+            });
+        }
+
+        // ============================================
+        // NAVIGATION
+        // ============================================
+        function setupNavigation() {
+            document.getElementById('nextBtn').addEventListener('click', nextStep);
+            document.getElementById('prevBtn').addEventListener('click', prevStep);
+            document.getElementById('submitBtn').addEventListener('click', submitForm);
+        }
+
+        function nextStep() {
+            if (!validateCurrentStep()) return;
+            
+            if (currentStep < totalSteps) {
+                currentStep++;
+                showStep(currentStep);
+                updateStepIndicator();
+            }
+        }
+
+        function prevStep() {
+            if (currentStep > 1) {
+                currentStep--;
+                showStep(currentStep);
+                updateStepIndicator();
+            }
+        }
+
+        function showStep(step) {
+            // Hide all steps
+            document.querySelectorAll('.form-step').forEach(s => {
+                s.classList.remove('active');
+            });
+            
+            // Show current step
+            document.querySelector(`[data-step="${step}"]`).classList.add('active');
+            
+            // Update navigation buttons
+            document.getElementById('prevBtn').style.display = step === 1 ? 'none' : 'block';
+            document.getElementById('nextBtn').style.display = step === totalSteps ? 'none' : 'block';
+            document.getElementById('submitBtn').style.display = step === totalSteps ? 'block' : 'none';
+            
+            // Update review on last step
+            if (step === totalSteps) {
+                updateReview();
+            }
+        }
+
+        function updateStepIndicator() {
+            document.querySelectorAll('.step').forEach((step, index) => {
+                if (index + 1 < currentStep) {
+                    step.classList.add('completed');
+                    step.classList.remove('active');
+                } else if (index + 1 === currentStep) {
+                    step.classList.add('active');
+                    step.classList.remove('completed');
+                } else {
+                    step.classList.remove('active', 'completed');
+                }
+            });
+        }
+
+        // ============================================
+        // VALIDATION
+        // ============================================
+        function validateCurrentStep() {
+            switch(currentStep) {
+                case 1:
+                    if (!formData.image) {
+                        alert('Bitte lade ein Fashion-Produkt hoch');
+                        return false;
+                    }
+                    formData.productType = document.getElementById('productType').value;
+                    return true;
+                    
+                case 2:
+                    if (!formData.style) {
+                        alert('Bitte wähle einen Fotografie-Style');
+                        return false;
+                    }
+                    return true;
+                    
+                case 3:
+                    if (!formData.scene) {
+                        alert('Bitte wähle eine Szene');
+                        return false;
+                    }
+                    formData.timeOfDay = document.getElementById('timeOfDay').value;
+                    return true;
+                    
+                case 4:
+                    // Collect model data
+                    formData.model = {
+                        age: document.getElementById('modelAge').value,
+                        gender: document.getElementById('modelGender').value,
+                        ethnicity: document.getElementById('modelEthnicity').value,
+                        body: document.getElementById('modelBody').value,
+                        hair: document.getElementById('modelHair').value,
+                        makeup: document.getElementById('modelMakeup').value,
+                        expression: document.getElementById('modelExpression').value,
+                        pose: document.getElementById('modelPose').value
+                    };
+                    return true;
+                    
+                default:
+                    return true;
+            }
+        }
+
+        // ============================================
+        // REVIEW & CREDITS
+        // ============================================
+        function setupVariationControl() {
+            document.getElementById('variationCount')?.addEventListener('change', (e) => {
+                formData.variations = parseInt(e.target.value);
+                updateCreditsDisplay();
+            });
+        }
+
+        function updateReview() {
+            const review = document.getElementById('summaryReview');
+            review.innerHTML = `
+                <h3>Zusammenfassung deiner Fashion-Fotografie</h3>
+                <div class="summary-item">
+                    <span class="summary-label">Produkttyp:</span>
+                    <span class="summary-value">${formData.productType}</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Style:</span>
+                    <span class="summary-value">${formData.style}</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Szene:</span>
+                    <span class="summary-value">${formData.scene} (${formData.timeOfDay})</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Model:</span>
+                    <span class="summary-value">${formData.model.gender}, ${formData.model.age}</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Pose & Expression:</span>
+                    <span class="summary-value">${formData.model.pose}, ${formData.model.expression}</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Variationen:</span>
+                    <span class="summary-value">${formData.variations} Bilder</span>
+                </div>
+            `;
+            updateCreditsDisplay();
+        }
+
+        function updateCreditsDisplay() {
+            const requiredCredits = formData.variations * 2;
+            document.getElementById('requiredCredits').textContent = requiredCredits;
+            
+            // Get available credits from header
+            const availableCredits = parseInt(document.getElementById('creditsAmount')?.textContent || 100);
+            document.getElementById('availableCredits').textContent = availableCredits;
+            
+            // Enable/disable submit based on credits
+            const submitBtn = document.getElementById('submitBtn');
+            if (submitBtn) {
+                if (availableCredits < requiredCredits) {
+                    submitBtn.disabled = true;
+                    submitBtn.textContent = '❌ Nicht genug Credits';
+                } else {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = '🚀 Bilder generieren';
+                }
+            }
+        }
+
+        // ============================================
+        // SUBMIT TO MAKE.COM
+        // ============================================
+        async function submitForm() {
+            console.log('🚀 Submitting Fashion Photography Request...');
+            
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = '⏳ Wird verarbeitet...';
+            
+            try {
+                // Build prompt instructions based on PROMPT_MATRIX
+                formData.prompt_instructions = {
+                    orchestrator: buildOrchestratorPrompt(),
+                    imageGen: buildImageGenPrompt(),
+                    scenario: getScenarioPrompt()
+                };
+                
+                // Upload image first
+                const imageUrl = await uploadImage();
+                formData.imageUrl = imageUrl;
+                
+                // Prepare final payload for Make.com
+                const payload = {
+                    user_id: localStorage.getItem('ai_studio_user') ? JSON.parse(localStorage.getItem('ai_studio_user')).id : 'anonymous',
+                    project_type: 'fashion',
+                    agent: 'fashion',
+                    specifications: formData,
+                    image_url: imageUrl,
+                    credits_needed: formData.variations * 2,
+                    timestamp: new Date().toISOString()
+                };
+                
+                console.log('📤 Sending to Make.com:', payload);
+                
+                // Send to webhook
+                const response = await fetch('/api/webhook', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`Server error: ${response.status}`);
+                }
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('✅ Erfolgreich! Deine Fashion-Bilder werden in 2-3 Minuten generiert und per Slack zugestellt.');
+                    setTimeout(() => {
+                        window.location.href = '/dashboard.html';
+                    }, 2000);
+                } else {
+                    throw new Error(result.error || 'Unbekannter Fehler');
+                }
+                
+            } catch (error) {
+                console.error('❌ Submit error:', error);
+                alert('Fehler: ' + error.message);
+                submitBtn.disabled = false;
+                submitBtn.textContent = '🚀 Bilder generieren';
+            }
+        }
+
+        async function uploadImage() {
+            if (!formData.image) throw new Error('Kein Bild vorhanden');
+            
+            const response = await fetch('/api/upload', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ image: formData.image })
+            });
+            
+            if (!response.ok) {
+                throw new Error('Bild-Upload fehlgeschlagen');
+            }
+            
+            const result = await response.json();
+            return result.imageUrl;
+        }
+
+        // ============================================
+        // PROMPT BUILDERS (Based on PROMPT_MATRIX)
+        // ============================================
+        function buildOrchestratorPrompt() {
+            return {
+                shot_composition: {
+                    type: formData.model.pose === 'sitting' ? 'three_quarter' : 'full_body',
+                    angle: 'eye_level',
+                    orientation: 'portrait'
+                },
+                model_direction: {
+                    pose: {
+                        body: formData.model.pose,
+                        expression: formData.model.expression
+                    }
+                },
+                styling: {
+                    garment_arrangement: 'natural',
+                    fit_emphasis: formData.productType === 'clothing' ? 'fitted' : 'natural'
+                },
+                environment: {
+                    location: formData.scene,
+                    lighting: formData.timeOfDay
+                },
+                brand_alignment: {
+                    aesthetic: formData.style,
+                    target_age: formData.model.age
+                }
+            };
+        }
+
+        function buildImageGenPrompt() {
+            return `Generate professional fashion photography:
+                - Product: ${formData.productType}
+                - Style: ${formData.style} fashion photography
+                - Scene: ${formData.scene} location during ${formData.timeOfDay}
+                - Model: ${formData.model.gender}, ${formData.model.age} years old, ${formData.model.ethnicity} ethnicity
+                - Body type: ${formData.model.body}
+                - Hair: ${formData.model.hair}
+                - Makeup: ${formData.model.makeup}
+                - Expression: ${formData.model.expression}
+                - Pose: ${formData.model.pose}
+                
+                CRITICAL: Model must naturally wear/display the uploaded fashion product.
+                Style: ${getStyleDescription(formData.style)}
+                Quality: Photorealistic, professional fashion photography`;
+        }
+
+        function getScenarioPrompt() {
+            const scenarios = {
+                ecommerce: "White background, consistent lighting, clear product visibility, multiple angles",
+                editorial: "Creative composition, dramatic lighting, artistic expression, story element",
+                lifestyle: "Real environment, natural movement, relatable scenario, authentic emotion",
+                lookbook: "Cohesive styling, brand aesthetic, seasonal context, outfit coordination",
+                runway: "Catwalk setting, dramatic lighting, movement captured, designer focus",
+                street: "Urban environment, trendy styling, candid feeling, youth culture"
+            };
+            return scenarios[formData.style] || scenarios.lifestyle;
+        }
+
+        function getStyleDescription(style) {
+            const descriptions = {
+                ecommerce: "Clean, consistent, product-focused with perfect lighting",
+                editorial: "Artistic, mood-driven, storytelling with creative composition",
+                lifestyle: "Relatable, aspirational, contextual in real-world settings",
+                lookbook: "Brand-focused, cohesive collection presentation",
+                runway: "High fashion, dramatic, movement and designer focus",
+                street: "Urban, trendy, authentic street style photography"
+            };
+            return descriptions[style] || descriptions.lifestyle;
+        }
+    </script>
+</body>
+</html>
