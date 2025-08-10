@@ -95,44 +95,44 @@
     <script src="js/auth.js"></script>
     <script src="js/api.js"></script>
     <script src="js/components.js"></script>
+    <!-- Scripts in richtiger Reihenfolge -->
+    <script src="js/config.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/components.js"></script>
     <script>
+        // Debugging helper
+        console.log('📱 AI Studio starting...');
+        console.log('Supabase loaded?', typeof window.supabase !== 'undefined');
+        
         // Wait for everything to be loaded
         window.addEventListener('DOMContentLoaded', async () => {
-            console.log('🚀 Starting AI Studio...');
+            console.log('🚀 DOM Content Loaded');
+            console.log('Auth object exists?', typeof window.auth !== 'undefined');
             
-            // Initialize auth system
-            let authReady = false;
-            let attempts = 0;
-            
-            // Wait for auth to be ready
-            while (!authReady && attempts < 20) {
-                if (window.auth && window.auth.initialized) {
-                    authReady = true;
-                    break;
-                }
-                await new Promise(resolve => setTimeout(resolve, 100));
-                attempts++;
-            }
-            
-            if (!authReady) {
-                console.error('❌ Auth system not ready after 2 seconds');
-                document.getElementById('loadingScreen').style.display = 'none';
-                document.getElementById('loginScreen').style.display = 'flex';
-                
-                // Show error message
-                const errorDiv = document.createElement('div');
-                errorDiv.className = 'notification notification-error';
-                errorDiv.style.cssText = 'position: fixed; top: 20px; right: 20px; z-index: 1000;';
-                errorDiv.innerHTML = `
-                    <span>⚠️ Supabase nicht konfiguriert. Bitte auth.js anpassen!</span>
-                `;
-                document.body.appendChild(errorDiv);
-                return;
-            }
+            // Give auth time to initialize
+            await new Promise(resolve => setTimeout(resolve, 500));
             
             try {
+                // Check if auth is available and initialized
+                if (!window.auth) {
+                    console.error('❌ window.auth not found');
+                    throw new Error('Auth system not available');
+                }
+                
+                if (!window.auth.initialized) {
+                    console.log('⏳ Auth not initialized yet, waiting...');
+                    // Try to initialize manually
+                    await window.auth.init();
+                }
+                
+                console.log('✅ Auth initialized:', window.auth.initialized);
+                console.log('Supabase client:', window.auth.supabase);
+                
                 // Check if already authenticated
                 const isAuth = await window.auth.isAuthenticated();
+                console.log('User authenticated?', isAuth);
+                
                 if (isAuth) {
                     // Already logged in, redirect to dashboard
                     window.location.href = '/dashboard.html';
@@ -144,29 +144,43 @@
                 document.getElementById('loginScreen').style.display = 'flex';
                 
             } catch (error) {
-                console.error('Auth check error:', error);
+                console.error('❌ Error during initialization:', error);
                 document.getElementById('loadingScreen').style.display = 'none';
                 document.getElementById('loginScreen').style.display = 'flex';
+                
+                // Show warning but allow login attempt
+                const warningDiv = document.createElement('div');
+                warningDiv.style.cssText = 'background: #ff6b6b; color: white; padding: 10px; text-align: center; position: fixed; top: 0; left: 0; right: 0; z-index: 1000;';
+                warningDiv.innerHTML = '⚠️ Auth System Initialisierungsfehler - Bitte Console prüfen';
+                document.body.appendChild(warningDiv);
             }
             
             // Google Sign In Button
             document.getElementById('googleSignIn').addEventListener('click', async () => {
+                console.log('🔘 Google Sign In clicked');
                 const button = document.getElementById('googleSignIn');
                 
-                // Check if auth is initialized
-                if (!window.auth || !window.auth.initialized) {
-                    console.error('Auth not initialized');
-                    document.getElementById('errorMessage').textContent = 
-                        'Auth System nicht initialisiert. Bitte Seite neu laden.';
-                    document.getElementById('errorModal').classList.add('show');
-                    return;
-                }
-                
-                button.disabled = true;
-                button.innerHTML = '<div class="spinner" style="width: 20px; height: 20px;"></div> Anmelden...';
-                
                 try {
+                    // Try to ensure auth is initialized
+                    if (!window.auth) {
+                        throw new Error('Auth system not available');
+                    }
+                    
+                    if (!window.auth.initialized) {
+                        console.log('Attempting to initialize auth...');
+                        await window.auth.init();
+                    }
+                    
+                    if (!window.auth.supabase) {
+                        throw new Error('Supabase client not available');
+                    }
+                    
+                    button.disabled = true;
+                    button.innerHTML = '<div class="spinner" style="width: 20px; height: 20px;"></div> Anmelden...';
+                    
+                    console.log('📤 Calling signInWithProvider...');
                     const result = await window.auth.signInWithProvider('google');
+                    console.log('📥 Sign in result:', result);
                     
                     if (!result.success) {
                         throw new Error(result.error || 'Anmeldung fehlgeschlagen');
@@ -176,7 +190,7 @@
                     console.log('✅ Sign in initiated, redirecting...');
                     
                 } catch (error) {
-                    console.error('Sign in error:', error);
+                    console.error('❌ Sign in error:', error);
                     
                     // Reset button
                     button.disabled = false;
@@ -191,11 +205,7 @@
                     `;
                     
                     // Show error
-                    let errorMsg = error.message;
-                    if (errorMsg.includes('not configured')) {
-                        errorMsg = 'Supabase ist nicht konfiguriert. Bitte auth.js anpassen!';
-                    }
-                    document.getElementById('errorMessage').textContent = errorMsg;
+                    document.getElementById('errorMessage').textContent = error.message;
                     document.getElementById('errorModal').classList.add('show');
                 }
             });
@@ -208,6 +218,7 @@
             const accessToken = hashParams.get('access_token');
             
             if (accessToken) {
+                console.log('🔑 OAuth callback detected with access token');
                 // OAuth callback successful, redirect to dashboard
                 window.location.href = '/dashboard.html';
             }
