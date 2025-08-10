@@ -1,334 +1,383 @@
-<!-- Scripts in richtiger Reihenfolge -->
-    <script src="js/config.js"></script>
-    <script src="js/auth.js"></script>
-    <script src="js/api.js"></script>
-    <script src="js/components.js"></script>
-    <script>
-        // Debugging helper
-        console.log('📱 AI Studio starting...');
-        console.log('Supabase loaded?', typeof window.supabase !== 'undefined');
+// auth.js - Supabase Authentication System
+
+class AuthManager {
+    constructor() {
+        // Initialize Supabase Client
+        this.supabase = null;
+        this.user = null;
+        this.profile = null;
+        this.initialized = false;
+    }
+
+// auth.js - Supabase Authentication System
+
+class AuthManager {
+    constructor() {
+        // Initialize Supabase Client
+        this.supabase = null;
+        this.user = null;
+        this.profile = null;
+        this.initialized = false;
+    }
+
+    async init() {
+        if (this.initialized) return true;
         
-        // Wait for everything to be loaded
-        window.addEventListener('DOMContentLoaded', async () => {
-            console.log('🚀 DOM Content Loaded');
-            console.log('Auth object exists?', typeof window.auth !== 'undefined');
+        try {
+            console.log('🔧 Initializing Auth System...');
             
-            // Give auth time to initialize
-            await new Promise(resolve => setTimeout(resolve, 500));
-            
-            try {
-                // Check if auth is available and initialized
-                if (!window.auth) {
-                    console.error('❌ window.auth not found');
-                    throw new Error('Auth system not available');
-                }
-                
-                if (!window.auth.initialized) {
-                    console.log('⏳ Auth not initialized yet, waiting...');
-                    // Try to initialize manually
-                    await window.auth.init();
-                }
-                
-                console.log('✅ Auth initialized:', window.auth.initialized);
-                console.log('Supabase client:', window.auth.supabase);
-                
-                // Check if already authenticated
-                const isAuth = await window.auth.isAuthenticated();
-                console.log('User authenticated?', isAuth);
-                
-                if (isAuth) {
-                    // Already logged in, redirect to dashboard
-                    window.location.href = '/dashboard.html';
-                    return;
-                }
-                
-                // Show login screen
-                document.getElementById('loadingScreen').style.display = 'none';
-                document.getElementById('loginScreen').style.display = 'flex';
-                
-            } catch (error) {
-                console.error('❌ Error during initialization:', error);
-                document.getElementById('loadingScreen').style.display = 'none';
-                document.getElementById('loginScreen').style.display = 'flex';
-                
-                // Show warning but allow login attempt
-                const warningDiv = document.createElement('div');
-                warningDiv.style.cssText = 'background: #ff6b6b; color: white; padding: 10px; text-align: center; position: fixed; top: 0; left: 0; right: 0; z-index: 1000;';
-                warningDiv.innerHTML = '⚠️ Auth System Initialisierungsfehler - Bitte Console prüfen';
-                document.body.appendChild(warningDiv);
-            }
-            
-            // Google Sign In Button
-            document.getElementById('googleSignIn').addEventListener('click', async () => {
-                console.log('🔘 Google Sign In clicked');
-                const button = document.getElementById('googleSignIn');
-                
-                try {
-                    // Try to ensure auth is initialized
-                    if (!window.auth) {
-                        throw new Error('Auth system not available');
-                    }
-                    
-                    if (!window.auth.initialized) {
-                        console.log('Attempting to initialize auth...');
-                        await window.auth.init();
-                    }
-                    
-                    if (!window.auth.supabase) {
-                        throw new Error('Supabase client not available');
-                    }
-                    
-                    button.disabled = true;
-                    button.innerHTML = '<div class="spinner" style="width: 20px; height: 20px;"></div> Anmelden...';
-                    
-                    console.log('📤 Calling signInWithProvider...');
-                    const result = await window.auth.signInWithProvider('google');
-                    console.log('📥 Sign in result:', result);
-                    
-                    if (!result.success) {
-                        throw new Error(result.error || 'Anmeldung fehlgeschlagen');
-                    }
-                    
-                    // Success - Supabase will handle the redirect
-                    console.log('✅ Sign in initiated, redirecting...');
-                    
-                } catch (error) {
-                    console.error('❌ Sign in error:', error);
-                    
-                    // Reset button
-                    button.disabled = false;
-                    button.innerHTML = `
-                        <svg width="20" height="20" viewBox="0 0 24 24">
-                            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-                        </svg>
-                        Mit Google anmelden
-                    `;
-                    
-                    // Show error
-                    document.getElementById('errorMessage').textContent = error.message;
-                    document.getElementById('errorModal').classList.add('show');
-                }
-            });
-        });
-
-        // Handle OAuth callback
-        window.addEventListener('load', asyn<!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Studio - Professional E-Commerce Photography</title>
-    
-    <!-- CSS -->
-    <link rel="stylesheet" href="css/styles.css">
-    <link rel="stylesheet" href="css/auth.css">
-    
-    <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=Sora:wght@300;400;600;700&display=swap" rel="stylesheet">
-    
-    <!-- Supabase -->
-    <script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-</head>
-<body>
-    <!-- Loading Screen -->
-    <div id="loadingScreen" class="loading-screen">
-        <div class="spinner"></div>
-        <p>Initialisiere AI Studio...</p>
-    </div>
-
-    <!-- Login Screen -->
-    <div id="loginScreen" class="login-screen" style="display: none;">
-        <div class="login-container">
-            <div class="login-box">
-                <!-- Logo -->
-                <div class="logo-section">
-                    <h1 class="logo">AI<span>STUDIO</span></h1>
-                    <p class="tagline">Professional E-Commerce Photography powered by AI</p>
-                </div>
-
-                <!-- Google Sign In -->
-                <div class="auth-section">
-                    <button id="googleSignIn" class="btn-google">
-                        <svg width="20" height="20" viewBox="0 0 24 24">
-                            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-                        </svg>
-                        Mit Google anmelden
-                    </button>
-
-                    <div class="auth-divider">
-                        <span>Schnell & Sicher</span>
-                    </div>
-
-                    <!-- Features -->
-                    <div class="feature-list">
-                        <div class="feature-item">
-                            <span class="feature-icon">✨</span>
-                            <span>100 kostenlose Credits zum Start</span>
-                        </div>
-                        <div class="feature-item">
-                            <span class="feature-icon">🚀</span>
-                            <span>6 spezialisierte AI Agents</span>
-                        </div>
-                        <div class="feature-item">
-                            <span class="feature-icon">📸</span>
-                            <span>Professionelle Produktfotografie</span>
-                        </div>
-                        <div class="feature-item">
-                            <span class="feature-icon">⚡</span>
-                            <span>Ergebnisse in 2-3 Minuten</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Footer -->
-                <div class="login-footer">
-                    <p>Mit der Anmeldung akzeptierst du unsere <a href="#">Nutzungsbedingungen</a></p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Error Modal -->
-    <div id="errorModal" class="modal">
-        <div class="modal-content">
-            <h3>Anmeldung fehlgeschlagen</h3>
-            <p id="errorMessage">Ein Fehler ist aufgetreten. Bitte versuche es erneut.</p>
-            <div class="modal-footer">
-                <button class="btn btn-primary" onclick="document.getElementById('errorModal').classList.remove('show')">
-                    OK
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Scripts -->
-    <script src="js/config.js"></script>
-    <script src="js/auth.js"></script>
-    <script src="js/api.js"></script>
-    <script src="js/components.js"></script>
-    <script>
-        // Wait for everything to be loaded
-        window.addEventListener('DOMContentLoaded', async () => {
-            console.log('🚀 Starting AI Studio...');
-            
-            // Initialize auth system
-            let authReady = false;
+            // Wait for Supabase to be loaded
             let attempts = 0;
-            
-            // Wait for auth to be ready
-            while (!authReady && attempts < 20) {
-                if (window.auth && window.auth.initialized) {
-                    authReady = true;
-                    break;
-                }
+            while (typeof window.supabase === 'undefined' && attempts < 10) {
+                console.log('⏳ Waiting for Supabase library...');
                 await new Promise(resolve => setTimeout(resolve, 100));
                 attempts++;
             }
             
-            if (!authReady) {
-                console.error('❌ Auth system not ready after 2 seconds');
-                document.getElementById('loadingScreen').style.display = 'none';
-                document.getElementById('loginScreen').style.display = 'flex';
-                
-                // Show error message
-                const errorDiv = document.createElement('div');
-                errorDiv.className = 'notification notification-error';
-                errorDiv.style.cssText = 'position: fixed; top: 20px; right: 20px; z-index: 1000;';
-                errorDiv.innerHTML = `
-                    <span>⚠️ Supabase nicht konfiguriert. Bitte auth.js anpassen!</span>
-                `;
-                document.body.appendChild(errorDiv);
-                return;
+            if (typeof window.supabase === 'undefined') {
+                throw new Error('Supabase library not loaded');
             }
             
-            try {
-                // Check if already authenticated
-                const isAuth = await window.auth.isAuthenticated();
-                if (isAuth) {
-                    // Already logged in, redirect to dashboard
+            console.log('✅ Supabase library loaded');
+            
+            // Supabase Config
+            const SUPABASE_URL = 'https://vnodqwehipwpusrthurk.supabase.co';
+            const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZub2Rxd2VoaXB3cHVzcnRodXJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ3NTA5NTcsImV4cCI6MjA3MDMyNjk1N30.LSMyYLt7URx1G1NFKZAqXTrzVHwjtbvOzeuxLZy0u-Q';
+            
+            console.log('🔑 Using Supabase URL:', SUPABASE_URL);
+            
+            this.supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            
+            if (!this.supabase) {
+                throw new Error('Failed to initialize Supabase client');
+            }
+            
+            console.log('✅ Supabase client created successfully');
+            
+            this.setupAuthListener();
+            this.initialized = true;
+            console.log('✅ Auth system fully initialized');
+            return true;
+            
+        } catch (error) {
+            console.error('❌ Auth initialization failed:', error);
+            this.initialized = false;
+            throw error;
+        }
+    }
+
+    setupAuthListener() {
+        // Listen for auth state changes
+        this.supabase.auth.onAuthStateChange(async (event, session) => {
+            console.log('Auth event:', event);
+            
+            if (event === 'SIGNED_IN' && session) {
+                this.user = session.user;
+                await this.loadUserProfile();
+                
+                // Redirect to dashboard if on login page
+                if (window.location.pathname === '/' || window.location.pathname === '/index.html') {
                     window.location.href = '/dashboard.html';
-                    return;
                 }
+            } else if (event === 'SIGNED_OUT') {
+                this.user = null;
+                this.profile = null;
                 
-                // Show login screen
-                document.getElementById('loadingScreen').style.display = 'none';
-                document.getElementById('loginScreen').style.display = 'flex';
-                
-            } catch (error) {
-                console.error('Auth check error:', error);
-                document.getElementById('loadingScreen').style.display = 'none';
-                document.getElementById('loginScreen').style.display = 'flex';
+                // Redirect to login if not already there
+                if (window.location.pathname !== '/' && window.location.pathname !== '/index.html') {
+                    window.location.href = '/';
+                }
+            }
+        });
+    }
+
+    async signInWithProvider(provider) {
+        try {
+            // Ensure auth is initialized
+            if (!this.initialized) {
+                await this.init();
             }
             
-            // Google Sign In Button
-            document.getElementById('googleSignIn').addEventListener('click', async () => {
-                const button = document.getElementById('googleSignIn');
-                
-                // Check if auth is initialized
-                if (!window.auth || !window.auth.initialized) {
-                    console.error('Auth not initialized');
-                    document.getElementById('errorMessage').textContent = 
-                        'Auth System nicht initialisiert. Bitte Seite neu laden.';
-                    document.getElementById('errorModal').classList.add('show');
-                    return;
-                }
-                
-                button.disabled = true;
-                button.innerHTML = '<div class="spinner" style="width: 20px; height: 20px;"></div> Anmelden...';
-                
-                try {
-                    const result = await window.auth.signInWithProvider('google');
-                    
-                    if (!result.success) {
-                        throw new Error(result.error || 'Anmeldung fehlgeschlagen');
-                    }
-                    
-                    // Success - Supabase will handle the redirect
-                    console.log('✅ Sign in initiated, redirecting...');
-                    
-                } catch (error) {
-                    console.error('Sign in error:', error);
-                    
-                    // Reset button
-                    button.disabled = false;
-                    button.innerHTML = `
-                        <svg width="20" height="20" viewBox="0 0 24 24">
-                            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-                        </svg>
-                        Mit Google anmelden
-                    `;
-                    
-                    // Show error
-                    let errorMsg = error.message;
-                    if (errorMsg.includes('not configured')) {
-                        errorMsg = 'Supabase ist nicht konfiguriert. Bitte auth.js anpassen!';
-                    }
-                    document.getElementById('errorMessage').textContent = errorMsg;
-                    document.getElementById('errorModal').classList.add('show');
+            if (!this.supabase) {
+                throw new Error('Supabase not initialized');
+            }
+            
+            const { data, error } = await this.supabase.auth.signInWithOAuth({
+                provider: provider,
+                options: {
+                    redirectTo: window.location.origin + '/dashboard.html'
                 }
             });
-        });
 
-        // Handle OAuth callback
-        window.addEventListener('load', async () => {
-            // Check if this is a callback from OAuth
-            const hashParams = new URLSearchParams(window.location.hash.substring(1));
-            const accessToken = hashParams.get('access_token');
+            if (error) throw error;
+            return { success: true, data };
+        } catch (error) {
+            console.error('Sign in error:', error);
+            return { success: false, error: error.message };
+        }
+    }
+
+    async signOut() {
+        try {
+            const { error } = await this.supabase.auth.signOut();
+            if (error) throw error;
             
-            if (accessToken) {
-                // OAuth callback successful, redirect to dashboard
-                window.location.href = '/dashboard.html';
+            this.user = null;
+            this.profile = null;
+            window.location.href = '/';
+        } catch (error) {
+            console.error('Sign out error:', error);
+        }
+    }
+
+    async isAuthenticated() {
+        try {
+            const { data: { session } } = await this.supabase.auth.getSession();
+            return !!session;
+        } catch (error) {
+            console.error('Auth check error:', error);
+            return false;
+        }
+    }
+
+    async getSession() {
+        try {
+            const { data: { session } } = await this.supabase.auth.getSession();
+            return session;
+        } catch (error) {
+            console.error('Get session error:', error);
+            return null;
+        }
+    }
+
+    getUser() {
+        return this.user;
+    }
+
+    async loadUserProfile() {
+        if (!this.user) return null;
+
+        try {
+            // Check if profile exists
+            let { data: profile, error } = await this.supabase
+                .from('user_profiles')
+                .select('*')
+                .eq('user_id', this.user.id)
+                .single();
+
+            if (error && error.code === 'PGRST116') {
+                // Profile doesn't exist, create it
+                profile = await this.createUserProfile();
+            } else if (error) {
+                throw error;
             }
-        });
-    </script>
-</body>
-</html>
+
+            this.profile = profile;
+            this.user.profile = profile;
+            return profile;
+        } catch (error) {
+            console.error('Load profile error:', error);
+            return null;
+        }
+    }
+
+    async createUserProfile() {
+        if (!this.user) return null;
+
+        try {
+            const profileData = {
+                user_id: this.user.id,
+                email: this.user.email,
+                username: this.user.user_metadata?.full_name || this.user.email.split('@')[0],
+                avatar_url: this.user.user_metadata?.avatar_url,
+                credits: 100, // Initial free credits
+                created_at: new Date().toISOString()
+            };
+
+            const { data, error } = await this.supabase
+                .from('user_profiles')
+                .insert([profileData])
+                .select()
+                .single();
+
+            if (error) throw error;
+            return data;
+        } catch (error) {
+            console.error('Create profile error:', error);
+            return null;
+        }
+    }
+
+    async updateCredits(amount) {
+        if (!this.user || !this.profile) return false;
+
+        try {
+            const newCredits = Math.max(0, this.profile.credits + amount);
+            
+            const { data, error } = await this.supabase
+                .from('user_profiles')
+                .update({ credits: newCredits })
+                .eq('user_id', this.user.id)
+                .select()
+                .single();
+
+            if (error) throw error;
+            
+            this.profile.credits = newCredits;
+            this.user.profile.credits = newCredits;
+            
+            // Update UI if credits display exists
+            const creditsDisplay = document.getElementById('creditsAmount');
+            if (creditsDisplay) {
+                creditsDisplay.textContent = newCredits;
+            }
+            
+            return true;
+        } catch (error) {
+            console.error('Update credits error:', error);
+            return false;
+        }
+    }
+}
+
+// Database operations
+class DatabaseManager {
+    constructor(supabase) {
+        this.supabase = supabase;
+    }
+
+    async createProject(projectData) {
+        try {
+            const user = window.auth?.getUser();
+            if (!user) throw new Error('Not authenticated');
+
+            const { data, error } = await this.supabase
+                .from('projects')
+                .insert([{
+                    user_id: user.id,
+                    project_name: projectData.name,
+                    project_type: projectData.type,
+                    specifications: projectData.specifications,
+                    input_image: projectData.imageUrl,
+                    credits_used: projectData.credits_needed,
+                    status: 'pending'
+                }])
+                .select()
+                .single();
+
+            if (error) throw error;
+            
+            // Deduct credits
+            await window.auth.updateCredits(-projectData.credits_needed);
+            
+            return { success: true, project: data };
+        } catch (error) {
+            console.error('Create project error:', error);
+            return { success: false, error: error.message };
+        }
+    }
+
+    async getProjects(limit = 10, offset = 0) {
+        try {
+            const user = window.auth?.getUser();
+            if (!user) return { success: false, error: 'Not authenticated' };
+
+            const { data, error } = await this.supabase
+                .from('projects')
+                .select('*')
+                .eq('user_id', user.id)
+                .order('created_at', { ascending: false })
+                .range(offset, offset + limit - 1);
+
+            if (error) throw error;
+            
+            return { success: true, projects: data };
+        } catch (error) {
+            console.error('Get projects error:', error);
+            return { success: false, error: error.message };
+        }
+    }
+
+    async getUserStats() {
+        try {
+            const user = window.auth?.getUser();
+            if (!user) return { success: false, error: 'Not authenticated' };
+
+            // Get stats from multiple queries
+            const today = new Date().toISOString().split('T')[0];
+            const thisMonth = new Date().toISOString().slice(0, 7);
+
+            // Projects today
+            const { count: projectsToday } = await this.supabase
+                .from('projects')
+                .select('*', { count: 'exact', head: true })
+                .eq('user_id', user.id)
+                .gte('created_at', today);
+
+            // Credits used this month
+            const { data: monthProjects } = await this.supabase
+                .from('projects')
+                .select('credits_used')
+                .eq('user_id', user.id)
+                .gte('created_at', thisMonth + '-01');
+
+            const creditsUsed = monthProjects?.reduce((sum, p) => sum + (p.credits_used || 0), 0) || 0;
+
+            return {
+                success: true,
+                stats: {
+                    projects_today: projectsToday || 0,
+                    credits_used_this_month: creditsUsed,
+                    total_credits: window.auth?.profile?.credits || 0,
+                    success_rate: 100
+                }
+            };
+        } catch (error) {
+            console.error('Get stats error:', error);
+            return { success: false, error: error.message };
+        }
+    }
+
+    async getTemplates(filters = {}) {
+        try {
+            let query = this.supabase.from('templates').select('*');
+            
+            if (filters.featured) {
+                query = query.eq('is_featured', true);
+            }
+            
+            if (filters.category) {
+                query = query.eq('category', filters.category);
+            }
+            
+            const { data, error } = await query.order('usage_count', { ascending: false });
+            
+            if (error) throw error;
+            
+            return { success: true, templates: data || [] };
+        } catch (error) {
+            console.error('Get templates error:', error);
+            return { success: false, error: error.message, templates: [] };
+        }
+    }
+}
+
+// Initialize global instance immediately
+window.auth = new AuthManager();
+
+// Initialize when DOM is ready
+window.addEventListener('DOMContentLoaded', async () => {
+    try {
+        console.log('📦 Initializing Auth Manager...');
+        await window.auth.init();
+        
+        // Only initialize DB if auth is successful
+        if (window.auth.supabase) {
+            window.db = new DatabaseManager(window.auth.supabase);
+            console.log('✅ Database Manager initialized');
+        }
+    } catch (error) {
+        console.error('❌ Failed to initialize auth system:', error);
+        // Don't throw - let the app continue and show error to user
+    }
+});
