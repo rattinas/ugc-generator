@@ -103,9 +103,28 @@
         
         let supabaseClient = null;
         
-        // Warte bis Supabase geladen ist
-        window.addEventListener('load', async () => {
-            console.log('🚀 Page loaded');
+        // WICHTIG: Zuerst OAuth Callback prüfen BEVOR wir andere Checks machen
+        window.addEventListener('DOMContentLoaded', async () => {
+            console.log('🚀 Page loading...');
+            
+            // Check für OAuth Callback SOFORT
+            const hashParams = new URLSearchParams(window.location.hash.substring(1));
+            const accessToken = hashParams.get('access_token');
+            const refreshToken = hashParams.get('refresh_token');
+            
+            if (accessToken) {
+                console.log('🔑 OAuth callback detected with tokens');
+                // Speichere die Tokens und leite weiter
+                localStorage.setItem('supabase.auth.token', JSON.stringify({
+                    access_token: accessToken,
+                    refresh_token: refreshToken
+                }));
+                
+                // Entferne Hash aus URL und leite zu Dashboard
+                window.history.replaceState(null, null, window.location.pathname);
+                window.location.href = '/dashboard.html';
+                return; // Wichtig: Hier stoppen!
+            }
             
             // Versuche Supabase Client zu erstellen
             try {
@@ -119,18 +138,20 @@
                 } else {
                     // Fallback: Lade Supabase dynamisch
                     console.log('⏳ Loading Supabase dynamically...');
-                    const script = document.createElement('script');
-                    script.src = 'https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.min.js';
-                    script.onload = () => {
-                        console.log('✅ Supabase loaded dynamically');
-                        supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-                        initializeApp();
-                    };
-                    document.head.appendChild(script);
-                    return;
+                    await new Promise((resolve) => {
+                        const script = document.createElement('script');
+                        script.src = 'https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.min.js';
+                        script.onload = () => {
+                            console.log('✅ Supabase loaded dynamically');
+                            supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                            resolve();
+                        };
+                        document.head.appendChild(script);
+                    });
                 }
                 
-                initializeApp();
+                // Jetzt App initialisieren
+                await initializeApp();
                 
             } catch (error) {
                 console.error('❌ Failed to initialize Supabase:', error);
@@ -139,20 +160,32 @@
             }
         });
         
-        function initializeApp() {
+        async function initializeApp() {
             console.log('🎯 Initializing app with Supabase client');
             
-            // Check authentication
-            supabaseClient.auth.getSession().then(({ data: { session } }) => {
+            // Check authentication mit getSession (nicht getUser!)
+            try {
+                const { data: { session }, error } = await supabaseClient.auth.getSession();
+                
+                if (error) {
+                    console.error('Session error:', error);
+                }
+                
                 if (session) {
-                    console.log('✅ User already authenticated');
+                    console.log('✅ User already authenticated:', session.user.email);
+                    // User ist eingeloggt, zum Dashboard
                     window.location.href = '/dashboard.html';
+                    return;
                 } else {
                     console.log('👤 No active session');
                     document.getElementById('loadingScreen').style.display = 'none';
                     document.getElementById('loginScreen').style.display = 'flex';
                 }
-            });
+            } catch (error) {
+                console.error('Auth check error:', error);
+                document.getElementById('loadingScreen').style.display = 'none';
+                document.getElementById('loginScreen').style.display = 'flex';
+            }
             
             // Setup Google Sign In
             document.getElementById('googleSignIn').addEventListener('click', async () => {
@@ -171,10 +204,19 @@
                 
                 try {
                     console.log('📤 Calling signInWithOAuth...');
+                    
+                    // WICHTIG: redirectTo muss die EXAKTE URL sein wo der User zurückkommt
+                    const redirectUrl = window.location.origin + '/';
+                    console.log('Redirect URL:', redirectUrl);
+                    
                     const { data, error } = await supabaseClient.auth.signInWithOAuth({
                         provider: 'google',
                         options: {
-                            redirectTo: `${window.location.origin}/dashboard.html`
+                            redirectTo: redirectUrl,
+                            queryParams: {
+                                access_type: 'offline',
+                                prompt: 'consent'
+                            }
                         }
                     });
                     
@@ -183,7 +225,7 @@
                     }
                     
                     console.log('✅ OAuth initiated:', data);
-                    // Supabase will redirect automatically
+                    // Supabase will redirect automatically to Google
                     
                 } catch (error) {
                     console.error('❌ Sign in error:', error);
@@ -208,15 +250,21 @@
                     document.getElementById('errorModal').classList.add('show');
                 }
             });
-            
-            // Handle OAuth callback
-            const hashParams = new URLSearchParams(window.location.hash.substring(1));
-            const accessToken = hashParams.get('access_token');
-            if (accessToken) {
-                console.log('🔑 OAuth callback detected');
-                window.location.href = '/dashboard.html';
-            }
         }
+        
+        // Auth State Listener für automatische Session-Erkennung
+        window.addEventListener('load', () => {
+            if (supabaseClient) {
+                supabaseClient.auth.onAuthStateChange((event, session) => {
+                    console.log('Auth state changed:', event);
+                    if (event === 'SIGNED_IN' && session) {
+                        console.log('User signed in:', session.user.email);
+                        // Automatisch zum Dashboard
+                        window.location.href = '/dashboard.html';
+                    }
+                });
+            }
+        });
     </script>
 </body>
 </html>
