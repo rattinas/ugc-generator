@@ -6,21 +6,50 @@ class AuthManager {
         this.supabase = null;
         this.user = null;
         this.profile = null;
-        this.initSupabase();
+        this.initialized = false;
     }
 
-    initSupabase() {
-        // Supabase Config
-        const SUPABASE_URL = window.location.hostname === 'localhost' 
-            ? 'http://localhost:54321'
-            : 'https://YOUR_PROJECT.supabase.co'; // REPLACE WITH YOUR SUPABASE URL
-        const SUPABASE_ANON_KEY = 'YOUR_ANON_KEY'; // REPLACE WITH YOUR ANON KEY
+    async init() {
+        if (this.initialized) return true;
         
-        if (typeof window.supabase !== 'undefined') {
+        try {
+            // Wait for Supabase to be loaded
+            let attempts = 0;
+            while (typeof window.supabase === 'undefined' && attempts < 10) {
+                await new Promise(resolve => setTimeout(resolve, 100));
+                attempts++;
+            }
+            
+            if (typeof window.supabase === 'undefined') {
+                throw new Error('Supabase library not loaded');
+            }
+            
+            // Supabase Config - REPLACE WITH YOUR ACTUAL VALUES
+            const SUPABASE_URL = 'https://vnodqwehipwpusrthurk.supabase.co'; // REPLACE THIS
+            const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZub2Rxd2VoaXB3cHVzcnRodXJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ3NTA5NTcsImV4cCI6MjA3MDMyNjk1N30.LSMyYLt7URx1G1NFKZAqXTrzVHwjtbvOzeuxLZy0u-Q'; // REPLACE THIS
+            
+            // Check if credentials are set
+            if (SUPABASE_URL.includes('YOUR_PROJECT') || SUPABASE_ANON_KEY === 'YOUR_ANON_KEY') {
+                console.error('⚠️ Supabase credentials not configured!');
+                console.error('Please update SUPABASE_URL and SUPABASE_ANON_KEY in auth.js');
+                throw new Error('Supabase credentials not configured');
+            }
+            
             this.supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            
+            if (!this.supabase) {
+                throw new Error('Failed to initialize Supabase client');
+            }
+            
             this.setupAuthListener();
-        } else {
-            console.error('Supabase not loaded');
+            this.initialized = true;
+            console.log('✅ Auth system initialized');
+            return true;
+            
+        } catch (error) {
+            console.error('❌ Auth initialization failed:', error);
+            this.initialized = false;
+            return false;
         }
     }
 
@@ -51,6 +80,15 @@ class AuthManager {
 
     async signInWithProvider(provider) {
         try {
+            // Ensure auth is initialized
+            if (!this.initialized) {
+                await this.init();
+            }
+            
+            if (!this.supabase) {
+                throw new Error('Supabase not initialized');
+            }
+            
             const { data, error } = await this.supabase.auth.signInWithOAuth({
                 provider: provider,
                 options: {
@@ -311,6 +349,17 @@ class DatabaseManager {
     }
 }
 
-// Initialize global instances
-window.auth = new AuthManager();
-window.db = new DatabaseManager(window.auth.supabase);
+// Initialize global instance with proper error handling
+window.addEventListener('DOMContentLoaded', async () => {
+    try {
+        window.auth = new AuthManager();
+        await window.auth.init();
+        
+        // Only initialize DB if auth is successful
+        if (window.auth.supabase) {
+            window.db = new DatabaseManager(window.auth.supabase);
+        }
+    } catch (error) {
+        console.error('Failed to initialize auth system:', error);
+    }
+});
