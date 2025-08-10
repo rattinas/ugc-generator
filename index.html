@@ -12,8 +12,8 @@
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=Sora:wght@300;400;600;700&display=swap" rel="stylesheet">
     
-    <!-- Supabase -->
-    <script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <!-- Supabase - Mit CDN direkt laden -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
     <!-- Loading Screen -->
@@ -95,69 +95,99 @@
     <script src="js/auth.js"></script>
     <script src="js/api.js"></script>
     <script src="js/components.js"></script>
-    <!-- Supabase MUSS ZUERST geladen werden -->
-    <script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-    
-    <!-- Dann unsere Scripts in der richtigen Reihenfolge -->
-    <script src="js/config.js"></script>
-    <script src="js/auth.js"></script>
-    <script src="js/api.js"></script>
-    <script src="js/components.js"></script>
-    
-    <!-- Inline Script für Initialisierung -->
+    <!-- Inline Script für direkte Initialisierung -->
     <script>
-        // Warte bis alles geladen ist
+        // Supabase direkt hier initialisieren
+        const SUPABASE_URL = 'https://vnodqwehipwpusrthurk.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZub2Rxd2VoaXB3cHVzcnRodXJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ3NTA5NTcsImV4cCI6MjA3MDMyNjk1N30.LSMyYLt7URx1G1NFKZAqXTrzVHwjtbvOzeuxLZy0u-Q';
+        
+        let supabaseClient = null;
+        
+        // Warte bis Supabase geladen ist
         window.addEventListener('load', async () => {
-            console.log('🚀 Page fully loaded');
+            console.log('🚀 Page loaded');
             
-            // Warte kurz damit auth.js Zeit hat zu initialisieren
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            
-            // Jetzt erst Auth prüfen
+            // Versuche Supabase Client zu erstellen
             try {
-                if (window.auth && window.auth.initialized) {
-                    const isAuth = await window.auth.isAuthenticated();
-                    if (isAuth) {
-                        window.location.href = '/dashboard.html';
-                        return;
-                    }
+                // Check verschiedene Möglichkeiten wie Supabase geladen sein könnte
+                if (typeof window.supabase !== 'undefined') {
+                    console.log('✅ Supabase found via window.supabase');
+                    supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                } else if (typeof supabase !== 'undefined') {
+                    console.log('✅ Supabase found via global supabase');
+                    supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                } else {
+                    // Fallback: Lade Supabase dynamisch
+                    console.log('⏳ Loading Supabase dynamically...');
+                    const script = document.createElement('script');
+                    script.src = 'https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.min.js';
+                    script.onload = () => {
+                        console.log('✅ Supabase loaded dynamically');
+                        supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                        initializeApp();
+                    };
+                    document.head.appendChild(script);
+                    return;
                 }
+                
+                initializeApp();
+                
             } catch (error) {
-                console.error('Auth check error:', error);
+                console.error('❌ Failed to initialize Supabase:', error);
+                document.getElementById('loadingScreen').style.display = 'none';
+                document.getElementById('loginScreen').style.display = 'flex';
             }
+        });
+        
+        function initializeApp() {
+            console.log('🎯 Initializing app with Supabase client');
             
-            // Login Screen anzeigen
-            document.getElementById('loadingScreen').style.display = 'none';
-            document.getElementById('loginScreen').style.display = 'flex';
+            // Check authentication
+            supabaseClient.auth.getSession().then(({ data: { session } }) => {
+                if (session) {
+                    console.log('✅ User already authenticated');
+                    window.location.href = '/dashboard.html';
+                } else {
+                    console.log('👤 No active session');
+                    document.getElementById('loadingScreen').style.display = 'none';
+                    document.getElementById('loginScreen').style.display = 'flex';
+                }
+            });
             
-            // Google Sign In Button
+            // Setup Google Sign In
             document.getElementById('googleSignIn').addEventListener('click', async () => {
-                console.log('Google Sign In clicked');
+                console.log('🔘 Google Sign In clicked');
                 const button = document.getElementById('googleSignIn');
                 
+                if (!supabaseClient) {
+                    console.error('❌ Supabase client not available');
+                    document.getElementById('errorMessage').textContent = 'Verbindung fehlgeschlagen. Bitte Seite neu laden.';
+                    document.getElementById('errorModal').classList.add('show');
+                    return;
+                }
+                
+                button.disabled = true;
+                button.innerHTML = '<div class="spinner" style="width: 20px; height: 20px;"></div> Anmelden...';
+                
                 try {
-                    if (!window.auth || !window.auth.supabase) {
-                        // Versuche auth nochmal zu initialisieren
-                        if (window.auth && !window.auth.initialized) {
-                            await window.auth.init();
+                    console.log('📤 Calling signInWithOAuth...');
+                    const { data, error } = await supabaseClient.auth.signInWithOAuth({
+                        provider: 'google',
+                        options: {
+                            redirectTo: `${window.location.origin}/dashboard.html`
                         }
-                        
-                        if (!window.auth.supabase) {
-                            throw new Error('Supabase Client nicht verfügbar');
-                        }
+                    });
+                    
+                    if (error) {
+                        throw error;
                     }
                     
-                    button.disabled = true;
-                    button.innerHTML = '<div class="spinner" style="width: 20px; height: 20px;"></div> Anmelden...';
-                    
-                    const result = await window.auth.signInWithProvider('google');
-                    
-                    if (!result.success) {
-                        throw new Error(result.error || 'Anmeldung fehlgeschlagen');
-                    }
+                    console.log('✅ OAuth initiated:', data);
+                    // Supabase will redirect automatically
                     
                 } catch (error) {
-                    console.error('Sign in error:', error);
+                    console.error('❌ Sign in error:', error);
+                    
                     button.disabled = false;
                     button.innerHTML = `
                         <svg width="20" height="20" viewBox="0 0 24 24">
@@ -169,19 +199,24 @@
                         Mit Google anmelden
                     `;
                     
-                    document.getElementById('errorMessage').textContent = error.message;
+                    // Show error message
+                    let errorMsg = error.message || 'Anmeldung fehlgeschlagen';
+                    if (errorMsg.includes('OAuth')) {
+                        errorMsg = 'Google Sign-In ist nicht konfiguriert. Bitte Admin kontaktieren.';
+                    }
+                    document.getElementById('errorMessage').textContent = errorMsg;
                     document.getElementById('errorModal').classList.add('show');
                 }
             });
             
-            // OAuth Callback Handler
+            // Handle OAuth callback
             const hashParams = new URLSearchParams(window.location.hash.substring(1));
             const accessToken = hashParams.get('access_token');
             if (accessToken) {
-                console.log('OAuth callback detected');
+                console.log('🔑 OAuth callback detected');
                 window.location.href = '/dashboard.html';
             }
-        });
+        }
     </script>
 </body>
 </html>
