@@ -96,17 +96,47 @@
     <script src="js/api.js"></script>
     <script src="js/components.js"></script>
     <script>
-        // Initialize auth on page load
-        document.addEventListener('DOMContentLoaded', async () => {
+        // Wait for everything to be loaded
+        window.addEventListener('DOMContentLoaded', async () => {
+            console.log('🚀 Starting AI Studio...');
+            
+            // Initialize auth system
+            let authReady = false;
+            let attempts = 0;
+            
+            // Wait for auth to be ready
+            while (!authReady && attempts < 20) {
+                if (window.auth && window.auth.initialized) {
+                    authReady = true;
+                    break;
+                }
+                await new Promise(resolve => setTimeout(resolve, 100));
+                attempts++;
+            }
+            
+            if (!authReady) {
+                console.error('❌ Auth system not ready after 2 seconds');
+                document.getElementById('loadingScreen').style.display = 'none';
+                document.getElementById('loginScreen').style.display = 'flex';
+                
+                // Show error message
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'notification notification-error';
+                errorDiv.style.cssText = 'position: fixed; top: 20px; right: 20px; z-index: 1000;';
+                errorDiv.innerHTML = `
+                    <span>⚠️ Supabase nicht konfiguriert. Bitte auth.js anpassen!</span>
+                `;
+                document.body.appendChild(errorDiv);
+                return;
+            }
+            
             try {
                 // Check if already authenticated
-                if (window.auth) {
-                    const isAuth = await window.auth.isAuthenticated();
-                    if (isAuth) {
-                        // Already logged in, redirect to dashboard
-                        window.location.href = '/dashboard.html';
-                        return;
-                    }
+                const isAuth = await window.auth.isAuthenticated();
+                if (isAuth) {
+                    // Already logged in, redirect to dashboard
+                    window.location.href = '/dashboard.html';
+                    return;
                 }
                 
                 // Show login screen
@@ -122,6 +152,16 @@
             // Google Sign In Button
             document.getElementById('googleSignIn').addEventListener('click', async () => {
                 const button = document.getElementById('googleSignIn');
+                
+                // Check if auth is initialized
+                if (!window.auth || !window.auth.initialized) {
+                    console.error('Auth not initialized');
+                    document.getElementById('errorMessage').textContent = 
+                        'Auth System nicht initialisiert. Bitte Seite neu laden.';
+                    document.getElementById('errorModal').classList.add('show');
+                    return;
+                }
+                
                 button.disabled = true;
                 button.innerHTML = '<div class="spinner" style="width: 20px; height: 20px;"></div> Anmelden...';
                 
@@ -133,6 +173,7 @@
                     }
                     
                     // Success - Supabase will handle the redirect
+                    console.log('✅ Sign in initiated, redirecting...');
                     
                 } catch (error) {
                     console.error('Sign in error:', error);
@@ -150,7 +191,11 @@
                     `;
                     
                     // Show error
-                    document.getElementById('errorMessage').textContent = error.message;
+                    let errorMsg = error.message;
+                    if (errorMsg.includes('not configured')) {
+                        errorMsg = 'Supabase ist nicht konfiguriert. Bitte auth.js anpassen!';
+                    }
+                    document.getElementById('errorMessage').textContent = errorMsg;
                     document.getElementById('errorModal').classList.add('show');
                 }
             });
