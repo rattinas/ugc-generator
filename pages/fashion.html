@@ -12,14 +12,11 @@
     
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
-    
-    <!-- Supabase -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-<body data-page="fashion">
+<body>
     <div class="page-container">
         <!-- Header -->
-        <header id="mainHeader" class="main-header">
+        <header class="main-header">
             <div class="header-content">
                 <h1 class="logo" onclick="window.location.href='/dashboard.html'">
                     AI<span>STUDIO</span>
@@ -33,735 +30,178 @@
             </div>
         </header>
 
-        <!-- Breadcrumb -->
-        <nav class="breadcrumb">
-            <a href="../dashboard.html">← Dashboard</a>
-            <span>/</span>
-            <span>Fashion Photography</span>
-        </nav>
-
         <!-- Main Content -->
         <main class="container">
             <div class="page-header">
                 <h1>👗 Fashion & Apparel</h1>
-                <p>Erstelle professionelle Fashion-Fotografie mit AI Models</p>
+                <p>Lade dein Fashion-Produkt hoch und wähle deine Einstellungen</p>
             </div>
 
-            <!-- Step Indicator -->
-            <div id="stepIndicator" class="step-indicator">
-                <div class="step active" data-step="1">
-                    <div class="step-circle">1</div>
-                    <div class="step-label">Upload</div>
-                </div>
-                <div class="step" data-step="2">
-                    <div class="step-circle">2</div>
-                    <div class="step-label">Style</div>
-                </div>
-                <div class="step" data-step="3">
-                    <div class="step-circle">3</div>
-                    <div class="step-label">Scene</div>
-                </div>
-                <div class="step" data-step="4">
-                    <div class="step-circle">4</div>
-                    <div class="step-label">Model</div>
-                </div>
-                <div class="step" data-step="5">
-                    <div class="step-circle">5</div>
-                    <div class="step-label">Review</div>
-                </div>
-            </div>
-
-            <!-- Form -->
-            <form id="fashionForm" class="multi-step-form">
-                <!-- Step 1: Upload -->
-                <div class="form-step active" data-step="1">
-                    <h2>Schritt 1: Fashion-Produkt hochladen</h2>
-                    
+            <!-- Simple Form -->
+            <div class="multi-step-form">
+                <!-- Image Upload -->
+                <div class="form-group">
+                    <label>Fashion-Produkt Bild *</label>
                     <div class="upload-area" id="uploadArea">
-                        <input type="file" id="fashionImage" accept="image/*" style="display: none;">
+                        <input type="file" id="imageFile" accept="image/*" style="display: none;">
                         <div id="uploadPlaceholder">
                             <div class="upload-icon">📸</div>
                             <div class="upload-text">Klicken zum Hochladen</div>
                             <div class="upload-subtext">PNG, JPG oder WebP • Max. 10MB</div>
                         </div>
                         <div id="imagePreview" style="display: none;">
-                            <img id="previewImg" class="preview-img" style="max-width: 100%; max-height: 400px; border-radius: 8px;">
-                            <button type="button" class="remove-image" onclick="removeImage()">×</button>
+                            <img id="previewImg" style="max-width: 100%; max-height: 300px;">
+                            <button type="button" onclick="removeImage()" class="btn btn-small">Entfernen</button>
                         </div>
                     </div>
-                    
+                </div>
+
+                <!-- Quick Settings -->
+                <div class="form-grid">
                     <div class="form-group">
-                        <label>Produkttyp</label>
-                        <select id="productType">
-                            <option value="clothing">Kleidung</option>
-                            <option value="shoes">Schuhe</option>
-                            <option value="accessories">Accessoires</option>
-                            <option value="bags">Taschen</option>
-                            <option value="jewelry">Schmuck</option>
+                        <label>Style</label>
+                        <select id="style">
+                            <option value="ecommerce">E-Commerce (Weißer Hintergrund)</option>
+                            <option value="lifestyle">Lifestyle (Natürlich)</option>
+                            <option value="editorial">Editorial (Magazin)</option>
+                            <option value="street">Street Style</option>
                         </select>
                     </div>
-                </div>
 
-                <!-- Step 2: Style Selection -->
-                <div class="form-step" data-step="2">
-                    <h2>Schritt 2: Fotografie-Style</h2>
-                    
-                    <div class="style-grid">
-                        <div class="style-card" data-style="ecommerce">
-                            <div class="style-icon">🛍️</div>
-                            <h4>E-Commerce</h4>
-                            <p>Clean, weißer Hintergrund</p>
-                        </div>
-                        
-                        <div class="style-card" data-style="editorial">
-                            <div class="style-icon">📸</div>
-                            <h4>Editorial</h4>
-                            <p>Künstlerisch, Magazine-Style</p>
-                        </div>
-                        
-                        <div class="style-card" data-style="lifestyle">
-                            <div class="style-icon">☕</div>
-                            <h4>Lifestyle</h4>
-                            <p>Natürlich, Alltags-Szenen</p>
-                        </div>
-                        
-                        <div class="style-card" data-style="lookbook">
-                            <div class="style-icon">📖</div>
-                            <h4>Lookbook</h4>
-                            <p>Kollektion, Brand-Focus</p>
-                        </div>
-                        
-                        <div class="style-card" data-style="runway">
-                            <div class="style-icon">✨</div>
-                            <h4>Runway</h4>
-                            <p>Catwalk, High Fashion</p>
-                        </div>
-                        
-                        <div class="style-card" data-style="street">
-                            <div class="style-icon">🏙️</div>
-                            <h4>Street Style</h4>
-                            <p>Urban, Trendy</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Step 3: Scene Selection -->
-                <div class="form-step" data-step="3">
-                    <h2>Schritt 3: Szene & Location</h2>
-                    
-                    <div class="scene-grid">
-                        <div class="scene-card" data-scene="studio">Studio</div>
-                        <div class="scene-card" data-scene="outdoor">Outdoor</div>
-                        <div class="scene-card" data-scene="urban">Urban/Stadt</div>
-                        <div class="scene-card" data-scene="nature">Natur</div>
-                        <div class="scene-card" data-scene="beach">Strand</div>
-                        <div class="scene-card" data-scene="cafe">Café</div>
-                        <div class="scene-card" data-scene="home">Zuhause</div>
-                        <div class="scene-card" data-scene="office">Büro</div>
-                        <div class="scene-card" data-scene="party">Event/Party</div>
-                        <div class="scene-card" data-scene="gym">Fitness</div>
-                    </div>
-                    
                     <div class="form-group">
-                        <label>Tageszeit</label>
-                        <select id="timeOfDay">
-                            <option value="morning">Morgen</option>
-                            <option value="noon">Mittag</option>
-                            <option value="golden">Golden Hour</option>
-                            <option value="evening">Abend</option>
-                            <option value="night">Nacht</option>
+                        <label>Model</label>
+                        <select id="model">
+                            <option value="female_young">Weiblich, Jung (18-25)</option>
+                            <option value="female_adult">Weiblich, Erwachsen (25-35)</option>
+                            <option value="male_young">Männlich, Jung (18-25)</option>
+                            <option value="male_adult">Männlich, Erwachsen (25-35)</option>
+                            <option value="diverse">Diverse Gruppe</option>
                         </select>
                     </div>
-                </div>
 
-                <!-- Step 4: Model Configuration -->
-                <div class="form-step" data-step="4">
-                    <h2>Schritt 4: Model konfigurieren</h2>
-                    
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label>Alter</label>
-                            <select id="modelAge">
-                                <option value="18-25">18-25 Jahre</option>
-                                <option value="25-35">25-35 Jahre</option>
-                                <option value="35-45">35-45 Jahre</option>
-                                <option value="45+">45+ Jahre</option>
-                            </select>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label>Geschlecht</label>
-                            <select id="modelGender">
-                                <option value="female">Weiblich</option>
-                                <option value="male">Männlich</option>
-                                <option value="non-binary">Non-Binary</option>
-                                <option value="diverse">Diverse Gruppe</option>
-                            </select>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label>Ethnizität</label>
-                            <select id="modelEthnicity">
-                                <option value="caucasian">Kaukasisch</option>
-                                <option value="african">Afrikanisch</option>
-                                <option value="asian">Asiatisch</option>
-                                <option value="latin">Lateinamerikanisch</option>
-                                <option value="middle-eastern">Nahöstlich</option>
-                                <option value="mixed">Gemischt/Divers</option>
-                            </select>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label>Körpertyp</label>
-                            <select id="modelBody">
-                                <option value="slim">Schlank</option>
-                                <option value="athletic">Athletisch</option>
-                                <option value="average">Durchschnittlich</option>
-                                <option value="curvy">Kurvig</option>
-                                <option value="plus">Plus Size</option>
-                            </select>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label>Haarstyling</label>
-                            <select id="modelHair">
-                                <option value="natural">Natürlich</option>
-                                <option value="styled">Gestylt</option>
-                                <option value="messy">Casual/Messy</option>
-                                <option value="professional">Business</option>
-                                <option value="editorial">Editorial/Kreativ</option>
-                            </select>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label>Makeup</label>
-                            <select id="modelMakeup">
-                                <option value="natural">No-Makeup Look</option>
-                                <option value="light">Leichtes Makeup</option>
-                                <option value="medium">Normales Makeup</option>
-                                <option value="full">Full Glam</option>
-                                <option value="editorial">Editorial/Artistic</option>
-                            </select>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label>Expression</label>
-                            <select id="modelExpression">
-                                <option value="neutral">Neutral</option>
-                                <option value="smile">Lächeln</option>
-                                <option value="serious">Ernst</option>
-                                <option value="confident">Selbstbewusst</option>
-                                <option value="playful">Verspielt</option>
-                            </select>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label>Pose</label>
-                            <select id="modelPose">
-                                <option value="standing">Stehend</option>
-                                <option value="walking">Gehend</option>
-                                <option value="sitting">Sitzend</option>
-                                <option value="dynamic">Dynamisch</option>
-                                <option value="casual">Lässig</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Step 5: Review & Submit -->
-                <div class="form-step" data-step="5">
-                    <h2>Schritt 5: Überprüfen & Generieren</h2>
-                    
-                    <div id="summaryReview" class="summary-review"></div>
-                    
                     <div class="form-group">
-                        <label>Anzahl Variationen</label>
-                        <select id="variationCount">
+                        <label>Scene</label>
+                        <select id="scene">
+                            <option value="studio">Studio</option>
+                            <option value="outdoor">Outdoor</option>
+                            <option value="urban">Urban/Stadt</option>
+                            <option value="home">Zuhause</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Anzahl Bilder</label>
+                        <select id="variations">
                             <option value="1">1 Bild (2 Credits)</option>
                             <option value="2">2 Bilder (4 Credits)</option>
                             <option value="3">3 Bilder (6 Credits)</option>
-                            <option value="4">4 Bilder (8 Credits)</option>
                         </select>
-                    </div>
-                    
-                    <div class="credits-info">
-                        <p>Verfügbare Credits: <strong id="availableCredits">100</strong></p>
-                        <p>Benötigte Credits: <strong id="requiredCredits">2</strong></p>
                     </div>
                 </div>
 
-                <!-- Navigation -->
-                <div class="form-navigation">
-                    <button type="button" class="btn btn-outline" id="prevBtn" style="display: none;">
+                <!-- Additional Details -->
+                <div class="form-group">
+                    <label>Zusätzliche Anweisungen (optional)</label>
+                    <textarea id="instructions" rows="3" placeholder="z.B. Model soll lächeln, goldene Stunde, bewegte Pose..."></textarea>
+                </div>
+
+                <!-- Submit -->
+                <div class="form-navigation" style="margin-top: 30px;">
+                    <button type="button" class="btn btn-outline" onclick="window.location.href='/dashboard.html'">
                         ← Zurück
                     </button>
-                    <button type="button" class="btn btn-primary" id="nextBtn">
-                        Weiter →
-                    </button>
-                    <button type="button" class="btn btn-accent" id="submitBtn" style="display: none;">
+                    <button type="button" class="btn btn-accent" id="submitBtn" onclick="submitToMake()">
                         🚀 Bilder generieren
                     </button>
                 </div>
-            </form>
+
+                <div class="credits-info" style="margin-top: 20px;">
+                    <p>Benötigte Credits: <strong id="requiredCredits">2</strong></p>
+                </div>
+            </div>
         </main>
     </div>
 
     <script>
-        // ============================================
-        // FASHION PHOTOGRAPHY MODULE - COMPLETE
-        // ============================================
-        
-        let currentStep = 1;
-        const totalSteps = 5;
-        let uploadedImageBase64 = null;
-        
-        // Form Data Object für Make.com
-        let formData = {
-            agent: 'fashion',
-            projectType: 'fashion',
-            image: null,
-            imageUrl: null,
-            productType: '',
-            style: '',
-            scene: '',
-            timeOfDay: '',
-            model: {
-                age: '',
-                gender: '',
-                ethnicity: '',
-                body: '',
-                hair: '',
-                makeup: '',
-                expression: '',
-                pose: ''
-            },
-            variations: 1,
-            prompt_instructions: {}
-        };
+        let uploadedImage = null;
 
-        // ============================================
-        // INITIALIZATION
-        // ============================================
-        document.addEventListener('DOMContentLoaded', () => {
-            console.log('✅ Fashion Module Loaded');
-            initializeModule();
+        // Image Upload
+        document.getElementById('uploadArea').addEventListener('click', () => {
+            document.getElementById('imageFile').click();
         });
 
-        function initializeModule() {
-            setupImageUpload();
-            setupStyleSelection();
-            setupSceneSelection();
-            setupNavigation();
-            setupVariationControl();
-            updateStepIndicator();
-        }
-
-        // ============================================
-        // IMAGE UPLOAD
-        // ============================================
-        function setupImageUpload() {
-            const uploadArea = document.getElementById('uploadArea');
-            const fileInput = document.getElementById('fashionImage');
-            
-            uploadArea.addEventListener('click', (e) => {
-                if (e.target.closest('.remove-image')) return;
-                fileInput.click();
-            });
-            
-            fileInput.addEventListener('change', handleImageUpload);
-        }
-
-        async function handleImageUpload(e) {
+        document.getElementById('imageFile').addEventListener('change', (e) => {
             const file = e.target.files[0];
-            if (!file) return;
-            
-            // Validate file
-            if (!file.type.startsWith('image/')) {
-                alert('Bitte nur Bilder hochladen');
-                return;
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    uploadedImage = e.target.result;
+                    document.getElementById('previewImg').src = uploadedImage;
+                    document.getElementById('uploadPlaceholder').style.display = 'none';
+                    document.getElementById('imagePreview').style.display = 'block';
+                };
+                reader.readAsDataURL(file);
             }
-            
-            if (file.size > 10 * 1024 * 1024) {
-                alert('Datei zu groß (max. 10MB)');
-                return;
-            }
-            
-            console.log('📸 Image selected:', file.name);
-            
-            // Convert to base64
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                uploadedImageBase64 = e.target.result;
-                formData.image = uploadedImageBase64;
-                
-                // Show preview
-                document.getElementById('previewImg').src = uploadedImageBase64;
-                document.getElementById('uploadPlaceholder').style.display = 'none';
-                document.getElementById('imagePreview').style.display = 'block';
-            };
-            reader.readAsDataURL(file);
-        }
+        });
 
         function removeImage() {
-            uploadedImageBase64 = null;
-            formData.image = null;
-            document.getElementById('fashionImage').value = '';
+            uploadedImage = null;
+            document.getElementById('imageFile').value = '';
             document.getElementById('uploadPlaceholder').style.display = 'block';
             document.getElementById('imagePreview').style.display = 'none';
         }
 
-        // ============================================
-        // STYLE & SCENE SELECTION
-        // ============================================
-        function setupStyleSelection() {
-            document.querySelectorAll('.style-card').forEach(card => {
-                card.addEventListener('click', function() {
-                    document.querySelectorAll('.style-card').forEach(c => c.classList.remove('selected'));
-                    this.classList.add('selected');
-                    formData.style = this.dataset.style;
-                    console.log('Style selected:', formData.style);
-                });
-            });
-        }
+        // Update credits
+        document.getElementById('variations').addEventListener('change', (e) => {
+            const credits = parseInt(e.target.value) * 2;
+            document.getElementById('requiredCredits').textContent = credits;
+        });
 
-        function setupSceneSelection() {
-            document.querySelectorAll('.scene-card').forEach(card => {
-                card.addEventListener('click', function() {
-                    document.querySelectorAll('.scene-card').forEach(c => c.classList.remove('selected'));
-                    this.classList.add('selected');
-                    formData.scene = this.dataset.scene;
-                    console.log('Scene selected:', formData.scene);
-                });
-            });
-        }
-
-        // ============================================
-        // NAVIGATION
-        // ============================================
-        function setupNavigation() {
-            document.getElementById('nextBtn').addEventListener('click', nextStep);
-            document.getElementById('prevBtn').addEventListener('click', prevStep);
-            document.getElementById('submitBtn').addEventListener('click', submitForm);
-        }
-
-        function nextStep() {
-            if (!validateCurrentStep()) return;
-            
-            if (currentStep < totalSteps) {
-                currentStep++;
-                showStep(currentStep);
-                updateStepIndicator();
+        // Submit to Make.com
+        async function submitToMake() {
+            if (!uploadedImage) {
+                alert('Bitte lade ein Bild hoch!');
+                return;
             }
-        }
 
-        function prevStep() {
-            if (currentStep > 1) {
-                currentStep--;
-                showStep(currentStep);
-                updateStepIndicator();
-            }
-        }
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = true;
+            btn.textContent = '⏳ Wird gesendet...';
 
-        function showStep(step) {
-            // Hide all steps
-            document.querySelectorAll('.form-step').forEach(s => {
-                s.classList.remove('active');
-            });
-            
-            // Show current step
-            document.querySelector(`[data-step="${step}"]`).classList.add('active');
-            
-            // Update navigation buttons
-            document.getElementById('prevBtn').style.display = step === 1 ? 'none' : 'block';
-            document.getElementById('nextBtn').style.display = step === totalSteps ? 'none' : 'block';
-            document.getElementById('submitBtn').style.display = step === totalSteps ? 'block' : 'none';
-            
-            // Update review on last step
-            if (step === totalSteps) {
-                updateReview();
-            }
-        }
-
-        function updateStepIndicator() {
-            document.querySelectorAll('.step').forEach((step, index) => {
-                if (index + 1 < currentStep) {
-                    step.classList.add('completed');
-                    step.classList.remove('active');
-                } else if (index + 1 === currentStep) {
-                    step.classList.add('active');
-                    step.classList.remove('completed');
-                } else {
-                    step.classList.remove('active', 'completed');
-                }
-            });
-        }
-
-        // ============================================
-        // VALIDATION
-        // ============================================
-        function validateCurrentStep() {
-            switch(currentStep) {
-                case 1:
-                    if (!formData.image) {
-                        alert('Bitte lade ein Fashion-Produkt hoch');
-                        return false;
-                    }
-                    formData.productType = document.getElementById('productType').value;
-                    return true;
-                    
-                case 2:
-                    if (!formData.style) {
-                        alert('Bitte wähle einen Fotografie-Style');
-                        return false;
-                    }
-                    return true;
-                    
-                case 3:
-                    if (!formData.scene) {
-                        alert('Bitte wähle eine Szene');
-                        return false;
-                    }
-                    formData.timeOfDay = document.getElementById('timeOfDay').value;
-                    return true;
-                    
-                case 4:
-                    // Collect model data
-                    formData.model = {
-                        age: document.getElementById('modelAge').value,
-                        gender: document.getElementById('modelGender').value,
-                        ethnicity: document.getElementById('modelEthnicity').value,
-                        body: document.getElementById('modelBody').value,
-                        hair: document.getElementById('modelHair').value,
-                        makeup: document.getElementById('modelMakeup').value,
-                        expression: document.getElementById('modelExpression').value,
-                        pose: document.getElementById('modelPose').value
-                    };
-                    return true;
-                    
-                default:
-                    return true;
-            }
-        }
-
-        // ============================================
-        // REVIEW & CREDITS
-        // ============================================
-        function setupVariationControl() {
-            document.getElementById('variationCount')?.addEventListener('change', (e) => {
-                formData.variations = parseInt(e.target.value);
-                updateCreditsDisplay();
-            });
-        }
-
-        function updateReview() {
-            const review = document.getElementById('summaryReview');
-            review.innerHTML = `
-                <h3>Zusammenfassung deiner Fashion-Fotografie</h3>
-                <div class="summary-item">
-                    <span class="summary-label">Produkttyp:</span>
-                    <span class="summary-value">${formData.productType}</span>
-                </div>
-                <div class="summary-item">
-                    <span class="summary-label">Style:</span>
-                    <span class="summary-value">${formData.style}</span>
-                </div>
-                <div class="summary-item">
-                    <span class="summary-label">Szene:</span>
-                    <span class="summary-value">${formData.scene} (${formData.timeOfDay})</span>
-                </div>
-                <div class="summary-item">
-                    <span class="summary-label">Model:</span>
-                    <span class="summary-value">${formData.model.gender}, ${formData.model.age}</span>
-                </div>
-                <div class="summary-item">
-                    <span class="summary-label">Pose & Expression:</span>
-                    <span class="summary-value">${formData.model.pose}, ${formData.model.expression}</span>
-                </div>
-                <div class="summary-item">
-                    <span class="summary-label">Variationen:</span>
-                    <span class="summary-value">${formData.variations} Bilder</span>
-                </div>
-            `;
-            updateCreditsDisplay();
-        }
-
-        function updateCreditsDisplay() {
-            const requiredCredits = formData.variations * 2;
-            document.getElementById('requiredCredits').textContent = requiredCredits;
-            
-            // Get available credits from header
-            const availableCredits = parseInt(document.getElementById('creditsAmount')?.textContent || 100);
-            document.getElementById('availableCredits').textContent = availableCredits;
-            
-            // Enable/disable submit based on credits
-            const submitBtn = document.getElementById('submitBtn');
-            if (submitBtn) {
-                if (availableCredits < requiredCredits) {
-                    submitBtn.disabled = true;
-                    submitBtn.textContent = '❌ Nicht genug Credits';
-                } else {
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = '🚀 Bilder generieren';
-                }
-            }
-        }
-
-        // ============================================
-        // SUBMIT TO MAKE.COM
-        // ============================================
-        async function submitForm() {
-            console.log('🚀 Submitting Fashion Photography Request...');
-            
-            const submitBtn = document.getElementById('submitBtn');
-            submitBtn.disabled = true;
-            submitBtn.textContent = '⏳ Wird verarbeitet...';
-            
             try {
-                // Build prompt instructions based on PROMPT_MATRIX
-                formData.prompt_instructions = {
-                    orchestrator: buildOrchestratorPrompt(),
-                    imageGen: buildImageGenPrompt(),
-                    scenario: getScenarioPrompt()
-                };
-                
-                // Upload image first
-                const imageUrl = await uploadImage();
-                formData.imageUrl = imageUrl;
-                
-                // Prepare final payload for Make.com
-                const payload = {
-                    user_id: localStorage.getItem('ai_studio_user') ? JSON.parse(localStorage.getItem('ai_studio_user')).id : 'anonymous',
-                    project_type: 'fashion',
-                    agent: 'fashion',
-                    specifications: formData,
-                    image_url: imageUrl,
-                    credits_needed: formData.variations * 2,
+                // Collect all data
+                const data = {
+                    webhook_type: 'fashion_photography',
+                    image: uploadedImage,
+                    style: document.getElementById('style').value,
+                    model: document.getElementById('model').value,
+                    scene: document.getElementById('scene').value,
+                    variations: document.getElementById('variations').value,
+                    instructions: document.getElementById('instructions').value,
                     timestamp: new Date().toISOString()
                 };
-                
-                console.log('📤 Sending to Make.com:', payload);
-                
+
+                console.log('Sending to Make.com:', data);
+
                 // Send to webhook
                 const response = await fetch('/api/webhook', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(payload)
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
                 });
-                
-                if (!response.ok) {
-                    throw new Error(`Server error: ${response.status}`);
-                }
-                
-                const result = await response.json();
-                
-                if (result.success) {
-                    alert('✅ Erfolgreich! Deine Fashion-Bilder werden in 2-3 Minuten generiert und per Slack zugestellt.');
-                    setTimeout(() => {
-                        window.location.href = '/dashboard.html';
-                    }, 2000);
+
+                if (response.ok) {
+                    alert('✅ Erfolgreich! Bilder werden in 2-3 Minuten per Slack geliefert.');
+                    setTimeout(() => window.location.href = '/dashboard.html', 2000);
                 } else {
-                    throw new Error(result.error || 'Unbekannter Fehler');
+                    throw new Error('Webhook failed');
                 }
-                
+
             } catch (error) {
-                console.error('❌ Submit error:', error);
-                alert('Fehler: ' + error.message);
-                submitBtn.disabled = false;
-                submitBtn.textContent = '🚀 Bilder generieren';
+                alert('❌ Fehler: ' + error.message);
+                btn.disabled = false;
+                btn.textContent = '🚀 Bilder generieren';
             }
-        }
-
-        async function uploadImage() {
-            if (!formData.image) throw new Error('Kein Bild vorhanden');
-            
-            const response = await fetch('/api/upload', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ image: formData.image })
-            });
-            
-            if (!response.ok) {
-                throw new Error('Bild-Upload fehlgeschlagen');
-            }
-            
-            const result = await response.json();
-            return result.imageUrl;
-        }
-
-        // ============================================
-        // PROMPT BUILDERS (Based on PROMPT_MATRIX)
-        // ============================================
-        function buildOrchestratorPrompt() {
-            return {
-                shot_composition: {
-                    type: formData.model.pose === 'sitting' ? 'three_quarter' : 'full_body',
-                    angle: 'eye_level',
-                    orientation: 'portrait'
-                },
-                model_direction: {
-                    pose: {
-                        body: formData.model.pose,
-                        expression: formData.model.expression
-                    }
-                },
-                styling: {
-                    garment_arrangement: 'natural',
-                    fit_emphasis: formData.productType === 'clothing' ? 'fitted' : 'natural'
-                },
-                environment: {
-                    location: formData.scene,
-                    lighting: formData.timeOfDay
-                },
-                brand_alignment: {
-                    aesthetic: formData.style,
-                    target_age: formData.model.age
-                }
-            };
-        }
-
-        function buildImageGenPrompt() {
-            return `Generate professional fashion photography:
-                - Product: ${formData.productType}
-                - Style: ${formData.style} fashion photography
-                - Scene: ${formData.scene} location during ${formData.timeOfDay}
-                - Model: ${formData.model.gender}, ${formData.model.age} years old, ${formData.model.ethnicity} ethnicity
-                - Body type: ${formData.model.body}
-                - Hair: ${formData.model.hair}
-                - Makeup: ${formData.model.makeup}
-                - Expression: ${formData.model.expression}
-                - Pose: ${formData.model.pose}
-                
-                CRITICAL: Model must naturally wear/display the uploaded fashion product.
-                Style: ${getStyleDescription(formData.style)}
-                Quality: Photorealistic, professional fashion photography`;
-        }
-
-        function getScenarioPrompt() {
-            const scenarios = {
-                ecommerce: "White background, consistent lighting, clear product visibility, multiple angles",
-                editorial: "Creative composition, dramatic lighting, artistic expression, story element",
-                lifestyle: "Real environment, natural movement, relatable scenario, authentic emotion",
-                lookbook: "Cohesive styling, brand aesthetic, seasonal context, outfit coordination",
-                runway: "Catwalk setting, dramatic lighting, movement captured, designer focus",
-                street: "Urban environment, trendy styling, candid feeling, youth culture"
-            };
-            return scenarios[formData.style] || scenarios.lifestyle;
-        }
-
-        function getStyleDescription(style) {
-            const descriptions = {
-                ecommerce: "Clean, consistent, product-focused with perfect lighting",
-                editorial: "Artistic, mood-driven, storytelling with creative composition",
-                lifestyle: "Relatable, aspirational, contextual in real-world settings",
-                lookbook: "Brand-focused, cohesive collection presentation",
-                runway: "High fashion, dramatic, movement and designer focus",
-                street: "Urban, trendy, authentic street style photography"
-            };
-            return descriptions[style] || descriptions.lifestyle;
         }
     </script>
 </body>
