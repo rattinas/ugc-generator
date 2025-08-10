@@ -203,11 +203,11 @@
                 button.innerHTML = '<div class="spinner" style="width: 20px; height: 20px;"></div> Anmelden...';
 
                 try {
-                    // Sign in with Google
+                    // Sign in with Google - Direct redirect ohne callback page
                     const { data, error } = await supabase.auth.signInWithOAuth({
                         provider: 'google',
                         options: {
-                            redirectTo: 'https://go2flow-image-bay.vercel.app/auth-callback.html'
+                            redirectTo: 'https://go2flow-image-bay.vercel.app/'  // Zurück zur index, nicht zu callback
                         }
                     });
 
