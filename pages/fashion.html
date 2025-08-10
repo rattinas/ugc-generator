@@ -13,7 +13,7 @@
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
 </head>
-<body>
+<body data-page="fashion">
     <div class="page-container">
         <!-- Header -->
         <header class="main-header">
@@ -22,10 +22,7 @@
                     AI<span>STUDIO</span>
                 </h1>
                 <div class="user-menu">
-                    <div class="credits-display">
-                        <span class="credits-icon">💳</span>
-                        <span id="creditsAmount">100</span> Credits
-                    </div>
+                    <span id="userEmail">User</span>
                 </div>
             </div>
         </header>
@@ -34,14 +31,15 @@
         <main class="container">
             <div class="page-header">
                 <h1>👗 Fashion & Apparel</h1>
-                <p>Lade dein Fashion-Produkt hoch und wähle deine Einstellungen</p>
+                <p>Erstelle professionelle Fashion-Fotografie mit erweiterten Optionen</p>
             </div>
 
-            <!-- Simple Form -->
+            <!-- Multi-Step Form -->
             <div class="multi-step-form">
-                <!-- Image Upload -->
-                <div class="form-group">
-                    <label>Fashion-Produkt Bild *</label>
+                <!-- Step 1: Image Upload -->
+                <div class="form-step active" data-step="1">
+                    <h2>Schritt 1: Fashion-Produkt hochladen</h2>
+                    
                     <div class="upload-area" id="uploadArea">
                         <input type="file" id="imageFile" accept="image/*" style="display: none;">
                         <div id="uploadPlaceholder">
@@ -50,87 +48,283 @@
                             <div class="upload-subtext">PNG, JPG oder WebP • Max. 10MB</div>
                         </div>
                         <div id="imagePreview" style="display: none;">
-                            <img id="previewImg" style="max-width: 100%; max-height: 300px;">
-                            <button type="button" onclick="removeImage()" class="btn btn-small">Entfernen</button>
+                            <img id="previewImg" style="max-width: 100%; max-height: 300px; border-radius: 8px;">
+                            <button type="button" onclick="removeImage()" class="btn btn-small" style="margin-top: 10px;">Entfernen</button>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group" style="margin-top: 20px;">
+                        <label>Produktkategorie *</label>
+                        <select id="productCategory" required>
+                            <option value="">Wähle eine Kategorie</option>
+                            <option value="shirt">Shirt/Hemd</option>
+                            <option value="dress">Kleid</option>
+                            <option value="pants">Hose</option>
+                            <option value="jacket">Jacke</option>
+                            <option value="shoes">Schuhe</option>
+                            <option value="bag">Tasche</option>
+                            <option value="accessories">Accessoires</option>
+                            <option value="sportswear">Sportbekleidung</option>
+                            <option value="underwear">Unterwäsche</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Step 2: Photography Style -->
+                <div class="form-step" data-step="2">
+                    <h2>Schritt 2: Fotografie-Stil</h2>
+                    
+                    <div class="style-grid">
+                        <div class="style-card" data-style="professional">
+                            <div class="style-icon">📷</div>
+                            <h4>Professional</h4>
+                            <p>Studio-Qualität mit perfekter Beleuchtung</p>
+                        </div>
+                        
+                        <div class="style-card" data-style="ugc">
+                            <div class="style-icon">📱</div>
+                            <h4>UGC Content</h4>
+                            <p>Authentisch, wie von Kunden gemacht</p>
+                        </div>
+                        
+                        <div class="style-card" data-style="mirror-selfie">
+                            <div class="style-icon">🪞</div>
+                            <h4>Spiegel-Selfie</h4>
+                            <p>Trendy Mirror-Selfie Style</p>
+                        </div>
+                        
+                        <div class="style-card" data-style="iphone">
+                            <div class="style-icon">📲</div>
+                            <h4>iPhone Shot</h4>
+                            <p>Mobile Photography Look</p>
+                        </div>
+                        
+                        <div class="style-card" data-style="lifestyle">
+                            <div class="style-icon">🌟</div>
+                            <h4>Lifestyle</h4>
+                            <p>Natürlicher Alltags-Look</p>
+                        </div>
+                        
+                        <div class="style-card" data-style="editorial">
+                            <div class="style-icon">📖</div>
+                            <h4>Editorial</h4>
+                            <p>High-Fashion Magazin Style</p>
+                        </div>
+                    </div>
+                    
+                    <!-- iPhone Model Selection (appears when iPhone style selected) -->
+                    <div id="iphoneOptions" style="display: none; margin-top: 20px;">
+                        <label>iPhone Modell:</label>
+                        <select id="iphoneModel">
+                            <option value="iphone-15-pro">iPhone 15 Pro</option>
+                            <option value="iphone-14-pro">iPhone 14 Pro</option>
+                            <option value="iphone-13-pro">iPhone 13 Pro</option>
+                            <option value="iphone-12">iPhone 12</option>
+                            <option value="android">Android Flagship</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Step 3: Model & Action -->
+                <div class="form-step" data-step="3">
+                    <h2>Schritt 3: Model & Aktion</h2>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Aktion/Pose</label>
+                            <select id="modelAction">
+                                <option value="wearing">Trägt das Produkt</option>
+                                <option value="holding">Hält das Produkt</option>
+                                <option value="trying-on">Probiert an</option>
+                                <option value="walking">Gehend/Laufend</option>
+                                <option value="sitting">Sitzend</option>
+                                <option value="posing">Posierend</option>
+                                <option value="mirror-pose">Spiegel-Pose</option>
+                                <option value="casual-selfie">Casual Selfie</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Model Typ</label>
+                            <select id="modelType">
+                                <option value="female-young">Weiblich (18-25)</option>
+                                <option value="female-adult">Weiblich (25-35)</option>
+                                <option value="female-mature">Weiblich (35+)</option>
+                                <option value="male-young">Männlich (18-25)</option>
+                                <option value="male-adult">Männlich (25-35)</option>
+                                <option value="male-mature">Männlich (35+)</option>
+                                <option value="diverse">Diverse/Non-Binary</option>
+                                <option value="group">Gruppe</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Körpertyp</label>
+                            <select id="bodyType">
+                                <option value="slim">Schlank</option>
+                                <option value="athletic">Athletisch</option>
+                                <option value="average">Durchschnitt</option>
+                                <option value="curvy">Kurvig</option>
+                                <option value="plus-size">Plus Size</option>
+                                <option value="diverse">Diverse</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Ethnizität</label>
+                            <select id="ethnicity">
+                                <option value="caucasian">Kaukasisch</option>
+                                <option value="african">Afrikanisch</option>
+                                <option value="asian">Asiatisch</option>
+                                <option value="latin">Lateinamerikanisch</option>
+                                <option value="middle-eastern">Nahöstlich</option>
+                                <option value="mixed">Gemischt</option>
+                                <option value="diverse">Diverse</option>
+                            </select>
                         </div>
                     </div>
                 </div>
 
-                <!-- Quick Settings -->
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label>Style</label>
-                        <select id="style">
-                            <option value="ecommerce">E-Commerce (Weißer Hintergrund)</option>
-                            <option value="lifestyle">Lifestyle (Natürlich)</option>
-                            <option value="editorial">Editorial (Magazin)</option>
-                            <option value="street">Street Style</option>
-                        </select>
+                <!-- Step 4: Scene & Environment -->
+                <div class="form-step" data-step="4">
+                    <h2>Schritt 4: Szene & Umgebung</h2>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Location</label>
+                            <select id="location">
+                                <option value="studio">Studio (Clean)</option>
+                                <option value="bedroom">Schlafzimmer</option>
+                                <option value="bathroom">Badezimmer (für Spiegel)</option>
+                                <option value="street">Straße/Urban</option>
+                                <option value="home">Zuhause</option>
+                                <option value="cafe">Café</option>
+                                <option value="park">Park/Natur</option>
+                                <option value="gym">Fitnessstudio</option>
+                                <option value="office">Büro</option>
+                                <option value="store">Umkleidekabine</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Tageszeit/Licht</label>
+                            <select id="lighting">
+                                <option value="natural">Natürliches Tageslicht</option>
+                                <option value="golden-hour">Golden Hour</option>
+                                <option value="studio">Studio-Beleuchtung</option>
+                                <option value="flash">Blitz (Phone)</option>
+                                <option value="indoor">Indoor Ambient</option>
+                                <option value="night">Nacht/Party</option>
+                                <option value="ring-light">Ring Light (Influencer)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Stimmung</label>
+                            <select id="mood">
+                                <option value="casual">Casual/Entspannt</option>
+                                <option value="confident">Selbstbewusst</option>
+                                <option value="playful">Verspielt</option>
+                                <option value="elegant">Elegant</option>
+                                <option value="edgy">Edgy/Cool</option>
+                                <option value="natural">Natürlich</option>
+                                <option value="glamorous">Glamourös</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Social Media Style</label>
+                            <select id="socialStyle">
+                                <option value="instagram">Instagram Feed</option>
+                                <option value="instagram-story">Instagram Story</option>
+                                <option value="tiktok">TikTok Style</option>
+                                <option value="pinterest">Pinterest Aesthetic</option>
+                                <option value="none">Kein spezifischer Style</option>
+                            </select>
+                        </div>
                     </div>
+                </div>
 
+                <!-- Step 5: Details & Submit -->
+                <div class="form-step" data-step="5">
+                    <h2>Schritt 5: Details & Generieren</h2>
+                    
                     <div class="form-group">
-                        <label>Model</label>
-                        <select id="model">
-                            <option value="female_young">Weiblich, Jung (18-25)</option>
-                            <option value="female_adult">Weiblich, Erwachsen (25-35)</option>
-                            <option value="male_young">Männlich, Jung (18-25)</option>
-                            <option value="male_adult">Männlich, Erwachsen (25-35)</option>
-                            <option value="diverse">Diverse Gruppe</option>
-                        </select>
+                        <label>Zusätzliche Anweisungen (optional)</label>
+                        <textarea id="additionalInstructions" rows="4" 
+                                  placeholder="z.B. Model soll lächeln, Handy in der Hand halten, bestimmte Pose..."></textarea>
                     </div>
-
+                    
                     <div class="form-group">
-                        <label>Scene</label>
-                        <select id="scene">
-                            <option value="studio">Studio</option>
-                            <option value="outdoor">Outdoor</option>
-                            <option value="urban">Urban/Stadt</option>
-                            <option value="home">Zuhause</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Anzahl Bilder</label>
+                        <label>Anzahl Variationen</label>
                         <select id="variations">
-                            <option value="1">1 Bild (2 Credits)</option>
-                            <option value="2">2 Bilder (4 Credits)</option>
-                            <option value="3">3 Bilder (6 Credits)</option>
+                            <option value="1">1 Bild</option>
+                            <option value="2">2 Bilder</option>
+                            <option value="3">3 Bilder</option>
+                            <option value="4">4 Bilder</option>
                         </select>
+                    </div>
+                    
+                    <!-- Summary -->
+                    <div class="summary-review" style="margin: 20px 0; padding: 20px; background: #f5f5f5; border-radius: 8px;">
+                        <h3>Zusammenfassung</h3>
+                        <div id="summaryContent"></div>
                     </div>
                 </div>
 
-                <!-- Additional Details -->
-                <div class="form-group">
-                    <label>Zusätzliche Anweisungen (optional)</label>
-                    <textarea id="instructions" rows="3" placeholder="z.B. Model soll lächeln, goldene Stunde, bewegte Pose..."></textarea>
-                </div>
-
-                <!-- Submit -->
-                <div class="form-navigation" style="margin-top: 30px;">
-                    <button type="button" class="btn btn-outline" onclick="window.location.href='/dashboard.html'">
+                <!-- Navigation -->
+                <div class="form-navigation" style="margin-top: 30px; display: flex; justify-content: space-between;">
+                    <button type="button" class="btn btn-outline" id="prevBtn" onclick="previousStep()">
                         ← Zurück
                     </button>
-                    <button type="button" class="btn btn-accent" id="submitBtn" onclick="submitToMake()">
+                    <button type="button" class="btn btn-primary" id="nextBtn" onclick="nextStep()">
+                        Weiter →
+                    </button>
+                    <button type="button" class="btn btn-accent" id="submitBtn" onclick="submitToMake()" style="display: none;">
                         🚀 Bilder generieren
                     </button>
-                </div>
-
-                <div class="credits-info" style="margin-top: 20px;">
-                    <p>Benötigte Credits: <strong id="requiredCredits">2</strong></p>
                 </div>
             </div>
         </main>
     </div>
 
     <script>
+        let currentStep = 1;
+        const totalSteps = 5;
         let uploadedImage = null;
+        let formData = {};
 
-        // Image Upload
-        document.getElementById('uploadArea').addEventListener('click', () => {
-            document.getElementById('imageFile').click();
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            updateStepDisplay();
+            setupEventListeners();
         });
 
-        document.getElementById('imageFile').addEventListener('change', (e) => {
+        function setupEventListeners() {
+            // Image Upload
+            document.getElementById('uploadArea').addEventListener('click', () => {
+                document.getElementById('imageFile').click();
+            });
+
+            document.getElementById('imageFile').addEventListener('change', handleImageUpload);
+
+            // Style Cards
+            document.querySelectorAll('.style-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    document.querySelectorAll('.style-card').forEach(c => c.classList.remove('selected'));
+                    this.classList.add('selected');
+                    
+                    const style = this.dataset.style;
+                    formData.style = style;
+                    
+                    // Show iPhone options if iPhone style selected
+                    document.getElementById('iphoneOptions').style.display = 
+                        style === 'iphone' ? 'block' : 'none';
+                });
+            });
+        }
+
+        function handleImageUpload(e) {
             const file = e.target.files[0];
             if (file && file.type.startsWith('image/')) {
                 const reader = new FileReader();
@@ -142,7 +336,7 @@
                 };
                 reader.readAsDataURL(file);
             }
-        });
+        }
 
         function removeImage() {
             uploadedImage = null;
@@ -151,47 +345,137 @@
             document.getElementById('imagePreview').style.display = 'none';
         }
 
-        // Update credits
-        document.getElementById('variations').addEventListener('change', (e) => {
-            const credits = parseInt(e.target.value) * 2;
-            document.getElementById('requiredCredits').textContent = credits;
-        });
-
-        // Submit to Make.com
-        async function submitToMake() {
-            if (!uploadedImage) {
-                alert('Bitte lade ein Bild hoch!');
-                return;
+        function nextStep() {
+            if (validateCurrentStep()) {
+                if (currentStep < totalSteps) {
+                    currentStep++;
+                    updateStepDisplay();
+                    
+                    if (currentStep === totalSteps) {
+                        updateSummary();
+                    }
+                }
             }
+        }
 
+        function previousStep() {
+            if (currentStep > 1) {
+                currentStep--;
+                updateStepDisplay();
+            }
+        }
+
+        function updateStepDisplay() {
+            // Hide all steps
+            document.querySelectorAll('.form-step').forEach(step => {
+                step.classList.remove('active');
+            });
+            
+            // Show current step
+            document.querySelector(`[data-step="${currentStep}"]`).classList.add('active');
+            
+            // Update navigation buttons
+            document.getElementById('prevBtn').style.display = currentStep === 1 ? 'none' : 'block';
+            document.getElementById('nextBtn').style.display = currentStep === totalSteps ? 'none' : 'block';
+            document.getElementById('submitBtn').style.display = currentStep === totalSteps ? 'block' : 'none';
+        }
+
+        function validateCurrentStep() {
+            switch(currentStep) {
+                case 1:
+                    if (!uploadedImage) {
+                        alert('Bitte lade ein Bild hoch!');
+                        return false;
+                    }
+                    formData.category = document.getElementById('productCategory').value;
+                    if (!formData.category) {
+                        alert('Bitte wähle eine Produktkategorie!');
+                        return false;
+                    }
+                    return true;
+                    
+                case 2:
+                    if (!formData.style) {
+                        alert('Bitte wähle einen Fotografie-Stil!');
+                        return false;
+                    }
+                    if (formData.style === 'iphone') {
+                        formData.iphoneModel = document.getElementById('iphoneModel').value;
+                    }
+                    return true;
+                    
+                case 3:
+                    formData.modelAction = document.getElementById('modelAction').value;
+                    formData.modelType = document.getElementById('modelType').value;
+                    formData.bodyType = document.getElementById('bodyType').value;
+                    formData.ethnicity = document.getElementById('ethnicity').value;
+                    return true;
+                    
+                case 4:
+                    formData.location = document.getElementById('location').value;
+                    formData.lighting = document.getElementById('lighting').value;
+                    formData.mood = document.getElementById('mood').value;
+                    formData.socialStyle = document.getElementById('socialStyle').value;
+                    return true;
+                    
+                case 5:
+                    formData.instructions = document.getElementById('additionalInstructions').value;
+                    formData.variations = document.getElementById('variations').value;
+                    return true;
+                    
+                default:
+                    return true;
+            }
+        }
+
+        function updateSummary() {
+            const summary = `
+                <p><strong>Kategorie:</strong> ${formData.category}</p>
+                <p><strong>Stil:</strong> ${formData.style}${formData.iphoneModel ? ' (' + formData.iphoneModel + ')' : ''}</p>
+                <p><strong>Aktion:</strong> ${formData.modelAction}</p>
+                <p><strong>Model:</strong> ${formData.modelType}</p>
+                <p><strong>Location:</strong> ${formData.location}</p>
+                <p><strong>Variationen:</strong> ${formData.variations}</p>
+            `;
+            document.getElementById('summaryContent').innerHTML = summary;
+        }
+
+        async function submitToMake() {
             const btn = document.getElementById('submitBtn');
             btn.disabled = true;
             btn.textContent = '⏳ Wird gesendet...';
 
             try {
-                // Collect all data
-                const data = {
+                // Get Drive folder from localStorage
+                const driveFolder = localStorage.getItem('drive_folder_link');
+                if (!driveFolder) {
+                    alert('Bitte konfiguriere zuerst deinen Google Drive Ordner im Dashboard!');
+                    window.location.href = '/dashboard.html';
+                    return;
+                }
+
+                // Prepare data for Make.com
+                const webhookData = {
                     webhook_type: 'fashion_photography',
                     image: uploadedImage,
-                    style: document.getElementById('style').value,
-                    model: document.getElementById('model').value,
-                    scene: document.getElementById('scene').value,
-                    variations: document.getElementById('variations').value,
-                    instructions: document.getElementById('instructions').value,
-                    timestamp: new Date().toISOString()
+                    drive_folder: driveFolder,
+                    specifications: formData,
+                    prompt_matrix: generatePromptMatrix(),
+                    timestamp: new Date().toISOString(),
+                    user: localStorage.getItem('ai_studio_user') ? JSON.parse(localStorage.getItem('ai_studio_user')).email : 'unknown'
                 };
 
-                console.log('Sending to Make.com:', data);
+                console.log('Sending to Make.com:', webhookData);
 
                 // Send to webhook
                 const response = await fetch('/api/webhook', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
+                    body: JSON.stringify(webhookData)
                 });
 
                 if (response.ok) {
-                    alert('✅ Erfolgreich! Bilder werden in 2-3 Minuten per Slack geliefert.');
+                    alert('✅ Erfolgreich! Bilder werden generiert und in deinem Google Drive Ordner gespeichert.');
                     setTimeout(() => window.location.href = '/dashboard.html', 2000);
                 } else {
                     throw new Error('Webhook failed');
@@ -202,6 +486,45 @@
                 btn.disabled = false;
                 btn.textContent = '🚀 Bilder generieren';
             }
+        }
+
+        function generatePromptMatrix() {
+            // Generate detailed prompt based on PROMPT_MATRIX structure
+            const action = formData.modelAction === 'wearing' ? 'wearing and showcasing' :
+                          formData.modelAction === 'holding' ? 'holding and presenting' :
+                          formData.modelAction === 'trying-on' ? 'trying on' :
+                          formData.modelAction;
+
+            let basePrompt = `Professional fashion photography: ${formData.modelType} model ${action} ${formData.category}. `;
+            
+            // Add style-specific elements
+            if (formData.style === 'ugc') {
+                basePrompt += 'Authentic user-generated content style, casual and relatable, shot with phone camera quality. ';
+            } else if (formData.style === 'mirror-selfie') {
+                basePrompt += 'Mirror selfie style, model holding phone, visible phone in mirror reflection, trendy pose. ';
+            } else if (formData.style === 'iphone') {
+                basePrompt += `Shot with ${formData.iphoneModel || 'iPhone'}, mobile photography aesthetic, natural handheld look. `;
+            } else if (formData.style === 'professional') {
+                basePrompt += 'Studio quality, perfect lighting, high-end fashion photography. ';
+            }
+            
+            // Add environment
+            basePrompt += `Location: ${formData.location}, ${formData.lighting} lighting, ${formData.mood} mood. `;
+            
+            // Add model details
+            basePrompt += `Model: ${formData.bodyType} body type, ${formData.ethnicity} ethnicity. `;
+            
+            // Add social media style if selected
+            if (formData.socialStyle !== 'none') {
+                basePrompt += `Optimized for ${formData.socialStyle}. `;
+            }
+            
+            // Add custom instructions
+            if (formData.instructions) {
+                basePrompt += formData.instructions;
+            }
+            
+            return basePrompt;
         }
     </script>
 </body>
