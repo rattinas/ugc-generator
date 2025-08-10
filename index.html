@@ -145,8 +145,8 @@
                         console.log('✅ Session set successfully', data);
                         // Entferne Hash aus URL
                         window.history.replaceState(null, null, window.location.pathname);
-                        // Leite zu Dashboard (use '/dashboard' assuming cleanUrls)
-                        window.location.href = '/dashboard';
+                        // Leite zu Dashboard (use '/dashboard.html' to avoid 404)
+                        window.location.href = '/dashboard.html';
                         return; // Stoppe hier
                     } catch (error) {
                         console.error('❌ Error setting session:', error);
@@ -185,8 +185,8 @@
                
                 if (session) {
                     console.log('✅ User already authenticated:', session.user.email);
-                    // User ist eingeloggt, zum Dashboard (use '/dashboard')
-                    window.location.href = '/dashboard';
+                    // User ist eingeloggt, zum Dashboard (use '/dashboard.html')
+                    window.location.href = '/dashboard.html';
                     return;
                 } else {
                     console.log('👤 No active session');
@@ -272,7 +272,7 @@
                     if (event === 'SIGNED_IN' && session) {
                         console.log('User signed in:', session.user.email);
                         // Automatisch zum Dashboard
-                        window.location.href = '/dashboard';
+                        window.location.href = '/dashboard.html';
                     } else if (event === 'SIGNED_OUT') {
                         window.location.href = '/';
                     }
