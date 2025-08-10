@@ -180,10 +180,21 @@
                     throw new Error('Supabase not loaded');
                 }
                 
-                // Create client
-                supabaseClient = (window.supabase || supabase).createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-                debugLog('✅ Supabase client created');
+                // Create client with session recovery
+                supabaseClient = (window.supabase || supabase).createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+                    auth: {
+                        detectSessionInUrl: true,
+                        persistSession: true,
+                        autoRefreshToken: true,
+                        storage: window.localStorage
+                    }
+                });
+                
+                debugLog('✅ Supabase client created with session recovery');
                 document.getElementById('supabaseStatus').textContent = 'CONNECTED';
+                
+                // WICHTIG: Warte kurz damit Supabase die Session aus der URL lesen kann
+                await new Promise(resolve => setTimeout(resolve, 500));
                 
                 // Check existing session
                 const { data: { session }, error } = await supabaseClient.auth.getSession();
@@ -207,18 +218,34 @@
                     debugLog('No active session');
                     document.getElementById('sessionStatus').textContent = 'NO SESSION';
                     
-                    // Show login screen
-                    document.getElementById('loadingScreen').style.display = 'none';
-                    document.getElementById('loginScreen').style.display = 'flex';
+                    // Try to recover session from URL
+                    const { data: { session: urlSession }, error: urlError } = await supabaseClient.auth.getSessionFromUrl();
+                    
+                    if (urlSession) {
+                        debugLog('✅ Session recovered from URL!', urlSession.user.email);
+                        document.getElementById('sessionStatus').textContent = 'RECOVERED: ' + urlSession.user.email;
+                        
+                        setTimeout(() => {
+                            window.location.href = '/dashboard.html';
+                        }, 2000);
+                    } else {
+                        debugLog('No session in URL either');
+                        // Show login screen
+                        document.getElementById('loadingScreen').style.display = 'none';
+                        document.getElementById('loginScreen').style.display = 'flex';
+                    }
                 }
                 
                 // Setup auth listener
-                supabaseClient.auth.onAuthStateChange((event, session) => {
+                supabaseClient.auth.onAuthStateChange(async (event, session) => {
                     debugLog('Auth state change', {event, user: session?.user?.email});
                     
                     if (event === 'SIGNED_IN' && session) {
                         debugLog('✅ User signed in successfully!');
                         document.getElementById('sessionStatus').textContent = 'SIGNED IN: ' + session.user.email;
+                        
+                        // Store session
+                        localStorage.setItem('supabase-session', JSON.stringify(session));
                         
                         setTimeout(() => {
                             window.location.href = '/dashboard.html';
@@ -226,8 +253,11 @@
                     } else if (event === 'SIGNED_OUT') {
                         debugLog('User signed out');
                         document.getElementById('sessionStatus').textContent = 'SIGNED OUT';
+                        localStorage.removeItem('supabase-session');
                     } else if (event === 'TOKEN_REFRESHED') {
                         debugLog('Token refreshed');
+                    } else if (event === 'USER_UPDATED') {
+                        debugLog('User updated');
                     }
                 });
                 
