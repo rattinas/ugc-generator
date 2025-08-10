@@ -9,14 +9,12 @@ class AuthManager {
         this.initialized = false;
     }
 
-// auth.js - Supabase Authentication System
+// auth.js - Simplified Supabase Authentication
 
 class AuthManager {
     constructor() {
-        // Initialize Supabase Client
         this.supabase = null;
         this.user = null;
-        this.profile = null;
         this.initialized = false;
     }
 
@@ -24,47 +22,72 @@ class AuthManager {
         if (this.initialized) return true;
         
         try {
-            console.log('🔧 Initializing Auth System...');
-            
-            // Wait for Supabase to be loaded
-            let attempts = 0;
-            while (typeof window.supabase === 'undefined' && attempts < 10) {
-                console.log('⏳ Waiting for Supabase library...');
-                await new Promise(resolve => setTimeout(resolve, 100));
-                attempts++;
-            }
-            
-            if (typeof window.supabase === 'undefined') {
-                throw new Error('Supabase library not loaded');
-            }
-            
-            console.log('✅ Supabase library loaded');
-            
-            // Supabase Config
             const SUPABASE_URL = 'https://vnodqwehipwpusrthurk.supabase.co';
             const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZub2Rxd2VoaXB3cHVzcnRodXJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ3NTA5NTcsImV4cCI6MjA3MDMyNjk1N30.LSMyYLt7URx1G1NFKZAqXTrzVHwjtbvOzeuxLZy0u-Q';
             
-            console.log('🔑 Using Supabase URL:', SUPABASE_URL);
-            
-            this.supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-            
-            if (!this.supabase) {
-                throw new Error('Failed to initialize Supabase client');
+            if (typeof window.supabase !== 'undefined') {
+                this.supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                this.initialized = true;
+                
+                // Get current session
+                const { data: { session } } = await this.supabase.auth.getSession();
+                if (session) {
+                    this.user = session.user;
+                }
+                
+                // Listen for auth changes
+                this.supabase.auth.onAuthStateChange((event, session) => {
+                    if (session) {
+                        this.user = session.user;
+                    } else {
+                        this.user = null;
+                    }
+                });
+                
+                return true;
             }
-            
-            console.log('✅ Supabase client created successfully');
-            
-            this.setupAuthListener();
-            this.initialized = true;
-            console.log('✅ Auth system fully initialized');
-            return true;
-            
+            return false;
         } catch (error) {
-            console.error('❌ Auth initialization failed:', error);
-            this.initialized = false;
-            throw error;
+            console.error('Auth init error:', error);
+            return false;
         }
     }
+
+    async isAuthenticated() {
+        if (!this.supabase) return false;
+        const { data: { session } } = await this.supabase.auth.getSession();
+        return !!session;
+    }
+
+    async signOut() {
+        if (!this.supabase) return;
+        await this.supabase.auth.signOut();
+        localStorage.removeItem('ai_studio_user');
+        window.location.href = '/';
+    }
+
+    getUser() {
+        // First try Supabase user
+        if (this.user) return this.user;
+        
+        // Fallback to localStorage
+        const stored = localStorage.getItem('ai_studio_user');
+        if (stored) {
+            try {
+                return JSON.parse(stored);
+            } catch (e) {
+                return null;
+            }
+        }
+        return null;
+    }
+}
+
+// Initialize
+window.auth = new AuthManager();
+window.addEventListener('DOMContentLoaded', () => {
+    window.auth.init();
+});
 
     setupAuthListener() {
         // Listen for auth state changes
