@@ -133,7 +133,7 @@
                     console.log('🔑 OAuth callback detected with tokens');
                     try {
                         // Setze die Session richtig mit Supabase Methode
-                        const { error } = await supabaseClient.auth.setSession({
+                        const { data, error } = await supabaseClient.auth.setSession({
                             access_token: accessToken,
                             refresh_token: refreshToken
                         });
@@ -142,11 +142,11 @@
                             throw error;
                         }
                        
-                        console.log('✅ Session set successfully');
+                        console.log('✅ Session set successfully', data);
                         // Entferne Hash aus URL
                         window.history.replaceState(null, null, window.location.pathname);
-                        // Leite zu Dashboard
-                        window.location.href = '/dashboard.html';
+                        // Leite zu Dashboard (use '/dashboard' assuming cleanUrls)
+                        window.location.href = '/dashboard';
                         return; // Stoppe hier
                     } catch (error) {
                         console.error('❌ Error setting session:', error);
@@ -185,8 +185,8 @@
                
                 if (session) {
                     console.log('✅ User already authenticated:', session.user.email);
-                    // User ist eingeloggt, zum Dashboard
-                    window.location.href = '/dashboard.html';
+                    // User ist eingeloggt, zum Dashboard (use '/dashboard')
+                    window.location.href = '/dashboard';
                     return;
                 } else {
                     console.log('👤 No active session');
@@ -264,7 +264,7 @@
             });
         }
        
-        // Auth State Listener für automatische Session-Erkennung
+        // Auth State Listener für automatische Session-Erkennung (added for extra stability)
         window.addEventListener('load', () => {
             if (supabaseClient) {
                 supabaseClient.auth.onAuthStateChange((event, session) => {
@@ -272,7 +272,9 @@
                     if (event === 'SIGNED_IN' && session) {
                         console.log('User signed in:', session.user.email);
                         // Automatisch zum Dashboard
-                        window.location.href = '/dashboard.html';
+                        window.location.href = '/dashboard';
+                    } else if (event === 'SIGNED_OUT') {
+                        window.location.href = '/';
                     }
                 });
             }
