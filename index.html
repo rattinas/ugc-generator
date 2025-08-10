@@ -118,31 +118,44 @@
             document.getElementById('currentUrl').textContent = window.location.href;
             document.getElementById('currentHash').textContent = window.location.hash || 'none';
             
-            // Check URL for tokens
+            // Check URL for tokens - Both hash and query params
             debugLog('Current URL', window.location.href);
             debugLog('Hash', window.location.hash);
             debugLog('Search params', window.location.search);
             
-            // Parse hash
+            // Check BOTH hash params and query params
             const hashParams = new URLSearchParams(window.location.hash.substring(1));
-            const accessToken = hashParams.get('access_token');
-            const refreshToken = hashParams.get('refresh_token');
-            const error = hashParams.get('error');
-            const errorDescription = hashParams.get('error_description');
+            const queryParams = new URLSearchParams(window.location.search);
+            
+            // Try to get tokens from either source
+            let accessToken = hashParams.get('access_token') || queryParams.get('access_token');
+            let refreshToken = hashParams.get('refresh_token') || queryParams.get('refresh_token');
+            const error = hashParams.get('error') || queryParams.get('error');
+            const errorDescription = hashParams.get('error_description') || queryParams.get('error_description');
+            
+            // Also check for Supabase's alternate token format
+            if (!accessToken) {
+                // Check localStorage for Supabase tokens
+                const storedAuth = localStorage.getItem('supabase.auth.token');
+                if (storedAuth) {
+                    debugLog('Found stored auth token');
+                    try {
+                        const parsed = JSON.parse(storedAuth);
+                        accessToken = parsed.currentSession?.access_token;
+                    } catch (e) {
+                        debugLog('Error parsing stored auth', e);
+                    }
+                }
+            }
             
             if (error) {
                 debugLog('OAuth Error', {error, errorDescription});
             }
             
             if (accessToken) {
-                debugLog('🎉 Access token found in URL!');
+                debugLog('🎉 Access token found!');
+                debugLog('Token source', hashParams.has('access_token') ? 'hash' : 'query');
                 debugLog('Token preview', accessToken.substring(0, 20) + '...');
-                
-                // Store tokens and redirect
-                localStorage.setItem('sb-access-token', accessToken);
-                if (refreshToken) {
-                    localStorage.setItem('sb-refresh-token', refreshToken);
-                }
                 
                 // Clean URL and redirect
                 setTimeout(() => {
@@ -242,17 +255,15 @@
                 button.textContent = 'Signing in...';
                 
                 try {
-                    const redirectTo = window.location.origin + '/';
+                    // WICHTIG: Nutze die EXAKTE URL ohne trailing slash
+                    const redirectTo = 'https://go2flow-image-bay.vercel.app';
                     debugLog('Using redirect URL', redirectTo);
                     
                     const { data, error } = await supabaseClient.auth.signInWithOAuth({
                         provider: 'google',
                         options: {
                             redirectTo: redirectTo,
-                            queryParams: {
-                                access_type: 'offline',
-                                prompt: 'consent'
-                            }
+                            skipBrowserRedirect: false
                         }
                     });
                     
@@ -261,6 +272,7 @@
                     }
                     
                     debugLog('✅ OAuth initiated', data);
+                    debugLog('Provider URL', data?.url);
                     
                 } catch (error) {
                     debugLog('❌ Sign in error', error);
