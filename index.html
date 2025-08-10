@@ -4,15 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Studio - Professional E-Commerce Photography</title>
-   
+    
     <!-- CSS -->
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/auth.css">
-   
+    
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=Sora:wght@300;400;600;700&display=swap" rel="stylesheet">
-   
-    <!-- Supabase - Mit CDN direkt laden -->
+    
+    <!-- Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
@@ -21,6 +21,7 @@
         <div class="spinner"></div>
         <p>Initialisiere AI Studio...</p>
     </div>
+
     <!-- Login Screen -->
     <div id="loginScreen" class="login-screen" style="display: none;">
         <div class="login-container">
@@ -30,6 +31,7 @@
                     <h1 class="logo">AI<span>STUDIO</span></h1>
                     <p class="tagline">Professional E-Commerce Photography powered by AI</p>
                 </div>
+
                 <!-- Google Sign In -->
                 <div class="auth-section">
                     <button id="googleSignIn" class="btn-google">
@@ -41,9 +43,11 @@
                         </svg>
                         Mit Google anmelden
                     </button>
+
                     <div class="auth-divider">
                         <span>Schnell & Sicher</span>
                     </div>
+
                     <!-- Features -->
                     <div class="feature-list">
                         <div class="feature-item">
@@ -64,6 +68,7 @@
                         </div>
                     </div>
                 </div>
+
                 <!-- Footer -->
                 <div class="login-footer">
                     <p>Mit der Anmeldung akzeptierst du unsere <a href="#">Nutzungsbedingungen</a></p>
@@ -71,6 +76,7 @@
             </div>
         </div>
     </div>
+
     <!-- Error Modal -->
     <div id="errorModal" class="modal">
         <div class="modal-content">
@@ -83,165 +89,110 @@
             </div>
         </div>
     </div>
-    <!-- Scripts -->
-    <script src="js/config.js"></script>
-    <script src="js/auth.js"></script>
-    <script src="js/api.js"></script>
-    <script src="js/components.js"></script>
-    <!-- Inline Script für direkte Initialisierung -->
+
     <script>
-        // Supabase direkt hier initialisieren
+        // Supabase Configuration
         const SUPABASE_URL = 'https://vnodqwehipwpusrthurk.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZub2Rxd2VoaXB3cHVzcnRodXJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ3NTA5NTcsImV4cCI6MjA3MDMyNjk1N30.LSMyYLt7URx1G1NFKZAqXTrzVHwjtbvOzeuxLZy0u-Q';
-       
-        let supabaseClient = null;
-       
-        // WICHTIG: Zuerst Supabase Client erstellen, dann OAuth Callback prüfen
-        window.addEventListener('DOMContentLoaded', async () => {
-            console.log('🚀 Page loading...');
-           
-            // Versuche Supabase Client zu erstellen
-            try {
-                // Check verschiedene Möglichkeiten wie Supabase geladen sein könnte
-                if (typeof window.supabase !== 'undefined') {
-                    console.log('✅ Supabase found via window.supabase');
-                    supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-                } else if (typeof supabase !== 'undefined') {
-                    console.log('✅ Supabase found via global supabase');
-                    supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-                } else {
-                    // Fallback: Lade Supabase dynamisch
-                    console.log('⏳ Loading Supabase dynamically...');
-                    await new Promise((resolve) => {
-                        const script = document.createElement('script');
-                        script.src = 'https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.min.js';
-                        script.onload = () => {
-                            console.log('✅ Supabase loaded dynamically');
-                            supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-                            resolve();
-                        };
-                        document.head.appendChild(script);
-                    });
-                }
-               
-                // Jetzt OAuth Callback prüfen
-                const hashParams = new URLSearchParams(window.location.hash.substring(1));
-                const accessToken = hashParams.get('access_token');
-                const refreshToken = hashParams.get('refresh_token');
-               
-                if (accessToken && refreshToken) {
-                    console.log('🔑 OAuth callback detected with tokens');
-                    try {
-                        // Setze die Session richtig mit Supabase Methode
-                        const { data, error } = await supabaseClient.auth.setSession({
-                            access_token: accessToken,
-                            refresh_token: refreshToken
-                        });
-                       
-                        if (error) {
-                            throw error;
-                        }
-                       
-                        console.log('✅ Session set successfully', data);
-                        // Entferne Hash aus URL
-                        window.history.replaceState(null, null, window.location.pathname);
-                        // Leite zu Dashboard (use '/dashboard.html' to avoid 404)
-                        window.location.href = '/dashboard.html';
-                        return; // Stoppe hier
-                    } catch (error) {
-                        console.error('❌ Error setting session:', error);
-                        // Zeige Error Modal
-                        document.getElementById('errorMessage').textContent = error.message || 'Session konnte nicht gesetzt werden.';
-                        document.getElementById('errorModal').classList.add('show');
-                        // Entferne Hash trotzdem
-                        window.history.replaceState(null, null, window.location.pathname);
-                        // Zeige Login Screen
-                        document.getElementById('loadingScreen').style.display = 'none';
-                        document.getElementById('loginScreen').style.display = 'flex';
-                        return;
-                    }
-                }
-               
-                // Wenn kein Callback, App initialisieren
-                await initializeApp();
-               
-            } catch (error) {
-                console.error('❌ Failed to initialize Supabase:', error);
-                document.getElementById('loadingScreen').style.display = 'none';
-                document.getElementById('loginScreen').style.display = 'flex';
-            }
-        });
-       
+        
+        let supabase = null;
+
+        // Initialize Supabase
         async function initializeApp() {
-            console.log('🎯 Initializing app with Supabase client');
-           
-            // Check authentication mit getSession
+            console.log('🚀 Initializing AI Studio...');
+            
             try {
-                const { data: { session }, error } = await supabaseClient.auth.getSession();
-               
-                if (error) {
-                    console.error('Session error:', error);
+                // Create Supabase client with auto session detection
+                if (typeof window.supabase !== 'undefined') {
+                    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+                        auth: {
+                            autoRefreshToken: true,
+                            persistSession: true,
+                            detectSessionInUrl: true
+                        }
+                    });
+                    console.log('✅ Supabase client created');
+                } else {
+                    throw new Error('Supabase library not loaded');
                 }
-               
+
+                // Setup auth state listener FIRST
+                supabase.auth.onAuthStateChange(async (event, session) => {
+                    console.log('🔄 Auth event:', event);
+                    
+                    if (event === 'SIGNED_IN' && session) {
+                        console.log('✅ Signed in:', session.user.email);
+                        // Save to localStorage as backup
+                        localStorage.setItem('ai_studio_user', JSON.stringify({
+                            email: session.user.email,
+                            id: session.user.id
+                        }));
+                        // Redirect to dashboard
+                        window.location.href = '/dashboard.html';
+                    } else if (event === 'SIGNED_OUT') {
+                        console.log('👋 Signed out');
+                        localStorage.removeItem('ai_studio_user');
+                    }
+                });
+
+                // Check for existing session
+                const { data: { session }, error } = await supabase.auth.getSession();
+                
                 if (session) {
-                    console.log('✅ User already authenticated:', session.user.email);
-                    // User ist eingeloggt, zum Dashboard (use '/dashboard.html')
+                    console.log('✅ Existing session found:', session.user.email);
+                    // User is already logged in
                     window.location.href = '/dashboard.html';
-                    return;
                 } else {
                     console.log('👤 No active session');
+                    // Show login screen
                     document.getElementById('loadingScreen').style.display = 'none';
                     document.getElementById('loginScreen').style.display = 'flex';
                 }
+
             } catch (error) {
-                console.error('Auth check error:', error);
+                console.error('❌ Initialization error:', error);
                 document.getElementById('loadingScreen').style.display = 'none';
                 document.getElementById('loginScreen').style.display = 'flex';
             }
-           
-            // Setup Google Sign In
+        }
+
+        // Setup Google Sign In
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize app
+            initializeApp();
+
+            // Google Sign In button
             document.getElementById('googleSignIn').addEventListener('click', async () => {
                 console.log('🔘 Google Sign In clicked');
-                const button = document.getElementById('googleSignIn');
-               
-                if (!supabaseClient) {
-                    console.error('❌ Supabase client not available');
-                    document.getElementById('errorMessage').textContent = 'Verbindung fehlgeschlagen. Bitte Seite neu laden.';
+                
+                if (!supabase) {
+                    console.error('❌ Supabase not initialized');
+                    document.getElementById('errorMessage').textContent = 'System nicht bereit. Bitte Seite neu laden.';
                     document.getElementById('errorModal').classList.add('show');
                     return;
                 }
-               
+
+                const button = document.getElementById('googleSignIn');
                 button.disabled = true;
                 button.innerHTML = '<div class="spinner" style="width: 20px; height: 20px;"></div> Anmelden...';
-               
+
                 try {
-                    console.log('📤 Calling signInWithOAuth...');
-                   
-                    // WICHTIG: redirectTo muss die EXAKTE URL sein wo der User zurückkommt
-                    const redirectUrl = window.location.origin + '/';
-                    console.log('Redirect URL:', redirectUrl);
-                   
-                    const { data, error } = await supabaseClient.auth.signInWithOAuth({
+                    // Sign in with Google
+                    const { data, error } = await supabase.auth.signInWithOAuth({
                         provider: 'google',
                         options: {
-                            redirectTo: redirectUrl,
-                            queryParams: {
-                                access_type: 'offline',
-                                prompt: 'consent'
-                            }
+                            redirectTo: 'https://go2flow-image-bay.vercel.app/auth-callback.html'
                         }
                     });
-                   
-                    if (error) {
-                        throw error;
-                    }
-                   
-                    console.log('✅ OAuth initiated:', data);
-                    // Supabase will redirect automatically to Google
-                   
+
+                    if (error) throw error;
+
+                    console.log('✅ OAuth redirect initiated');
+                    // Supabase will handle the redirect to Google
+
                 } catch (error) {
                     console.error('❌ Sign in error:', error);
-                   
+                    
                     button.disabled = false;
                     button.innerHTML = `
                         <svg width="20" height="20" viewBox="0 0 24 24">
@@ -252,32 +203,11 @@
                         </svg>
                         Mit Google anmelden
                     `;
-                   
-                    // Show error message
-                    let errorMsg = error.message || 'Anmeldung fehlgeschlagen';
-                    if (errorMsg.includes('OAuth')) {
-                        errorMsg = 'Google Sign-In ist nicht konfiguriert. Bitte Admin kontaktieren.';
-                    }
-                    document.getElementById('errorMessage').textContent = errorMsg;
+
+                    document.getElementById('errorMessage').textContent = error.message || 'Anmeldung fehlgeschlagen';
                     document.getElementById('errorModal').classList.add('show');
                 }
             });
-        }
-       
-        // Auth State Listener für automatische Session-Erkennung (added for extra stability)
-        window.addEventListener('load', () => {
-            if (supabaseClient) {
-                supabaseClient.auth.onAuthStateChange((event, session) => {
-                    console.log('Auth state changed:', event);
-                    if (event === 'SIGNED_IN' && session) {
-                        console.log('User signed in:', session.user.email);
-                        // Automatisch zum Dashboard
-                        window.location.href = '/dashboard.html';
-                    } else if (event === 'SIGNED_OUT') {
-                        window.location.href = '/';
-                    }
-                });
-            }
         });
     </script>
 </body>
