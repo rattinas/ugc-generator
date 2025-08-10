@@ -26,10 +26,10 @@
                 </h1>
                 
                 <div class="user-menu">
-                    <div class="credits-display">
-                        <span class="credits-icon">💳</span>
-                        <span id="creditsAmount">100</span> Credits
-                    </div>
+                    <!-- Google Drive Settings -->
+                    <button onclick="openDriveSettings()" class="btn btn-small" style="margin-right: 10px;">
+                        <span>📁</span> Drive Ordner
+                    </button>
                     
                     <div class="user-dropdown">
                         <span id="userEmail">User</span>
@@ -45,6 +45,11 @@
             <section class="welcome-section">
                 <h2>Willkommen zurück!</h2>
                 <p>Was möchtest du heute fotografieren?</p>
+                
+                <!-- Drive Status -->
+                <div id="driveStatus" class="drive-status" style="margin-top: 20px; padding: 15px; background: #f0f0f0; border-radius: 8px; display: none;">
+                    <p style="margin: 0;">📁 Google Drive Ordner: <strong id="driveFolderPath">Nicht konfiguriert</strong></p>
+                </div>
             </section>
 
             <!-- Use Cases -->
@@ -58,35 +63,38 @@
                         <h4>Fashion & Apparel</h4>
                         <p>Kleidung, Schuhe & Accessoires auf Models</p>
                         <div class="card-features">
+                            <span>UGC Content</span>
+                            <span>Spiegel-Selfies</span>
+                            <span>iPhone Shots</span>
                             <span>Model-Konfiguration</span>
-                            <span>Lifestyle Scenes</span>
                         </div>
-                        <div class="card-credits">2 Credits</div>
                     </div>
 
                     <!-- Product -->
                     <div class="use-case-card" onclick="navigateTo('/pages/product.html')">
+                        <div class="card-badge">Erweitert</div>
                         <div class="card-icon">📦</div>
                         <h4>Product Photography</h4>
                         <p>Objekte in Aktion & Produktdemos</p>
                         <div class="card-features">
                             <span>Hand Modeling</span>
                             <span>In-Use Demos</span>
+                            <span>UGC Style</span>
+                            <span>360° Views</span>
                         </div>
-                        <div class="card-credits">1 Credit</div>
                     </div>
 
                     <!-- Beauty -->
                     <div class="use-case-card" onclick="navigateTo('/pages/beauty.html')">
-                        <div class="card-badge">Neu</div>
+                        <div class="card-badge">Premium</div>
                         <div class="card-icon">💄</div>
                         <h4>Beauty & Cosmetics</h4>
                         <p>Makeup, Skincare & Haircare</p>
                         <div class="card-features">
                             <span>Application Shots</span>
                             <span>Before/After</span>
+                            <span>Texture Macros</span>
                         </div>
-                        <div class="card-credits">2 Credits</div>
                     </div>
 
                     <!-- Food -->
@@ -97,8 +105,8 @@
                         <div class="card-features">
                             <span>Styled Plating</span>
                             <span>Action Cooking</span>
+                            <span>Packaging Hero</span>
                         </div>
-                        <div class="card-credits">1 Credit</div>
                     </div>
 
                     <!-- Jewelry -->
@@ -109,8 +117,8 @@
                         <div class="card-features">
                             <span>Macro Details</span>
                             <span>Luxury Staging</span>
+                            <span>Worn Shots</span>
                         </div>
-                        <div class="card-credits">2 Credits</div>
                     </div>
 
                     <!-- Sports -->
@@ -120,13 +128,38 @@
                         <p>Equipment & Activewear</p>
                         <div class="card-features">
                             <span>Action Shots</span>
+                            <span>Equipment Demo</span>
                             <span>Lifestyle Active</span>
                         </div>
-                        <div class="card-credits">2 Credits</div>
                     </div>
                 </div>
             </section>
         </main>
+    </div>
+
+    <!-- Google Drive Settings Modal -->
+    <div id="driveSettingsModal" class="modal">
+        <div class="modal-content">
+            <h3>Google Drive Einstellungen</h3>
+            <p>Gib den Link zu deinem Google Drive Ordner ein, in dem die generierten Bilder gespeichert werden sollen:</p>
+            
+            <div class="form-group" style="margin: 20px 0;">
+                <label>Google Drive Ordner Link:</label>
+                <input type="text" 
+                       id="driveFolderLink" 
+                       placeholder="https://drive.google.com/drive/folders/..." 
+                       class="form-control"
+                       style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                <small style="color: #666; display: block; margin-top: 5px;">
+                    Der Ordner muss für Make.com freigegeben sein
+                </small>
+            </div>
+            
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeDriveSettings()">Abbrechen</button>
+                <button class="btn btn-primary" onclick="saveDriveSettings()">Speichern</button>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -135,10 +168,9 @@
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZub2Rxd2VoaXB3cHVzcnRodXJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ3NTA5NTcsImV4cCI6MjA3MDMyNjk1N30.LSMyYLt7URx1G1NFKZAqXTrzVHwjtbvOzeuxLZy0u-Q';
         
         let supabase = null;
-        let isCheckingAuth = false; // Prevent multiple checks
+        let isCheckingAuth = false;
 
         async function checkAuth() {
-            // Prevent redirect loop
             if (isCheckingAuth) return;
             isCheckingAuth = true;
 
@@ -152,7 +184,6 @@
 
                 if (!supabase) {
                     console.error('Supabase not initialized');
-                    // Don't redirect, just show error
                     showError();
                     return;
                 }
@@ -168,8 +199,10 @@
 
                 if (session) {
                     console.log('✅ User authenticated:', session.user.email);
-                    // Update UI with user info
                     document.getElementById('userEmail').textContent = session.user.email;
+                    
+                    // Load Drive settings
+                    loadDriveSettings();
                     
                     // Setup auth listener for logout
                     supabase.auth.onAuthStateChange((event, session) => {
@@ -178,7 +211,7 @@
                         }
                     });
                 } else {
-                    // No session - check localStorage as fallback
+                    // Check localStorage as fallback
                     const storedUser = localStorage.getItem('ai_studio_user');
                     
                     if (storedUser) {
@@ -186,16 +219,15 @@
                             const user = JSON.parse(storedUser);
                             console.log('📦 Using stored user:', user.email);
                             document.getElementById('userEmail').textContent = user.email;
+                            loadDriveSettings();
                         } catch (e) {
                             console.error('Invalid stored user data');
-                            // Only redirect if really no auth
                             setTimeout(() => {
                                 window.location.href = '/';
                             }, 1000);
                         }
                     } else {
                         console.log('❌ No authentication found');
-                        // Redirect to login after delay to prevent loop
                         setTimeout(() => {
                             window.location.href = '/';
                         }, 1000);
@@ -225,22 +257,68 @@
             }
             
             localStorage.removeItem('ai_studio_user');
+            localStorage.removeItem('drive_folder_link');
             window.location.href = '/';
         }
 
         function navigateTo(path) {
-            // Check credits before navigation
-            const creditsElement = document.getElementById('creditsAmount');
-            const credits = parseInt(creditsElement?.textContent || 0);
-            
-            if (credits < 1) {
-                if (confirm('Du hast keine Credits mehr. Möchtest du welche kaufen?')) {
-                    window.location.href = '/pages/billing.html';
+            // Check if Drive is configured
+            const driveLink = localStorage.getItem('drive_folder_link');
+            if (!driveLink) {
+                if (confirm('Bitte konfiguriere zuerst deinen Google Drive Ordner. Jetzt einrichten?')) {
+                    openDriveSettings();
                 }
                 return;
             }
             
             window.location.href = path;
+        }
+
+        // Google Drive Settings
+        function openDriveSettings() {
+            document.getElementById('driveSettingsModal').classList.add('show');
+            const savedLink = localStorage.getItem('drive_folder_link');
+            if (savedLink) {
+                document.getElementById('driveFolderLink').value = savedLink;
+            }
+        }
+
+        function closeDriveSettings() {
+            document.getElementById('driveSettingsModal').classList.remove('show');
+        }
+
+        function saveDriveSettings() {
+            const link = document.getElementById('driveFolderLink').value.trim();
+            
+            if (!link) {
+                alert('Bitte gib einen gültigen Google Drive Link ein');
+                return;
+            }
+            
+            // Basic validation
+            if (!link.includes('drive.google.com')) {
+                alert('Bitte gib einen gültigen Google Drive Link ein');
+                return;
+            }
+            
+            // Save to localStorage
+            localStorage.setItem('drive_folder_link', link);
+            
+            // Update UI
+            loadDriveSettings();
+            closeDriveSettings();
+            
+            alert('✅ Drive Ordner gespeichert!');
+        }
+
+        function loadDriveSettings() {
+            const savedLink = localStorage.getItem('drive_folder_link');
+            if (savedLink) {
+                document.getElementById('driveStatus').style.display = 'block';
+                // Extract folder name from link if possible
+                const folderName = savedLink.split('/').pop() || 'Konfiguriert';
+                document.getElementById('driveFolderPath').textContent = folderName;
+            }
         }
 
         // Initialize on load
