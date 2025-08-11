@@ -1,378 +1,151 @@
-// jewelry.js - Jewelry Photography Module
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jewelry Photography - AI Studio</title>
+    
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/components.css">
+    <link rel="stylesheet" href="../css/pages.css">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+    
+    <script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+</head>
+<body data-page="jewelry">
+    <div class="page-container">
+        <header id="mainHeader" class="main-header"></header>
 
-class JewelryModule {
-    constructor() {
-        this.currentStep = 1;
-        this.totalSteps = 5;
-        this.uploadedFile = null;
-        this.formData = {
-            imageUrl: null,
-            category: '',
-            productName: '',
-            material: '',
-            style: '',
-            focus: '',
-            lighting: '',
-            background: '',
-            reflections: '',
-            modelVisibility: '',
-            styling: '',
-            handStyling: '',
-            props: '',
-            additionalDetails: '',
-            variations: 1
-        };
-    }
+        <nav class="breadcrumb">
+            <a href="../dashboard.html">← Dashboard</a>
+            <span>/</span>
+            <span>Jewelry Photography</span>
+        </nav>
 
-    init() {
-        console.log('💎 Initializing Jewelry Module...');
-        this.setupEventListeners();
-        this.updateStepDisplay();
-        this.checkDriveConfiguration();
-    }
+        <main class="container">
+            <div class="page-header">
+                <h1>💎 Jewelry & Luxury</h1>
+                <p>Erstelle hochwertige Schmuck- und Luxusfotografie</p>
+            </div>
 
-    checkDriveConfiguration() {
-        const driveFolder = localStorage.getItem('drive_folder_link');
-        if (!driveFolder) {
-            if (confirm('Google Drive Ordner nicht konfiguriert. Jetzt einrichten?')) {
-                window.location.href = '/dashboard.html';
-            }
-        }
-    }
+            <div id="stepIndicator"></div>
 
-    setupEventListeners() {
-        // Image Upload
-        const uploadArea = document.getElementById('uploadArea');
-        const imageFile = document.getElementById('imageFile');
-        
-        if (uploadArea && imageFile) {
-            uploadArea.addEventListener('click', () => imageFile.click());
-            imageFile.addEventListener('change', (e) => this.handleImageUpload(e));
-        }
+            <form id="jewelryForm" class="multi-step-form">
+                <div class="form-step active" data-step="1">
+                    <h2>Schritt 1: Schmuckstück hochladen</h2>
+                    <div id="imageUpload"></div>
+                    
+                    <div class="form-group">
+                        <label>Schmuck-Kategorie</label>
+                        <select id="jewelryCategory" required>
+                            <option value="">Wähle eine Kategorie</option>
+                            <option value="ring">Ring</option>
+                            <option value="necklace">Halskette</option>
+                            <option value="bracelet">Armband</option>
+                            <option value="earrings">Ohrringe</option>
+                            <option value="watch">Uhr</option>
+                            <option value="brooch">Brosche</option>
+                        </select>
+                    </div>
 
-        // Category and Material selection
-        document.getElementById('jewelryCategory')?.addEventListener('change', (e) => {
-            this.formData.category = e.target.value;
-            this.updateCategoryDefaults(e.target.value);
-        });
-
-        document.getElementById('material')?.addEventListener('change', (e) => {
-            this.formData.material = e.target.value;
-            this.updateMaterialSettings(e.target.value);
-        });
-
-        // Style cards
-        document.querySelectorAll('.style-card[data-style]').forEach(card => {
-            card.addEventListener('click', () => this.selectStyle(card));
-        });
-
-        // Model visibility change
-        document.getElementById('modelVisibility')?.addEventListener('change', (e) => {
-            this.updateModelOptions(e.target.value);
-        });
-
-        // Navigation
-        document.getElementById('prevBtn')?.addEventListener('click', () => this.previousStep());
-        document.getElementById('nextBtn')?.addEventListener('click', () => this.nextStep());
-        document.getElementById('submitBtn')?.addEventListener('click', () => this.submit());
-    }
-
-    async handleImageUpload(event) {
-        const file = event.target.files[0];
-        if (!file) return;
-
-        // Validate file
-        const validation = window.API?.validateImageFile(file);
-        if (!validation?.valid) {
-            alert(validation?.error || 'Ungültiges Bild');
-            return;
-        }
-
-        this.uploadedFile = file;
-
-        // Show preview
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            const previewImg = document.getElementById('previewImg');
-            if (previewImg) {
-                previewImg.src = e.target.result;
-                document.getElementById('uploadPlaceholder').style.display = 'none';
-                document.getElementById('imagePreview').style.display = 'block';
-            }
-        };
-        reader.readAsDataURL(file);
-    }
-
-    selectStyle(card) {
-        document.querySelectorAll('.style-card[data-style]').forEach(c => c.classList.remove('selected'));
-        card.classList.add('selected');
-        this.formData.style = card.dataset.style;
-
-        // Adjust settings based on style
-        this.updateStyleDefaults(card.dataset.style);
-    }
-
-    updateCategoryDefaults(category) {
-        const defaults = {
-            'ring': { focus: 'gemstone', background: 'black', reflections: 'enhanced' },
-            'necklace': { focus: 'overall', modelVisibility: 'neck-area', background: 'gradient' },
-            'bracelet': { focus: 'overall', modelVisibility: 'hands-only', lighting: 'soft' },
-            'earrings': { focus: 'detail', modelVisibility: 'partial', background: 'white' },
-            'watch': { focus: 'mechanism', lighting: 'studio', reflections: 'controlled' },
-            'brooch': { focus: 'craftsmanship', background: 'velvet', lighting: 'dramatic' }
-        };
-
-        const categoryDefaults = defaults[category];
-        if (categoryDefaults) {
-            Object.keys(categoryDefaults).forEach(key => {
-                const element = document.getElementById(key);
-                if (element) element.value = categoryDefaults[key];
-            });
-        }
-    }
-
-    updateMaterialSettings(material) {
-        const materialSettings = {
-            'gold': { lighting: 'warm', reflections: 'enhanced', background: 'black' },
-            'silver': { lighting: 'cool', reflections: 'controlled', background: 'gradient' },
-            'platinum': { lighting: 'studio', reflections: 'minimal', background: 'white' },
-            'diamond': { lighting: 'sparkle', reflections: 'enhanced', focus: 'gemstone' },
-            'gemstone': { lighting: 'dramatic', background: 'black', focus: 'gemstone' },
-            'pearl': { lighting: 'soft', reflections: 'minimal', background: 'gradient' }
-        };
-
-        const settings = materialSettings[material];
-        if (settings) {
-            Object.keys(settings).forEach(key => {
-                const element = document.getElementById(key);
-                if (element) element.value = settings[key];
-            });
-        }
-    }
-
-    updateStyleDefaults(style) {
-        const styleDefaults = {
-            'hero': { background: 'gradient', lighting: 'studio', modelVisibility: 'none' },
-            'worn': { modelVisibility: 'partial', styling: 'elegant', lighting: 'natural' },
-            'macro': { focus: 'detail', background: 'black', lighting: 'dramatic' },
-            'lifestyle': { modelVisibility: 'full', styling: 'formal', props: 'champagne' },
-            'display': { props: 'box', background: 'velvet', lighting: 'soft' },
-            'collection': { background: 'white', lighting: 'studio', props: 'none' }
-        };
-
-        const defaults = styleDefaults[style];
-        if (defaults) {
-            Object.keys(defaults).forEach(key => {
-                const element = document.getElementById(key);
-                if (element) element.value = defaults[key];
-            });
-        }
-    }
-
-    updateModelOptions(visibility) {
-        const handStyling = document.getElementById('handStyling');
-        const styling = document.getElementById('styling');
-        
-        if (visibility === 'none') {
-            if (handStyling) handStyling.closest('.form-group').style.display = 'none';
-            if (styling) styling.closest('.form-group').style.display = 'none';
-        } else {
-            if (handStyling) handStyling.closest('.form-group').style.display = 'block';
-            if (styling) styling.closest('.form-group').style.display = 'block';
-        }
-    }
-
-    nextStep() {
-        if (this.validateCurrentStep()) {
-            if (this.currentStep < this.totalSteps) {
-                this.currentStep++;
-                this.updateStepDisplay();
-                
-                if (this.currentStep === this.totalSteps) {
-                    this.updateSummary();
-                }
-            }
-        }
-    }
-
-    previousStep() {
-        if (this.currentStep > 1) {
-            this.currentStep--;
-            this.updateStepDisplay();
-        }
-    }
-
-    updateStepDisplay() {
-        // Hide all steps
-        document.querySelectorAll('.form-step').forEach(step => {
-            step.classList.remove('active');
-        });
-        
-        // Show current step
-        const currentStepElement = document.querySelector(`[data-step="${this.currentStep}"]`);
-        if (currentStepElement) {
-            currentStepElement.classList.add('active');
-        }
-        
-        // Update navigation buttons
-        const prevBtn = document.getElementById('prevBtn');
-        const nextBtn = document.getElementById('nextBtn');
-        const submitBtn = document.getElementById('submitBtn');
-        
-        if (prevBtn) prevBtn.style.display = this.currentStep === 1 ? 'none' : 'block';
-        if (nextBtn) nextBtn.style.display = this.currentStep === this.totalSteps ? 'none' : 'block';
-        if (submitBtn) submitBtn.style.display = this.currentStep === this.totalSteps ? 'block' : 'none';
-    }
-
-    validateCurrentStep() {
-        switch(this.currentStep) {
-            case 1:
-                if (!this.uploadedFile) {
-                    alert('Bitte lade ein Schmuckstück hoch!');
-                    return false;
-                }
-                this.formData.category = document.getElementById('jewelryCategory')?.value;
-                this.formData.productName = document.getElementById('jewelryName')?.value;
-                this.formData.material = document.getElementById('material')?.value;
-                if (!this.formData.category) {
-                    alert('Bitte wähle eine Schmuck-Kategorie!');
-                    return false;
-                }
-                return true;
-
-            case 2:
-                if (!this.formData.style) {
-                    alert('Bitte wähle einen Präsentationsstil!');
-                    return false;
-                }
-                return true;
-
-            case 3:
-                this.formData.focus = document.getElementById('focus')?.value;
-                this.formData.lighting = document.getElementById('lighting')?.value;
-                this.formData.background = document.getElementById('background')?.value;
-                this.formData.reflections = document.getElementById('reflections')?.value;
-                return true;
-
-            case 4:
-                this.formData.modelVisibility = document.getElementById('modelVisibility')?.value;
-                this.formData.styling = document.getElementById('styling')?.value;
-                this.formData.handStyling = document.getElementById('handStyling')?.value;
-                this.formData.props = document.getElementById('props')?.value;
-                return true;
-
-            case 5:
-                this.formData.additionalDetails = document.getElementById('additionalDetails')?.value;
-                this.formData.variations = document.getElementById('variationCount')?.value;
-                return true;
-
-            default:
-                return true;
-        }
-    }
-
-    updateSummary() {
-        const summaryContent = document.getElementById('summaryReview');
-        if (summaryContent) {
-            summaryContent.innerHTML = `
-                <h3>Zusammenfassung</h3>
-                <div class="summary-item">
-                    <span class="summary-label">Schmuckstück:</span>
-                    <span class="summary-value">${this.formData.productName || this.formData.category}</span>
+                    <div class="form-group">
+                        <label>Material</label>
+                        <select id="material">
+                            <option value="gold">Gold</option>
+                            <option value="silver">Silber</option>
+                            <option value="platinum">Platin</option>
+                            <option value="diamond">Diamant</option>
+                            <option value="gemstone">Edelstein</option>
+                            <option value="pearl">Perle</option>
+                        </select>
+                    </div>
                 </div>
-                <div class="summary-item">
-                    <span class="summary-label">Material:</span>
-                    <span class="summary-value">${this.formData.material}</span>
+
+                <div class="form-step" data-step="2">
+                    <h2>Schritt 2: Präsentationsstil</h2>
+                    <div class="style-grid">
+                        <div class="style-card" data-style="hero"><div class="style-icon">✨</div><h4>Hero Shot</h4><p>Einzelstück perfekt inszeniert</p></div>
+                        <div class="style-card" data-style="worn"><div class="style-icon">👤</div><h4>Getragen</h4><p>Am Model präsentiert</p></div>
+                        <div class="style-card" data-style="macro"><div class="style-icon">🔍</div><h4>Macro Detail</h4><p>Extreme Nahaufnahme</p></div>
+                        <div class="style-card" data-style="lifestyle"><div class="style-icon">🌟</div><h4>Lifestyle</h4><p>Luxus-Kontext</p></div>
+                        <div class="style-card" data-style="display"><div class="style-icon">💼</div><h4>Display</h4><p>Schmuckschatulle/Vitrine</p></div>
+                        <div class="style-card" data-style="collection"><div class="style-icon">💍</div><h4>Kollektion</h4><p>Mehrere Stücke zusammen</p></div>
+                    </div>
                 </div>
-                <div class="summary-item">
-                    <span class="summary-label">Stil:</span>
-                    <span class="summary-value">${this.formData.style}</span>
+
+                <div class="form-step" data-step="3">
+                    <h2>Schritt 3: Technische Details</h2>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Fokus</label>
+                            <select id="focus"><option value="overall">Gesamtansicht</option><option value="detail">Detail/Gravur</option><option value="gemstone">Edelstein</option><option value="mechanism">Mechanik (Uhr)</option><option value="craftsmanship">Handwerkskunst</option></select>
+                        </div>
+                        <div class="form-group">
+                            <label>Beleuchtung</label>
+                            <select id="lighting"><option value="soft">Weiches Licht</option><option value="dramatic">Dramatisch</option><option value="sparkle">Funkeln/Brillanz</option><option value="natural">Natürlich</option><option value="studio">Studio Multi-Light</option></select>
+                        </div>
+                        <div class="form-group">
+                            <label>Hintergrund</label>
+                            <select id="background"><option value="black">Schwarz</option><option value="white">Weiß</option><option value="gradient">Gradient</option><option value="velvet">Samt</option><option value="marble">Marmor</option><option value="mirror">Spiegel/Reflektion</option></select>
+                        </div>
+                        <div class="form-group">
+                            <label>Reflexionen</label>
+                            <select id="reflections"><option value="controlled">Kontrolliert</option><option value="enhanced">Verstärkt</option><option value="minimal">Minimal</option><option value="mirror">Spiegelung</option></select>
+                        </div>
+                    </div>
                 </div>
-                <div class="summary-item">
-                    <span class="summary-label">Fokus:</span>
-                    <span class="summary-value">${this.formData.focus}</span>
+
+                <div class="form-step" data-step="4">
+                    <h2>Schritt 4: Model & Styling</h2>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Model Sichtbarkeit</label>
+                            <select id="modelVisibility"><option value="hands-only">Nur Hände</option><option value="neck-area">Halsbereich</option><option value="partial">Teilweise</option><option value="full">Ganzer Körper</option><option value="none">Kein Model</option></select>
+                        </div>
+                        <div class="form-group">
+                            <label>Styling</label>
+                            <select id="styling"><option value="elegant">Elegant</option><option value="casual">Casual</option><option value="formal">Formal/Abend</option><option value="business">Business</option><option value="minimal">Minimalistisch</option></select>
+                        </div>
+                        <div class="form-group">
+                            <label>Hand Styling</label>
+                            <select id="handStyling"><option value="manicured">Manikürt</option><option value="natural">Natürlich</option><option value="elegant">Elegant</option><option value="masculine">Maskulin</option></select>
+                        </div>
+                        <div class="form-group">
+                            <label>Props</label>
+                            <select id="props"><option value="none">Keine</option><option value="flowers">Blumen</option><option value="champagne">Champagner</option><option value="box">Schmuckschatulle</option><option value="fabric">Edle Stoffe</option></select>
+                        </div>
+                    </div>
                 </div>
-                <div class="summary-item">
-                    <span class="summary-label">Variationen:</span>
-                    <span class="summary-value">${this.formData.variations}</span>
+
+                <div class="form-step" data-step="5">
+                    <h2>Schritt 5: Überprüfen & Generieren</h2>
+                    <div id="summaryReview" class="summary-review"></div>
+                    <div class="form-group">
+                        <label>Anzahl Variationen</label>
+                        <select id="variationCount">
+                            <option value="1">1 Bild</option>
+                            <option value="2">2 Bilder</option>
+                            <option value="3">3 Bilder</option>
+                            <option value="4">4 Bilder</option>
+                        </select>
+                    </div>
                 </div>
-            `;
-        }
-    }
 
-    async submit() {
-        const submitBtn = document.getElementById('submitBtn');
-        if (submitBtn) {
-            submitBtn.disabled = true;
-            submitBtn.textContent = '⏳ Wird verarbeitet...';
-        }
+                <div class="form-navigation">
+                    <button type="button" class="btn btn-outline" id="prevBtn" style="display: none;">← Zurück</button>
+                    <button type="button" class="btn btn-primary" id="nextBtn">Weiter →</button>
+                    
+                    <button type="button" class="btn btn-accent" id="submitBtn" style="display: none;">🚀 Bilder generieren</button>
+                </div>
+            </form>
+        </main>
+    </div>
 
-        try {
-            // Upload image to get URL
-            console.log('📤 Uploading jewelry image...');
-            const base64 = await window.API.fileToBase64(this.uploadedFile);
-            const uploadResult = await window.API.uploadImage(base64);
-            
-            if (!uploadResult.success) {
-                throw new Error('Bild-Upload fehlgeschlagen');
-            }
-
-            this.formData.imageUrl = uploadResult.imageUrl;
-            console.log('✅ Image uploaded:', this.formData.imageUrl);
-
-            // Prepare project data
-            const projectData = {
-                projectType: 'jewelry',
-                imageUrl: this.formData.imageUrl, // Only URL
-                specifications: this.formData,
-                variations: parseInt(this.formData.variations)
-            };
-
-            // Submit to API
-            const result = await window.API.submitProject(projectData);
-            
-            if (result.success) {
-                alert('✅ Erfolgreich! Schmuck-Bilder werden generiert und in Google Drive gespeichert.');
-                setTimeout(() => {
-                    window.location.href = '/dashboard.html';
-                }, 2000);
-            } else {
-                throw new Error(result.error || 'Unbekannter Fehler');
-            }
-
-        } catch (error) {
-            console.error('❌ Submit error:', error);
-            alert('Fehler: ' + error.message);
-            
-            if (submitBtn) {
-                submitBtn.disabled = false;
-                submitBtn.textContent = '🚀 Bilder generieren';
-            }
-        }
-    }
-
-    removeImage() {
-        this.uploadedFile = null;
-        this.formData.imageUrl = null;
-        
-        const imageFile = document.getElementById('imageFile');
-        if (imageFile) imageFile.value = '';
-        
-        const uploadPlaceholder = document.getElementById('uploadPlaceholder');
-        const imagePreview = document.getElementById('imagePreview');
-        
-        if (uploadPlaceholder) uploadPlaceholder.style.display = 'block';
-        if (imagePreview) imagePreview.style.display = 'none';
-    }
-}
-
-// Initialize when DOM is ready
-document.addEventListener('DOMContentLoaded', () => {
-    if (document.body.dataset.page === 'jewelry') {
-        window.jewelryModule = new JewelryModule();
-        window.jewelryModule.init();
-    }
-});
-
-// Export for global access
-window.JewelryModule = JewelryModule;
+    <script src="../js/config.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/components.js"></script>
+    <script src="../js/modules/jewelry.js"></script>
+</body>
+</html>
