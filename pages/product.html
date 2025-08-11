@@ -12,210 +12,280 @@
     
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
-    
-    <!-- Supabase -->
-    <script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 </head>
-<body>
+<body data-page="product">
     <div class="page-container">
         <!-- Header -->
-        <header id="mainHeader" class="main-header"></header>
-
-        <!-- Back Navigation -->
-        <nav class="breadcrumb">
-            <a href="../dashboard.html">← Dashboard</a>
-            <span>/</span>
-            <span>Product Photography</span>
-        </nav>
+        <header class="main-header">
+            <div class="header-content">
+                <h1 class="logo" onclick="window.location.href='/dashboard.html'">
+                    AI<span>STUDIO</span>
+                </h1>
+                <div class="user-menu">
+                    <span id="userEmail">User</span>
+                </div>
+            </div>
+        </header>
 
         <!-- Main Content -->
         <main class="container">
             <div class="page-header">
                 <h1>📦 Product Photography</h1>
-                <p>Erstelle professionelle Produktfotos mit realistischer Handinteraktion</p>
+                <p>Erstelle professionelle Produktfotos mit realistischer Interaktion</p>
             </div>
 
-            <!-- Step Indicator -->
-            <div id="stepIndicator"></div>
-
-            <!-- Form -->
-            <form id="productForm" class="multi-step-form">
-                <!-- Step 1: Upload -->
+            <!-- Multi-Step Form -->
+            <div class="multi-step-form">
+                <!-- Step 1: Upload & Category -->
                 <div class="form-step active" data-step="1">
                     <h2>Schritt 1: Produkt hochladen</h2>
-                    <div id="imageUpload"></div>
                     
-                    <div class="form-group">
-                        <label>Produktkategorie</label>
+                    <div class="upload-area" id="uploadArea">
+                        <input type="file" id="imageFile" accept="image/*" style="display: none;">
+                        <div id="uploadPlaceholder">
+                            <div class="upload-icon">📸</div>
+                            <div class="upload-text">Klicken zum Hochladen</div>
+                            <div class="upload-subtext">PNG, JPG oder WebP • Max. 10MB</div>
+                        </div>
+                        <div id="imagePreview" style="display: none;">
+                            <img id="previewImg" style="max-width: 100%; max-height: 300px; border-radius: 8px;">
+                            <button type="button" onclick="productModule.removeImage()" class="btn btn-small" style="margin-top: 10px;">Entfernen</button>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group" style="margin-top: 20px;">
+                        <label>Produktkategorie *</label>
                         <select id="productCategory" required>
                             <option value="">Wähle eine Kategorie</option>
                             <option value="electronics">Elektronik</option>
-                            <option value="cosmetics">Kosmetik</option>
+                            <option value="cosmetics">Kosmetik & Beauty</option>
+                            <option value="household">Haushalt</option>
+                            <option value="food-beverage">Food & Getränke</option>
                             <option value="tools">Werkzeuge</option>
-                            <option value="homegoods">Haushalt</option>
                             <option value="toys">Spielzeug</option>
-                            <option value="food">Lebensmittel</option>
-                            <option value="other">Andere</option>
+                            <option value="sports">Sport-Equipment</option>
+                            <option value="office">Bürobedarf</option>
+                            <option value="accessories">Accessoires</option>
                         </select>
                     </div>
+                    
+                    <div class="form-group">
+                        <label>Produktname (optional)</label>
+                        <input type="text" id="productName" placeholder="z.B. iPhone Case, Gesichtscreme...">
+                    </div>
                 </div>
 
-                <!-- Step 2: Interaction Type -->
+                <!-- Step 2: Photography Style -->
                 <div class="form-step" data-step="2">
-                    <h2>Schritt 2: Interaktionstyp</h2>
+                    <h2>Schritt 2: Fotografie-Stil</h2>
                     
-                    <div class="interaction-grid">
-                        <div class="interaction-card" data-interaction="holding">
-                            <div class="card-icon">🤲</div>
-                            <h4>Halten</h4>
-                            <p>Produkt wird in der Hand gehalten</p>
+                    <div class="style-grid">
+                        <div class="style-card" data-style="professional">
+                            <div class="style-icon">💼</div>
+                            <h4>Professional</h4>
+                            <p>E-Commerce Ready, weißer Hintergrund</p>
                         </div>
                         
-                        <div class="interaction-card" data-interaction="using">
-                            <div class="card-icon">👆</div>
-                            <h4>Benutzen</h4>
-                            <p>Produkt wird aktiv verwendet</p>
+                        <div class="style-card" data-style="lifestyle">
+                            <div class="style-icon">🏠</div>
+                            <h4>Lifestyle</h4>
+                            <p>Im natürlichen Umfeld</p>
                         </div>
                         
-                        <div class="interaction-card" data-interaction="applying">
-                            <div class="card-icon">✋</div>
-                            <h4>Anwenden</h4>
-                            <p>Produkt wird aufgetragen/angewendet</p>
+                        <div class="style-card" data-style="ugc">
+                            <div class="style-icon">📱</div>
+                            <h4>UGC Style</h4>
+                            <p>Authentisch wie von Kunden</p>
                         </div>
                         
-                        <div class="interaction-card" data-interaction="displaying">
-                            <div class="card-icon">🎁</div>
-                            <h4>Präsentieren</h4>
-                            <p>Produkt wird präsentiert</p>
+                        <div class="style-card" data-style="hands-on">
+                            <div class="style-icon">🤲</div>
+                            <h4>Hands-On Demo</h4>
+                            <p>Produkt in Aktion</p>
+                        </div>
+                        
+                        <div class="style-card" data-style="unboxing">
+                            <div class="style-icon">📦</div>
+                            <h4>Unboxing</h4>
+                            <p>Auspacken & Erste Eindrücke</p>
+                        </div>
+                        
+                        <div class="style-card" data-style="comparison">
+                            <div class="style-icon">⚖️</div>
+                            <h4>Vergleich</h4>
+                            <p>Mit ähnlichen Produkten</p>
                         </div>
                     </div>
-                    
-                    <input type="hidden" id="interactionType" required>
                 </div>
 
-                <!-- Step 3: Hand Model -->
+                <!-- Step 3: Interaction Type -->
                 <div class="form-step" data-step="3">
-                    <h2>Schritt 3: Hand Model Details</h2>
+                    <h2>Schritt 3: Interaktion & Aktion</h2>
                     
                     <div class="form-grid">
                         <div class="form-group">
-                            <label>Hand Erscheinung</label>
-                            <select id="handAppearance">
-                                <option value="feminine">Feminin</option>
-                                <option value="masculine">Maskulin</option>
+                            <label>Hauptaktion</label>
+                            <select id="mainAction">
+                                <option value="holding">Produkt halten/präsentieren</option>
+                                <option value="using">Produkt benutzen</option>
+                                <option value="applying">Produkt anwenden/auftragen</option>
+                                <option value="installing">Produkt installieren/einrichten</option>
+                                <option value="opening">Produkt öffnen/auspacken</option>
+                                <option value="demonstrating">Features demonstrieren</option>
+                                <option value="comparing">Größe/Features vergleichen</option>
+                                <option value="static">Statisch (ohne Hände)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Spezifische Aktion</label>
+                            <input type="text" id="specificAction" 
+                                   placeholder="z.B. Creme auf Gesicht auftragen, Handy bedienen...">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Hand-Model Typ</label>
+                            <select id="handType">
+                                <option value="female">Weiblich</option>
+                                <option value="male">Männlich</option>
                                 <option value="neutral">Neutral</option>
+                                <option value="child">Kind</option>
+                                <option value="elderly">Älter</option>
                                 <option value="diverse">Diverse/Mehrere</option>
+                                <option value="none">Keine Hände</option>
                             </select>
                         </div>
                         
                         <div class="form-group">
-                            <label>Alter</label>
-                            <select id="handAge">
-                                <option value="young">Jung (18-30)</option>
-                                <option value="middle">Mittel (30-50)</option>
-                                <option value="mature">Reif (50+)</option>
-                            </select>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label>Hautton</label>
-                            <select id="skinTone">
-                                <option value="light">Hell</option>
-                                <option value="medium">Mittel</option>
-                                <option value="dark">Dunkel</option>
-                                <option value="varied">Variiert</option>
-                            </select>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label>Nagelstyling</label>
-                            <select id="nailStyle">
+                            <label>Hand Styling</label>
+                            <select id="handStyling">
                                 <option value="natural">Natürlich</option>
-                                <option value="manicured">Manikürt</option>
-                                <option value="colored">Farbig</option>
-                                <option value="short">Kurz/Praktisch</option>
+                                <option value="manicured">Gepflegt/Manikürt</option>
+                                <option value="working">Arbeitshände</option>
+                                <option value="jewelry">Mit Schmuck</option>
+                                <option value="minimal">Minimalistisch</option>
                             </select>
                         </div>
                     </div>
                 </div>
 
-                <!-- Step 4: Scene & Environment -->
+                <!-- Step 4: Environment & Context -->
                 <div class="form-step" data-step="4">
-                    <h2>Schritt 4: Szene & Umgebung</h2>
+                    <h2>Schritt 4: Umgebung & Kontext</h2>
                     
-                    <div class="form-group">
-                        <label>Setting</label>
-                        <select id="setting" required>
-                            <option value="studio">Studio (weißer Hintergrund)</option>
-                            <option value="home">Zuhause</option>
-                            <option value="office">Büro</option>
-                            <option value="outdoor">Outdoor</option>
-                            <option value="workshop">Werkstatt</option>
-                            <option value="kitchen">Küche</option>
-                            <option value="bathroom">Badezimmer</option>
-                        </select>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Setting/Location</label>
+                            <select id="setting">
+                                <option value="studio">Studio (clean)</option>
+                                <option value="desktop">Schreibtisch</option>
+                                <option value="kitchen">Küche</option>
+                                <option value="bathroom">Badezimmer</option>
+                                <option value="living-room">Wohnzimmer</option>
+                                <option value="outdoor">Outdoor</option>
+                                <option value="workshop">Werkstatt</option>
+                                <option value="gym">Fitnessstudio</option>
+                                <option value="car">Auto</option>
+                                <option value="office">Büro</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Hintergrund</label>
+                            <select id="background">
+                                <option value="white">Weiß (E-Commerce)</option>
+                                <option value="gradient">Gradient</option>
+                                <option value="natural">Natürlich (Location)</option>
+                                <option value="blurred">Unscharf (Bokeh)</option>
+                                <option value="colored">Farbig</option>
+                                <option value="textured">Texturiert</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Beleuchtung</label>
+                            <select id="lighting">
+                                <option value="studio">Studio (perfekt)</option>
+                                <option value="natural">Natürliches Licht</option>
+                                <option value="window">Fensterlicht</option>
+                                <option value="dramatic">Dramatisch</option>
+                                <option value="soft">Weich/Diffus</option>
+                                <option value="phone-flash">Handy-Blitz (UGC)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Props/Zubehör</label>
+                            <select id="props">
+                                <option value="none">Keine</option>
+                                <option value="minimal">Minimal</option>
+                                <option value="lifestyle">Lifestyle Props</option>
+                                <option value="packaging">Mit Verpackung</option>
+                                <option value="accessories">Mit Zubehör</option>
+                                <option value="comparison">Vergleichsobjekte</option>
+                            </select>
+                        </div>
                     </div>
+                </div>
+
+                <!-- Step 5: Details & Submit -->
+                <div class="form-step" data-step="5">
+                    <h2>Schritt 5: Details & Generieren</h2>
                     
                     <div class="form-group">
-                        <label>Beleuchtung</label>
-                        <select id="lighting">
-                            <option value="natural">Natürliches Licht</option>
-                            <option value="studio">Studio Beleuchtung</option>
-                            <option value="dramatic">Dramatisch</option>
-                            <option value="soft">Weich/Diffus</option>
+                        <label>Kamerawinkel</label>
+                        <select id="cameraAngle">
+                            <option value="eye-level">Augenhöhe</option>
+                            <option value="45-degree">45 Grad</option>
+                            <option value="top-down">Von oben</option>
+                            <option value="low-angle">Von unten</option>
+                            <option value="macro">Makro/Nahaufnahme</option>
+                            <option value="wide">Weitwinkel</option>
                         </select>
                     </div>
                     
                     <div class="form-group">
                         <label>Zusätzliche Details (optional)</label>
-                        <textarea id="additionalDetails" rows="3" 
-                                  placeholder="z.B. Spray-Effekt sichtbar, Produkt in Aktion..."></textarea>
+                        <textarea id="additionalDetails" rows="4" 
+                                  placeholder="z.B. Wassertropfen auf Produkt, Steam-Effekt, bestimmte Features im Fokus..."></textarea>
                     </div>
-                </div>
-
-                <!-- Step 5: Review & Submit -->
-                <div class="form-step" data-step="5">
-                    <h2>Schritt 5: Überprüfen & Generieren</h2>
-                    
-                    <div id="summaryReview" class="summary-review"></div>
                     
                     <div class="form-group">
                         <label>Anzahl Variationen</label>
-                        <select id="variationCount">
-                            <option value="1">1 Bild (1 Credit)</option>
-                            <option value="2">2 Bilder (2 Credits)</option>
-                            <option value="3">3 Bilder (3 Credits)</option>
-                            <option value="4">4 Bilder (4 Credits)</option>
+                        <select id="variations">
+                            <option value="1">1 Bild</option>
+                            <option value="2">2 Bilder</option>
+                            <option value="3">3 Bilder</option>
+                            <option value="4">4 Bilder</option>
                         </select>
                     </div>
                     
-                    <div class="credits-info">
-                        <p>Verfügbare Credits: <strong id="availableCredits">0</strong></p>
-                        <p>Benötigte Credits: <strong id="requiredCredits">1</strong></p>
+                    <!-- Summary -->
+                    <div class="summary-review" style="margin: 20px 0; padding: 20px; background: #f5f5f5; border-radius: 8px;">
+                        <h3>Zusammenfassung</h3>
+                        <div id="summaryContent"></div>
                     </div>
                 </div>
 
                 <!-- Navigation -->
-                <div class="form-navigation">
-                    <button type="button" class="btn btn-outline" id="prevBtn" style="display: none;">
+                <div class="form-navigation" style="margin-top: 30px; display: flex; justify-content: space-between;">
+                    <button type="button" class="btn btn-outline" id="prevBtn" onclick="productModule.previousStep()">
                         ← Zurück
                     </button>
-                    <button type="button" class="btn btn-primary" id="nextBtn">
+                    <button type="button" class="btn btn-primary" id="nextBtn" onclick="productModule.nextStep()">
                         Weiter →
                     </button>
-                    <button type="submit" class="btn btn-accent" id="submitBtn" style="display: none;">
+                    <button type="button" class="btn btn-accent" id="submitBtn" onclick="productModule.submit()" style="display: none;">
                         🚀 Bilder generieren
                     </button>
                 </div>
-            </form>
+            </div>
         </main>
     </div>
 
     <!-- Scripts -->
     <script src="../js/config.js"></script>
-    <script src="../js/auth.js"></script>
     <script src="../js/api.js"></script>
-    <script src="../js/components.js"></script>
     <script src="../js/modules/product.js"></script>
 </body>
 </html>
