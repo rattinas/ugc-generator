@@ -46,7 +46,7 @@ class BeautyModule {
         document.getElementById('nextBtn')?.addEventListener('click', () => this.nextStep());
         document.getElementById('submitBtn')?.addEventListener('click', () => this.submit());
 
-        // KORRIGIERT: Event-Listener für Upload-Komponenten hinzugefügt
+        // Event-Listener für Upload-Komponenten
         document.getElementById('uploadArea')?.addEventListener('click', () => document.getElementById('imageFile')?.click());
         document.getElementById('imageFile')?.addEventListener('change', (e) => this.handleImageUpload(e));
         document.getElementById('removeImageBtn')?.addEventListener('click', () => this.removeImage());
@@ -58,7 +58,6 @@ class BeautyModule {
         });
     }
 
-    // KORRIGIERT: Methode für Bild-Upload hinzugefügt
     async handleImageUpload(event) {
         const file = event.target.files[0];
         if (!file) return;
@@ -83,7 +82,6 @@ class BeautyModule {
         reader.readAsDataURL(file);
     }
 
-    // KORRIGIERT: Methode zum Entfernen des Bildes hinzugefügt
     removeImage() {
         this.uploadedFile = null;
         this.formData.imageUrl = null;
@@ -151,7 +149,6 @@ class BeautyModule {
         this.collectFormData();
         switch(this.currentStep) {
             case 1:
-                // KORRIGIERT: Validierung für das hochgeladene Bild hinzugefügt
                 if (!this.uploadedFile) {
                     alert('Bitte lade ein Produktbild hoch!');
                     return false;
@@ -195,7 +192,6 @@ class BeautyModule {
         }
 
         try {
-            // Schritt 1: Bild hochladen, um URL zu erhalten
             if (!this.uploadedFile) throw new Error('Kein Bild zum Hochladen ausgewählt.');
             
             const base64 = await window.API.fileToBase64(this.uploadedFile);
@@ -207,7 +203,6 @@ class BeautyModule {
             this.formData.imageUrl = uploadResult.imageUrl;
             console.log('✅ Image uploaded:', this.formData.imageUrl);
 
-            // Schritt 2: Finale Daten mit der Bild-URL an den Server senden
             if (submitBtn) submitBtn.textContent = '🚀 Daten werden gesendet...';
             this.collectFormData();
 
