@@ -3,58 +3,165 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - AI Studio</title>
+    <title>Dashboard - Go 2 Flow Studio</title>
     
     <!-- CSS -->
-    <link rel="stylesheet" href="css/styles.css">
-    <link rel="stylesheet" href="css/components.css">
-    <link rel="stylesheet" href="css/pages.css">
+    <link rel="stylesheet" href="css/go2flow-styles.css">
     
     <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=Sora:wght@300;400;600;700&display=swap" rel="stylesheet">
     
     <!-- Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <style>
+        .dashboard {
+            min-height: 100vh;
+            background: var(--g2f-bg-primary);
+        }
+        
+        .welcome-section {
+            padding: 40px 0;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding-left: 24px;
+            padding-right: 24px;
+        }
+        
+        .welcome-section h2 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            background: var(--g2f-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .welcome-section p {
+            font-size: 16px;
+            color: var(--g2f-text-secondary);
+        }
+        
+        .drive-status {
+            margin-top: 20px;
+            padding: 16px;
+            background: var(--g2f-bg-card);
+            border: 1px solid var(--g2f-border);
+            border-radius: var(--g2f-radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .drive-status p {
+            margin: 0;
+            color: var(--g2f-text-secondary);
+        }
+        
+        .drive-status strong {
+            color: var(--g2f-accent);
+        }
+        
+        .section {
+            margin: 48px 0;
+            max-width: 1400px;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 0 24px;
+        }
+        
+        .section-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--g2f-text-primary);
+            margin-bottom: 24px;
+        }
+        
+        .use-case-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 24px;
+        }
+        
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .user-dropdown {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: var(--g2f-bg-secondary);
+            border: 1px solid var(--g2f-border);
+            border-radius: var(--g2f-radius-full);
+            color: var(--g2f-text-secondary);
+            font-size: 14px;
+        }
+        
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+        
+        .drive-btn {
+            background: var(--g2f-bg-secondary);
+            border: 1px solid var(--g2f-accent);
+            color: var(--g2f-accent);
+        }
+        
+        .drive-btn:hover {
+            background: rgba(0, 212, 255, 0.1);
+            transform: translateY(-2px);
+        }
+    </style>
 </head>
 <body>
     <div class="dashboard">
         <!-- Header Component -->
-        <header id="mainHeader" class="main-header">
+        <header class="main-header">
             <div class="header-content">
-                <h1 class="logo" onclick="window.location.href='/dashboard.html'">
-                    AI<span>STUDIO</span>
-                </h1>
+                <div class="logo-container" onclick="window.location.href='/dashboard.html'">
+                    <img src="https://onecdn.io/media/6133cb85-37e0-4e06-ab28-ec5cc5257fd9/md2x" 
+                         alt="Go 2 Flow" 
+                         class="logo-img">
+                    <span class="logo-text">Go 2 Flow Studio</span>
+                </div>
                 
                 <div class="user-menu">
                     <!-- Google Drive Settings -->
-                    <button onclick="openDriveSettings()" class="btn btn-small" style="margin-right: 10px;">
+                    <button onclick="openDriveSettings()" class="btn btn-small drive-btn">
                         <span>📁</span> Drive Ordner
                     </button>
                     
                     <div class="user-dropdown">
                         <span id="userEmail">User</span>
-                        <button onclick="signOut()" class="btn btn-small">Abmelden</button>
+                        <button onclick="signOut()" class="btn btn-small btn-secondary">Abmelden</button>
                     </div>
                 </div>
             </div>
         </header>
 
         <!-- Main Content -->
-        <main class="container">
+        <main>
             <!-- Welcome Section -->
             <section class="welcome-section">
-                <h2>Willkommen zurück!</h2>
-                <p>Was möchtest du heute fotografieren?</p>
+                <h2>Willkommen im Go 2 Flow Studio!</h2>
+                <p>Erstelle photorealistische E-Commerce Bilder mit KI-Unterstützung</p>
                 
                 <!-- Drive Status -->
-                <div id="driveStatus" class="drive-status" style="margin-top: 20px; padding: 15px; background: #f0f0f0; border-radius: 8px; display: none;">
-                    <p style="margin: 0;">📁 Google Drive Ordner: <strong id="driveFolderPath">Nicht konfiguriert</strong></p>
+                <div id="driveStatus" class="drive-status" style="display: none;">
+                    <p>📁 Google Drive Ordner: <strong id="driveFolderPath">Nicht konfiguriert</strong></p>
+                    <button onclick="openDriveSettings()" class="btn btn-small btn-accent">Ändern</button>
                 </div>
             </section>
 
             <!-- Use Cases -->
             <section class="section">
-                <h3 class="section-title">Wähle deinen Use Case</h3>
+                <h3 class="section-title">Wähle deinen Photography Style</h3>
                 <div class="use-case-grid">
                     <!-- Fashion -->
                     <div class="use-case-card" onclick="navigateTo('/pages/fashion.html')">
@@ -141,22 +248,23 @@
     <div id="driveSettingsModal" class="modal">
         <div class="modal-content">
             <h3>Google Drive Einstellungen</h3>
-            <p>Gib den Link zu deinem Google Drive Ordner ein, in dem die generierten Bilder gespeichert werden sollen:</p>
+            <p style="color: var(--g2f-text-secondary); margin-bottom: 20px;">
+                Gib den Link zu deinem Google Drive Ordner ein, in dem die generierten Bilder gespeichert werden sollen:
+            </p>
             
-            <div class="form-group" style="margin: 20px 0;">
+            <div class="form-group">
                 <label>Google Drive Ordner Link:</label>
                 <input type="text" 
                        id="driveFolderLink" 
                        placeholder="https://drive.google.com/drive/folders/..." 
-                       class="form-control"
-                       style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;">
-                <small style="color: #666; display: block; margin-top: 5px;">
+                       class="form-control">
+                <small style="color: var(--g2f-text-secondary); display: block; margin-top: 8px;">
                     Der Ordner muss für Make.com freigegeben sein
                 </small>
             </div>
             
             <div class="modal-footer">
-                <button class="btn btn-outline" onclick="closeDriveSettings()">Abbrechen</button>
+                <button class="btn btn-secondary" onclick="closeDriveSettings()">Abbrechen</button>
                 <button class="btn btn-primary" onclick="saveDriveSettings()">Speichern</button>
             </div>
         </div>
@@ -212,7 +320,7 @@
                     });
                 } else {
                     // Check localStorage as fallback
-                    const storedUser = localStorage.getItem('ai_studio_user');
+                    const storedUser = localStorage.getItem('g2f_studio_user');
                     
                     if (storedUser) {
                         try {
@@ -244,8 +352,8 @@
 
         function showError() {
             document.querySelector('.welcome-section').innerHTML = `
-                <h2 style="color: #ff6b6b;">Authentifizierungsfehler</h2>
-                <p>Bitte <a href="/" style="color: #667eea;">neu anmelden</a></p>
+                <h2 style="color: var(--g2f-accent);">Authentifizierungsfehler</h2>
+                <p>Bitte <a href="/" style="color: var(--g2f-accent);">neu anmelden</a></p>
             `;
         }
 
@@ -256,7 +364,7 @@
                 await supabase.auth.signOut();
             }
             
-            localStorage.removeItem('ai_studio_user');
+            localStorage.removeItem('g2f_studio_user');
             localStorage.removeItem('drive_folder_link');
             window.location.href = '/';
         }
@@ -314,7 +422,7 @@
         function loadDriveSettings() {
             const savedLink = localStorage.getItem('drive_folder_link');
             if (savedLink) {
-                document.getElementById('driveStatus').style.display = 'block';
+                document.getElementById('driveStatus').style.display = 'flex';
                 // Extract folder name from link if possible
                 const folderName = savedLink.split('/').pop() || 'Konfiguriert';
                 document.getElementById('driveFolderPath').textContent = folderName;
