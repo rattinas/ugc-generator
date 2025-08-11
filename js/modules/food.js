@@ -46,7 +46,7 @@ class FoodModule {
         document.getElementById('submitBtn')?.addEventListener('click', () => this.submit());
         document.querySelector('.logo')?.addEventListener('click', () => window.location.href = '/dashboard.html');
 
-        // KORREKTUR: Vereinfachte und direkte Event-Listener für den Upload
+        // Bild-Upload
         document.getElementById('uploadArea')?.addEventListener('click', () => document.getElementById('imageFile')?.click());
         document.getElementById('imageFile')?.addEventListener('change', (e) => this.handleImageUpload(e));
         document.getElementById('removeImageBtn')?.addEventListener('click', () => this.removeImage());
@@ -62,6 +62,7 @@ class FoodModule {
         const file = event.target.files[0];
         if (!file) return;
 
+        // Annahme: window.API.validateImageFile existiert
         const validation = window.API?.validateImageFile ? window.API.validateImageFile(file) : { valid: true };
         if (!validation.valid) {
             alert(validation.error || 'Ungültiges Bild');
@@ -157,9 +158,6 @@ class FoodModule {
             if (this.currentStep < this.totalSteps) {
                 this.currentStep++;
                 this.updateStepDisplay();
-                if (this.currentStep === this.totalSteps) {
-                    this.updateSummary();
-                }
             }
         }
     }
@@ -172,6 +170,9 @@ class FoodModule {
     }
 
     updateStepDisplay() {
+        if (this.currentStep === this.totalSteps) {
+            this.updateSummary();
+        }
         document.querySelectorAll('.form-step').forEach(step => step.classList.remove('active'));
         document.querySelector(`[data-step="${this.currentStep}"]`)?.classList.add('active');
         document.getElementById('prevBtn').style.display = this.currentStep === 1 ? 'none' : 'block';
@@ -224,7 +225,6 @@ class FoodModule {
         submitBtn.textContent = '⏳ Bild wird hochgeladen...';
 
         try {
-            // Annahme: window.API ist in api.js definiert und enthält die benötigten Funktionen
             const base64 = await window.API.fileToBase64(this.uploadedFile);
             const uploadResult = await window.API.uploadImage(base64);
             
@@ -248,7 +248,7 @@ class FoodModule {
             const result = await window.API.submitProject(projectData);
             
             if (result.success) {
-                alert('✅ Erfolgreich! Food-Bilder werden generiert und in Google Drive gespeichert.');
+                alert('✅ Erfolgreich! Die Bilder werden generiert und in Google Drive gespeichert.');
                 setTimeout(() => { window.location.href = '/dashboard.html'; }, 2000);
             } else {
                 throw new Error(result.error || 'Unbekannter Fehler beim Übermitteln des Projekts.');
