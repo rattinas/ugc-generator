@@ -40,70 +40,20 @@ class FoodModule {
     }
 
     setupEventListeners() {
-        // Navigation Buttons
-        const prevBtn = document.getElementById('prevBtn');
-        const nextBtn = document.getElementById('nextBtn');
-        const submitBtn = document.getElementById('submitBtn');
-        const logo = document.querySelector('.logo');
+        // Navigation & Globale Elemente
+        document.getElementById('prevBtn')?.addEventListener('click', () => this.previousStep());
+        document.getElementById('nextBtn')?.addEventListener('click', () => this.nextStep());
+        document.getElementById('submitBtn')?.addEventListener('click', () => this.submit());
+        document.querySelector('.logo')?.addEventListener('click', () => window.location.href = '/dashboard.html');
 
-        if (prevBtn) {
-            prevBtn.addEventListener('click', () => this.previousStep());
-        }
-        
-        if (nextBtn) {
-            nextBtn.addEventListener('click', () => this.nextStep());
-        }
-        
-        if (submitBtn) {
-            submitBtn.addEventListener('click', () => this.submit());
-        }
-        
-        if (logo) {
-            logo.addEventListener('click', () => window.location.href = '/dashboard.html');
-        }
+        // KORREKTUR: Vereinfachte und direkte Event-Listener für den Upload
+        document.getElementById('uploadArea')?.addEventListener('click', () => document.getElementById('imageFile')?.click());
+        document.getElementById('imageFile')?.addEventListener('change', (e) => this.handleImageUpload(e));
+        document.getElementById('removeImageBtn')?.addEventListener('click', () => this.removeImage());
 
-        // Bild-Upload Setup
-        const uploadArea = document.getElementById('uploadArea');
-        const imageFile = document.getElementById('imageFile');
-        const removeImageBtn = document.getElementById('removeImageBtn');
-
-        // Upload Area Click Handler
-        if (uploadArea) {
-            uploadArea.addEventListener('click', function(e) {
-                // Prüfe ob das Remove Button geklickt wurde
-                if (e.target && (e.target.id === 'removeImageBtn' || e.target.closest('#removeImageBtn'))) {
-                    return; // Nicht das File Input triggern
-                }
-                
-                // Trigger File Input
-                if (imageFile) {
-                    imageFile.click();
-                }
-            });
-        }
-
-        // File Input Change Handler
-        if (imageFile) {
-            imageFile.addEventListener('change', (e) => this.handleImageUpload(e));
-        }
-
-        // Remove Image Button
-        if (removeImageBtn) {
-            removeImageBtn.addEventListener('click', (e) => {
-                e.stopPropagation(); // Verhindert dass der Upload Area Click getriggert wird
-                this.removeImage();
-            });
-        }
-
-        // Food Category Change
-        const foodCategory = document.getElementById('foodCategory');
-        if (foodCategory) {
-            foodCategory.addEventListener('change', (e) => this.updateCategoryDefaults(e.target.value));
-        }
-
-        // Style Cards Click Handler
-        const styleCards = document.querySelectorAll('.style-card');
-        styleCards.forEach(card => {
+        // Formular-Interaktionen
+        document.getElementById('foodCategory')?.addEventListener('change', (e) => this.updateCategoryDefaults(e.target.value));
+        document.querySelectorAll('.style-card').forEach(card => {
             card.addEventListener('click', () => this.selectStyle(card));
         });
     }
@@ -112,28 +62,21 @@ class FoodModule {
         const file = event.target.files[0];
         if (!file) return;
 
-        // Validierung
-        if (window.API && window.API.validateImageFile) {
-            const validation = window.API.validateImageFile(file);
-            if (!validation.valid) {
-                alert(validation.error || 'Ungültiges Bild');
-                return;
-            }
+        const validation = window.API?.validateImageFile ? window.API.validateImageFile(file) : { valid: true };
+        if (!validation.valid) {
+            alert(validation.error || 'Ungültiges Bild');
+            return;
         }
 
         this.uploadedFile = file;
 
-        // Vorschau anzeigen
         const reader = new FileReader();
         reader.onload = (e) => {
             const previewImg = document.getElementById('previewImg');
-            const uploadPlaceholder = document.getElementById('uploadPlaceholder');
-            const imagePreview = document.getElementById('imagePreview');
-            
-            if (previewImg && uploadPlaceholder && imagePreview) {
+            if (previewImg) {
                 previewImg.src = e.target.result;
-                uploadPlaceholder.style.display = 'none';
-                imagePreview.style.display = 'block';
+                document.getElementById('uploadPlaceholder').style.display = 'none';
+                document.getElementById('imagePreview').style.display = 'block';
             }
         };
         reader.readAsDataURL(file);
@@ -142,24 +85,15 @@ class FoodModule {
     removeImage() {
         this.uploadedFile = null;
         this.formData.imageUrl = null;
-        
         const imageFile = document.getElementById('imageFile');
-        const uploadPlaceholder = document.getElementById('uploadPlaceholder');
-        const imagePreview = document.getElementById('imagePreview');
-        
         if (imageFile) imageFile.value = '';
-        if (uploadPlaceholder) uploadPlaceholder.style.display = 'block';
-        if (imagePreview) imagePreview.style.display = 'none';
+        document.getElementById('uploadPlaceholder').style.display = 'block';
+        document.getElementById('imagePreview').style.display = 'none';
     }
 
     selectStyle(card) {
-        // Entferne selected von allen Cards
         document.querySelectorAll('.style-card').forEach(c => c.classList.remove('selected'));
-        // Füge selected zur geklickten Card hinzu
         card.classList.add('selected');
-        // Speichere den Style
-        this.formData.style = card.dataset.style;
-        // Update Defaults basierend auf Style
         this.updateStyleDefaults(card.dataset.style);
     }
 
@@ -172,7 +106,6 @@ class FoodModule {
             'baked': { cameraAngle: '45-degree', effects: 'steam', lighting: 'warm' },
             'dessert': { cameraAngle: 'close-up', presentation: 'plated', props: 'minimal' }
         };
-        
         const categoryDefaults = defaults[category];
         if (categoryDefaults) {
             Object.keys(categoryDefaults).forEach(key => {
@@ -191,7 +124,6 @@ class FoodModule {
             'packaging': { surface: 'white', lighting: 'studio', props: 'none' },
             'action': { effects: 'steam', lighting: 'dramatic', presentation: 'process' }
         };
-        
         const defaults = styleDefaults[style];
         if (defaults) {
             Object.keys(defaults).forEach(key => {
@@ -204,18 +136,18 @@ class FoodModule {
     collectFormData() {
         this.formData = {
             ...this.formData,
-            category: document.getElementById('foodCategory')?.value || '',
-            productName: document.getElementById('foodName')?.value || '',
+            category: document.getElementById('foodCategory')?.value,
+            productName: document.getElementById('foodName')?.value,
             style: document.querySelector('.style-card.selected')?.dataset.style || '',
-            cameraAngle: document.getElementById('cameraAngle')?.value || '',
-            presentation: document.getElementById('presentation')?.value || '',
-            effects: document.getElementById('effects')?.value || '',
-            props: document.getElementById('props')?.value || '',
-            surface: document.getElementById('surface')?.value || '',
-            lighting: document.getElementById('lighting')?.value || '',
-            colorPalette: document.getElementById('colorPalette')?.value || '',
-            season: document.getElementById('season')?.value || '',
-            additionalDetails: document.getElementById('additionalDetails')?.value || '',
+            cameraAngle: document.getElementById('cameraAngle')?.value,
+            presentation: document.getElementById('presentation')?.value,
+            effects: document.getElementById('effects')?.value,
+            props: document.getElementById('props')?.value,
+            surface: document.getElementById('surface')?.value,
+            lighting: document.getElementById('lighting')?.value,
+            colorPalette: document.getElementById('colorPalette')?.value,
+            season: document.getElementById('season')?.value,
+            additionalDetails: document.getElementById('additionalDetails')?.value,
             variations: parseInt(document.getElementById('variations')?.value, 10) || 1
         };
     }
@@ -240,30 +172,15 @@ class FoodModule {
     }
 
     updateStepDisplay() {
-        // Alle Steps ausblenden
-        document.querySelectorAll('.form-step').forEach(step => {
-            step.classList.remove('active');
-        });
-        
-        // Aktuellen Step anzeigen
-        const currentStepElement = document.querySelector(`[data-step="${this.currentStep}"]`);
-        if (currentStepElement) {
-            currentStepElement.classList.add('active');
-        }
-        
-        // Navigation Buttons Update
-        const prevBtn = document.getElementById('prevBtn');
-        const nextBtn = document.getElementById('nextBtn');
-        const submitBtn = document.getElementById('submitBtn');
-        
-        if (prevBtn) prevBtn.style.display = this.currentStep === 1 ? 'none' : 'block';
-        if (nextBtn) nextBtn.style.display = this.currentStep === this.totalSteps ? 'none' : 'block';
-        if (submitBtn) submitBtn.style.display = this.currentStep === this.totalSteps ? 'block' : 'none';
+        document.querySelectorAll('.form-step').forEach(step => step.classList.remove('active'));
+        document.querySelector(`[data-step="${this.currentStep}"]`)?.classList.add('active');
+        document.getElementById('prevBtn').style.display = this.currentStep === 1 ? 'none' : 'block';
+        document.getElementById('nextBtn').style.display = this.currentStep === this.totalSteps ? 'none' : 'block';
+        document.getElementById('submitBtn').style.display = this.currentStep === this.totalSteps ? 'block' : 'none';
     }
 
     validateCurrentStep() {
         this.collectFormData();
-        
         switch(this.currentStep) {
             case 1:
                 if (!this.uploadedFile) {
@@ -275,14 +192,12 @@ class FoodModule {
                     return false;
                 }
                 return true;
-                
             case 2:
                 if (!this.formData.style) {
                     alert('Bitte wähle einen Food-Style!');
                     return false;
                 }
                 return true;
-                
             default:
                 return true;
         }
@@ -293,13 +208,11 @@ class FoodModule {
         const summaryContent = document.getElementById('summaryReview');
         if (summaryContent) {
             summaryContent.innerHTML = `
-                <h3>📋 Zusammenfassung</h3>
+                <h3>Zusammenfassung</h3>
                 <p><strong>Produkt:</strong> ${this.formData.productName || this.formData.category}</p>
                 <p><strong>Style:</strong> ${this.formData.style}</p>
                 <p><strong>Winkel:</strong> ${this.formData.cameraAngle}</p>
                 <p><strong>Präsentation:</strong> ${this.formData.presentation}</p>
-                <p><strong>Effekte:</strong> ${this.formData.effects}</p>
-                <p><strong>Beleuchtung:</strong> ${this.formData.lighting}</p>
                 <p><strong>Variationen:</strong> ${this.formData.variations}</p>
             `;
         }
@@ -307,19 +220,11 @@ class FoodModule {
 
     async submit() {
         const submitBtn = document.getElementById('submitBtn');
-        
-        if (!submitBtn) return;
-        
         submitBtn.disabled = true;
         submitBtn.textContent = '⏳ Bild wird hochgeladen...';
 
         try {
-            // Check if API exists
-            if (!window.API) {
-                throw new Error('API nicht verfügbar');
-            }
-
-            // Upload Image
+            // Annahme: window.API ist in api.js definiert und enthält die benötigten Funktionen
             const base64 = await window.API.fileToBase64(this.uploadedFile);
             const uploadResult = await window.API.uploadImage(base64);
             
@@ -341,16 +246,13 @@ class FoodModule {
             };
 
             const result = await window.API.submitProject(projectData);
-
+            
             if (result.success) {
                 alert('✅ Erfolgreich! Food-Bilder werden generiert und in Google Drive gespeichert.');
-                setTimeout(() => {
-                    window.location.href = '/dashboard.html';
-                }, 2000);
+                setTimeout(() => { window.location.href = '/dashboard.html'; }, 2000);
             } else {
                 throw new Error(result.error || 'Unbekannter Fehler beim Übermitteln des Projekts.');
             }
-            
         } catch (error) {
             console.error('❌ Submit error:', error);
             alert('Fehler: ' + error.message);
