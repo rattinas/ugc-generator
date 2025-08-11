@@ -265,13 +265,39 @@
     </div>
 
     <script>
+        // --- PLATZHALTER FÜR DEINE BACKEND-API ---
+        // Ersetze dies mit deinen echten API-Aufrufen.
+        window.API = {
+            /**
+             * Lädt ein Base64-Bild auf deinen Server hoch und gibt eine URL zurück.
+             * @param {string} base64Image - Der Base64-kodierte String des Bildes.
+             * @returns {Promise<{success: boolean, imageUrl?: string, error?: string}>}
+             */
+            uploadImage: async (base64Image) => {
+                console.log("Simuliere Bild-Upload an deinen Server...");
+                // In einem echten Szenario wäre hier ein fetch() zu deinem dedizierten Upload-Endpunkt.
+                // z.B. `fetch('/api/image-upload', { method: 'POST', body: JSON.stringify({ image: base64Image }) })`
+                await new Promise(resolve => setTimeout(resolve, 1500)); // Simuliert Netzwerkverzögerung
+                
+                // Simuliert eine erfolgreiche Antwort vom Server
+                const dummyUrl = `https://storage.deinserver.com/images/fashion-${Date.now()}.jpg`;
+                console.log("Upload-Simulation erfolgreich, URL:", dummyUrl);
+                return { success: true, imageUrl: dummyUrl };
+
+                // Simuliert einen Fehler:
+                // return { success: false, error: "Upload-Limit erreicht" };
+            }
+        };
+
+
         class FashionModule {
             constructor() {
                 this.currentStep = 1;
                 this.totalSteps = 5;
-                this.uploadedFile = null; // Speichert das File-Objekt
+                this.uploadedFile = null; 
+                this.base64Image = null; // Nur für den Upload benötigt
                 this.formData = {
-                    base64Image: null,
+                    imageUrl: null, // Die permanente URL nach dem Upload
                     category: '',
                     style: '',
                     iphoneModel: '',
@@ -305,28 +331,15 @@
             }
 
             setupEventListeners() {
-                // Navigations-Buttons
                 document.getElementById('prevBtn')?.addEventListener('click', () => this.previousStep());
                 document.getElementById('nextBtn')?.addEventListener('click', () => this.nextStep());
                 document.getElementById('submitBtn')?.addEventListener('click', () => this.submit());
-
-                // Logo-Klick
                 document.querySelector('.logo')?.addEventListener('click', () => window.location.href = '/dashboard.html');
-
-                // Step 1: Bild-Upload
                 document.getElementById('uploadArea')?.addEventListener('click', () => document.getElementById('imageFile')?.click());
                 document.getElementById('imageFile')?.addEventListener('change', (e) => this.handleImageUpload(e));
                 document.getElementById('removeImageBtn')?.addEventListener('click', () => this.removeImage());
-
-                // Step 2: Stil-Auswahl
-                document.querySelectorAll('.style-card').forEach(card => {
-                    card.addEventListener('click', () => this.selectStyle(card));
-                });
-
-                // Alle Formularfelder überwachen
-                document.querySelectorAll('select, textarea').forEach(input => {
-                    input.addEventListener('change', (e) => this.collectFormData());
-                });
+                document.querySelectorAll('.style-card').forEach(card => card.addEventListener('click', () => this.selectStyle(card)));
+                document.querySelectorAll('select, textarea').forEach(input => input.addEventListener('change', () => this.collectFormData()));
             }
 
             handleImageUpload(event) {
@@ -335,19 +348,11 @@
                     this.removeImage();
                     return;
                 }
-                
-                // Annahme: Es gibt eine globale Validierungsfunktion. Wenn nicht, entfernen oder anpassen.
-                // const validation = window.API?.validateImageFile(file);
-                // if (!validation?.valid) {
-                //     alert(validation?.error || 'Ungültiges Bild');
-                //     return;
-                // }
-
                 this.uploadedFile = file;
 
                 const reader = new FileReader();
                 reader.onload = (e) => {
-                    this.formData.base64Image = e.target.result; // Speichere Base64 für die Vorschau und den Versand
+                    this.base64Image = e.target.result;
                     const previewImg = document.getElementById('previewImg');
                     if (previewImg) {
                         previewImg.src = e.target.result;
@@ -360,7 +365,8 @@
             
             removeImage() {
                 this.uploadedFile = null;
-                this.formData.base64Image = null;
+                this.base64Image = null;
+                this.formData.imageUrl = null;
                 const imageFileInput = document.getElementById('imageFile');
                 if(imageFileInput) imageFileInput.value = '';
                 
@@ -371,17 +377,15 @@
             selectStyle(card) {
                 document.querySelectorAll('.style-card').forEach(c => c.classList.remove('selected'));
                 card.classList.add('selected');
-                this.formData.style = card.dataset.style;
-
+                this.collectFormData();
                 const iphoneOptions = document.getElementById('iphoneOptions');
                 if (iphoneOptions) {
                     iphoneOptions.style.display = this.formData.style === 'iphone' ? 'block' : 'none';
                 }
-                this.collectFormData();
             }
 
             collectFormData() {
-                // Sammelt die Daten von allen Feldern
+                this.formData.style = document.querySelector('.style-card.selected')?.dataset.style || '';
                 this.formData.category = document.getElementById('productCategory')?.value;
                 this.formData.iphoneModel = this.formData.style === 'iphone' ? document.getElementById('iphoneModel')?.value : '';
                 this.formData.modelAction = document.getElementById('modelAction')?.value;
@@ -401,10 +405,7 @@
                     if (this.currentStep < this.totalSteps) {
                         this.currentStep++;
                         this.updateStepDisplay();
-                        
-                        if (this.currentStep === this.totalSteps) {
-                            this.updateSummary();
-                        }
+                        if (this.currentStep === this.totalSteps) this.updateSummary();
                     }
                 }
             }
@@ -418,21 +419,17 @@
 
             updateStepDisplay() {
                 document.querySelectorAll('.form-step').forEach(step => step.classList.remove('active'));
-                const currentStepElement = document.querySelector(`[data-step="${this.currentStep}"]`);
-                if (currentStepElement) {
-                    currentStepElement.classList.add('active');
-                }
-                
+                document.querySelector(`[data-step="${this.currentStep}"]`)?.classList.add('active');
                 document.getElementById('prevBtn').style.display = this.currentStep === 1 ? 'none' : 'block';
                 document.getElementById('nextBtn').style.display = this.currentStep === this.totalSteps ? 'none' : 'block';
                 document.getElementById('submitBtn').style.display = this.currentStep === this.totalSteps ? 'block' : 'none';
             }
 
             validateCurrentStep() {
-                this.collectFormData(); // Sicherstellen, dass die neuesten Daten erfasst sind
+                this.collectFormData();
                 switch(this.currentStep) {
                     case 1:
-                        if (!this.formData.base64Image) {
+                        if (!this.uploadedFile) {
                             alert('Bitte lade ein Bild hoch!');
                             return false;
                         }
@@ -447,9 +444,7 @@
                             return false;
                         }
                         return true;
-                    default:
-                        // Für die restlichen Schritte ist keine strikte Validierung erforderlich
-                        return true;
+                    default: return true;
                 }
             }
             
@@ -458,7 +453,7 @@
                 const summaryContent = document.getElementById('summaryContent');
                 if (summaryContent) {
                     summaryContent.innerHTML = `
-                        <p><strong>Produktbild:</strong> ${this.uploadedFile ? this.uploadedFile.name : 'Vorhanden'}</p>
+                        <p><strong>Produktbild:</strong> ${this.uploadedFile ? this.uploadedFile.name : 'Nicht vorhanden'}</p>
                         <p><strong>Kategorie:</strong> ${this.formData.category || 'Nicht gewählt'}</p>
                         <p><strong>Stil:</strong> ${this.formData.style || 'Nicht gewählt'}${this.formData.iphoneModel ? ' (' + this.formData.iphoneModel + ')' : ''}</p>
                         <p><strong>Model & Pose:</strong> ${this.formData.modelType}, ${this.formData.modelAction}</p>
@@ -469,55 +464,44 @@
             }
 
             generatePromptMatrix() {
-                const {
-                    category, style, iphoneModel, modelAction, modelType, bodyType,
-                    ethnicity, location, lighting, mood, socialStyle, instructions
-                } = this.formData;
-
-                const action = modelAction === 'wearing' ? 'wearing and showcasing' :
-                             modelAction === 'holding' ? 'holding and presenting' : modelAction;
-
-                let prompt = `Professional fashion photography: A ${modelType} model (${ethnicity}, ${bodyType} body type) is ${action} a ${category}. `;
-                
-                const styleMap = {
-                    'professional': `The style is high-end professional studio quality with perfect lighting.`,
-                    'ugc': `The style is authentic user-generated content, looking casual and relatable, with phone camera quality.`,
-                    'mirror-selfie': `A trendy mirror selfie style, the model is holding a phone and taking the picture in a mirror.`,
-                    'iphone': `The photo has a modern mobile photography aesthetic, as if shot on an ${iphoneModel || 'iPhone'}.`,
-                    'lifestyle': `A natural, everyday lifestyle look.`,
-                    'editorial': `A high-fashion, editorial magazine style.`
-                };
+                const { category, style, iphoneModel, modelAction, modelType, bodyType, ethnicity, location, lighting, mood, socialStyle, instructions } = this.formData;
+                let prompt = `Professional fashion photography: A ${modelType} model (${ethnicity}, ${bodyType} body type) is ${modelAction} a ${category}. `;
+                const styleMap = { 'professional': 'The style is high-end professional studio quality with perfect lighting.', 'ugc': 'The style is authentic user-generated content, looking casual and relatable, with phone camera quality.', 'mirror-selfie': 'A trendy mirror selfie style, the model is holding a phone and taking the picture in a mirror.', 'iphone': `The photo has a modern mobile photography aesthetic, as if shot on an ${iphoneModel || 'iPhone'}.`, 'lifestyle': 'A natural, everyday lifestyle look.', 'editorial': 'A high-fashion, editorial magazine style.' };
                 prompt += styleMap[style] || '';
-
                 prompt += ` The setting is a ${location}. The lighting is ${lighting} creating a ${mood} mood.`;
-                
-                if (socialStyle !== 'none') {
-                    prompt += ` The composition should be optimized for ${socialStyle}.`;
-                }
-                
-                if (instructions) {
-                    prompt += ` Additional instructions: ${instructions}.`;
-                }
-                
+                if (socialStyle !== 'none') prompt += ` The composition should be optimized for ${socialStyle}.`;
+                if (instructions) prompt += ` Additional instructions: ${instructions}.`;
                 return prompt.replace(/\s+/g, ' ').trim();
             }
 
             async submit() {
                 const btn = document.getElementById('submitBtn');
                 btn.disabled = true;
-                btn.textContent = '⏳ Wird gesendet...';
+                btn.textContent = '⏳ Verarbeite Bild...';
 
                 try {
-                    const driveFolder = localStorage.getItem('drive_folder_link');
-                    if (!driveFolder) {
-                        throw new Error('Bitte konfiguriere zuerst deinen Google Drive Ordner im Dashboard!');
+                    // SCHRITT 1: Bild hochladen, um URL zu erhalten
+                    if (this.uploadedFile) {
+                        const uploadResult = await window.API.uploadImage(this.base64Image);
+                        if (!uploadResult.success) {
+                            throw new Error(uploadResult.error || 'Der Bild-Upload ist fehlgeschlagen.');
+                        }
+                        this.formData.imageUrl = uploadResult.imageUrl;
+                    } else {
+                        throw new Error('Kein Bild zum Hochladen ausgewählt.');
                     }
+                    
+                    btn.textContent = '🚀 Sende an Webhook...';
+
+                    // SCHRITT 2: Daten mit der neuen Bild-URL an den Webhook senden
+                    const driveFolder = localStorage.getItem('drive_folder_link');
+                    if (!driveFolder) throw new Error('Bitte konfiguriere zuerst deinen Google Drive Ordner im Dashboard!');
 
                     const webhookData = {
                         webhook_type: 'fashion_photography',
-                        image: this.formData.base64Image, // Base64-String des Bildes
+                        image_url: this.formData.imageUrl, // NUR die URL senden
                         drive_folder: driveFolder,
-                        specifications: this.formData, // Enthält alle Formular-Daten
+                        specifications: this.formData,
                         prompt_matrix: this.generatePromptMatrix(),
                         timestamp: new Date().toISOString(),
                         user: localStorage.getItem('ai_studio_user') ? JSON.parse(localStorage.getItem('ai_studio_user')).email : 'unknown'
@@ -525,7 +509,6 @@
 
                     console.log('Sending to Webhook:', webhookData);
 
-                    // Annahme: Es gibt einen Server-Endpunkt unter /api/webhook
                     const response = await fetch('/api/webhook', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
@@ -539,7 +522,6 @@
                         const errorData = await response.json();
                         throw new Error(errorData.message || 'Webhook-Anfrage fehlgeschlagen.');
                     }
-
                 } catch (error) {
                     alert('❌ Fehler: ' + error.message);
                     btn.disabled = false;
@@ -548,7 +530,6 @@
             }
         }
 
-        // Initialize when DOM is ready
         document.addEventListener('DOMContentLoaded', () => {
             if (document.body.dataset.page === 'fashion') {
                 window.fashionApp = new FashionModule();
