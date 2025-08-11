@@ -1,4 +1,4 @@
-// sports.js - Sports Photography Module
+// js/modules/sports.js
 
 class SportsModule {
     constructor() {
@@ -8,7 +8,6 @@ class SportsModule {
         this.formData = {
             imageUrl: null,
             category: '',
-            productName: '',
             sportType: '',
             actionType: '',
             bodyType: '',
@@ -20,16 +19,26 @@ class SportsModule {
             weather: '',
             mood: '',
             specialEffects: '',
-            additionalDetails: '',
             variations: 1
         };
+
+        // Annahme: Globale Komponenten-Renderer existieren
+        this.headerComponent = window.components?.header;
+        this.stepIndicatorComponent = window.components?.stepIndicator;
     }
 
     init() {
         console.log('⚽ Initializing Sports Module...');
+        this.loadComponents();
         this.setupEventListeners();
         this.updateStepDisplay();
         this.checkDriveConfiguration();
+        this.updateCreditDisplay();
+    }
+    
+    loadComponents() {
+        if (this.headerComponent) this.headerComponent.render('mainHeader');
+        if (this.stepIndicatorComponent) this.stepIndicatorComponent.render('stepIndicator', this.totalSteps, this.currentStep);
     }
 
     checkDriveConfiguration() {
@@ -42,56 +51,30 @@ class SportsModule {
     }
 
     setupEventListeners() {
-        // Image Upload
-        const uploadArea = document.getElementById('uploadArea');
-        const imageFile = document.getElementById('imageFile');
-        
-        if (uploadArea && imageFile) {
-            uploadArea.addEventListener('click', () => imageFile.click());
-            imageFile.addEventListener('change', (e) => this.handleImageUpload(e));
-        }
-
-        // Category and Sport Type
-        document.getElementById('sportsCategory')?.addEventListener('change', (e) => {
-            this.formData.category = e.target.value;
-            this.updateCategoryDefaults(e.target.value);
-        });
-
-        document.getElementById('sportType')?.addEventListener('change', (e) => {
-            this.formData.sportType = e.target.value;
-            this.updateSportDefaults(e.target.value);
-        });
-
-        // Action type cards
-        document.querySelectorAll('.style-card[data-action]').forEach(card => {
-            card.addEventListener('click', () => this.selectActionType(card));
-        });
-
-        // Intensity change
-        document.getElementById('intensity')?.addEventListener('change', (e) => {
-            this.updateIntensityEffects(e.target.value);
-        });
-
         // Navigation
         document.getElementById('prevBtn')?.addEventListener('click', () => this.previousStep());
         document.getElementById('nextBtn')?.addEventListener('click', () => this.nextStep());
         document.getElementById('submitBtn')?.addEventListener('click', () => this.submit());
+        
+        // Bild-Upload
+        document.getElementById('uploadArea')?.addEventListener('click', () => document.getElementById('imageFile')?.click());
+        document.getElementById('imageFile')?.addEventListener('change', (e) => this.handleImageUpload(e));
+        document.getElementById('removeImageBtn')?.addEventListener('click', () => this.removeImage());
+
+        // Formular-Interaktionen
+        document.getElementById('sportsCategory')?.addEventListener('change', (e) => this.updateCategoryDefaults(e.target.value));
+        document.getElementById('sportType')?.addEventListener('change', (e) => this.updateSportDefaults(e.target.value));
+        document.getElementById('intensity')?.addEventListener('change', (e) => this.updateIntensityEffects(e.target.value));
+        document.querySelectorAll('.style-card').forEach(card => card.addEventListener('click', () => this.selectActionType(card)));
+        document.getElementById('variations')?.addEventListener('change', () => this.updateCreditDisplay());
     }
 
     async handleImageUpload(event) {
         const file = event.target.files[0];
         if (!file) return;
 
-        // Validate file
-        const validation = window.API?.validateImageFile(file);
-        if (!validation?.valid) {
-            alert(validation?.error || 'Ungültiges Bild');
-            return;
-        }
-
         this.uploadedFile = file;
 
-        // Show preview
         const reader = new FileReader();
         reader.onload = (e) => {
             const previewImg = document.getElementById('previewImg');
@@ -104,12 +87,18 @@ class SportsModule {
         reader.readAsDataURL(file);
     }
 
-    selectActionType(card) {
-        document.querySelectorAll('.style-card[data-action]').forEach(c => c.classList.remove('selected'));
-        card.classList.add('selected');
-        this.formData.actionType = card.dataset.action;
+    removeImage() {
+        this.uploadedFile = null;
+        this.formData.imageUrl = null;
+        const imageFile = document.getElementById('imageFile');
+        if (imageFile) imageFile.value = '';
+        document.getElementById('uploadPlaceholder').style.display = 'block';
+        document.getElementById('imagePreview').style.display = 'none';
+    }
 
-        // Adjust settings based on action type
+    selectActionType(card) {
+        document.querySelectorAll('.style-card').forEach(c => c.classList.remove('selected'));
+        card.classList.add('selected');
         this.updateActionDefaults(card.dataset.action);
     }
 
@@ -122,16 +111,13 @@ class SportsModule {
             'nutrition': { location: 'gym', actionType: 'lifestyle', intensity: 'relaxed' },
             'tech': { location: 'outdoor', actionType: 'training', mood: 'focused' }
         };
-
         const categoryDefaults = defaults[category];
         if (categoryDefaults) {
             Object.keys(categoryDefaults).forEach(key => {
                 const element = document.getElementById(key);
                 if (element) element.value = categoryDefaults[key];
-                
-                // For action type cards
-                if (key === 'actionType' && categoryDefaults[key]) {
-                    const card = document.querySelector(`[data-action="${categoryDefaults[key]}"]`);
+                if (key === 'actionType') {
+                    const card = document.querySelector(`.style-card[data-action="${categoryDefaults[key]}"]`);
                     if (card) this.selectActionType(card);
                 }
             });
@@ -149,7 +135,6 @@ class SportsModule {
             'outdoor': { location: 'nature', timeOfDay: 'golden', weather: 'clear' },
             'combat': { location: 'gym', mood: 'serious', intensity: 'extreme' }
         };
-
         const defaults = sportDefaults[sportType];
         if (defaults) {
             Object.keys(defaults).forEach(key => {
@@ -168,7 +153,6 @@ class SportsModule {
             'competition': { intensity: 'extreme', mood: 'serious' },
             'results': { intensity: 'relaxed', mood: 'victorious' }
         };
-
         const defaults = actionDefaults[actionType];
         if (defaults) {
             Object.keys(defaults).forEach(key => {
@@ -181,15 +165,40 @@ class SportsModule {
     updateIntensityEffects(intensity) {
         const specialEffects = document.getElementById('specialEffects');
         if (!specialEffects) return;
-
         const effectSuggestions = {
             'relaxed': 'Keine besonderen Effekte',
             'moderate': 'Leichter Schweiß, natürliche Bewegung',
             'intense': 'Schweiß sichtbar, Anstrengung erkennbar',
             'extreme': 'Starker Schweiß, Staub/Wasser spritzt, maximale Anstrengung'
         };
-
         specialEffects.placeholder = effectSuggestions[intensity] || '';
+    }
+    
+    updateCreditDisplay() {
+        const variations = parseInt(document.getElementById('variations')?.value, 10) || 1;
+        const requiredCredits = variations * 2;
+        document.getElementById('requiredCredits').textContent = requiredCredits;
+        const availableCredits = localStorage.getItem('available_credits') || 0;
+        document.getElementById('availableCredits').textContent = availableCredits;
+    }
+
+    collectFormData() {
+        this.formData = {
+            ...this.formData,
+            category: document.getElementById('sportsCategory')?.value,
+            sportType: document.getElementById('sportType')?.value,
+            actionType: document.querySelector('.style-card.selected')?.dataset.action || '',
+            bodyType: document.getElementById('bodyType')?.value,
+            gender: document.getElementById('gender')?.value,
+            age: document.getElementById('age')?.value,
+            intensity: document.getElementById('intensity')?.value,
+            location: document.getElementById('location')?.value,
+            timeOfDay: document.getElementById('timeOfDay')?.value,
+            weather: document.getElementById('weather')?.value,
+            mood: document.getElementById('mood')?.value,
+            specialEffects: document.getElementById('specialEffects')?.value,
+            variations: parseInt(document.getElementById('variations')?.value, 10) || 1,
+        };
     }
 
     nextStep() {
@@ -197,10 +206,6 @@ class SportsModule {
             if (this.currentStep < this.totalSteps) {
                 this.currentStep++;
                 this.updateStepDisplay();
-                
-                if (this.currentStep === this.totalSteps) {
-                    this.updateSummary();
-                }
             }
         }
     }
@@ -213,167 +218,99 @@ class SportsModule {
     }
 
     updateStepDisplay() {
-        // Hide all steps
-        document.querySelectorAll('.form-step').forEach(step => {
-            step.classList.remove('active');
-        });
-        
-        // Show current step
-        const currentStepElement = document.querySelector(`[data-step="${this.currentStep}"]`);
-        if (currentStepElement) {
-            currentStepElement.classList.add('active');
+        if (this.currentStep === this.totalSteps) {
+            this.updateSummary();
         }
         
-        // Update navigation buttons
-        const prevBtn = document.getElementById('prevBtn');
-        const nextBtn = document.getElementById('nextBtn');
-        const submitBtn = document.getElementById('submitBtn');
+        document.querySelectorAll('.form-step').forEach(step => step.classList.remove('active'));
+        document.querySelector(`[data-step="${this.currentStep}"]`)?.classList.add('active');
         
-        if (prevBtn) prevBtn.style.display = this.currentStep === 1 ? 'none' : 'block';
-        if (nextBtn) nextBtn.style.display = this.currentStep === this.totalSteps ? 'none' : 'block';
-        if (submitBtn) submitBtn.style.display = this.currentStep === this.totalSteps ? 'block' : 'none';
+        if (this.stepIndicatorComponent) this.stepIndicatorComponent.update('stepIndicator', this.currentStep);
+
+        document.getElementById('prevBtn').style.display = this.currentStep === 1 ? 'none' : 'block';
+        document.getElementById('nextBtn').style.display = this.currentStep === this.totalSteps ? 'none' : 'block';
+        document.getElementById('submitBtn').style.display = this.currentStep === this.totalSteps ? 'block' : 'none';
     }
 
     validateCurrentStep() {
+        this.collectFormData();
         switch(this.currentStep) {
             case 1:
                 if (!this.uploadedFile) {
-                    alert('Bitte lade ein Sport-Equipment hoch!');
+                    alert('Bitte lade ein Bild deines Produkts hoch!');
                     return false;
                 }
-                this.formData.category = document.getElementById('sportsCategory')?.value;
-                this.formData.productName = document.getElementById('productName')?.value;
-                this.formData.sportType = document.getElementById('sportType')?.value;
                 if (!this.formData.category) {
                     alert('Bitte wähle eine Sport-Kategorie!');
                     return false;
                 }
                 return true;
-
             case 2:
                 if (!this.formData.actionType) {
                     alert('Bitte wähle einen Action-Typ!');
                     return false;
                 }
                 return true;
-
-            case 3:
-                this.formData.bodyType = document.getElementById('bodyType')?.value;
-                this.formData.gender = document.getElementById('gender')?.value;
-                this.formData.age = document.getElementById('age')?.value;
-                this.formData.intensity = document.getElementById('intensity')?.value;
-                return true;
-
-            case 4:
-                this.formData.location = document.getElementById('location')?.value;
-                this.formData.timeOfDay = document.getElementById('timeOfDay')?.value;
-                this.formData.weather = document.getElementById('weather')?.value;
-                this.formData.mood = document.getElementById('mood')?.value;
-                this.formData.specialEffects = document.getElementById('specialEffects')?.value;
-                return true;
-
-            case 5:
-                this.formData.additionalDetails = document.getElementById('additionalDetails')?.value;
-                this.formData.variations = document.getElementById('variationCount')?.value;
-                return true;
-
             default:
                 return true;
         }
     }
 
     updateSummary() {
+        this.collectFormData();
         const summaryContent = document.getElementById('summaryReview');
         if (summaryContent) {
             summaryContent.innerHTML = `
                 <h3>Zusammenfassung</h3>
-                <div class="summary-item">
-                    <span class="summary-label">Produkt:</span>
-                    <span class="summary-value">${this.formData.productName || this.formData.category}</span>
-                </div>
-                <div class="summary-item">
-                    <span class="summary-label">Sportart:</span>
-                    <span class="summary-value">${this.formData.sportType}</span>
-                </div>
-                <div class="summary-item">
-                    <span class="summary-label">Action:</span>
-                    <span class="summary-value">${this.formData.actionType}</span>
-                </div>
-                <div class="summary-item">
-                    <span class="summary-label">Intensität:</span>
-                    <span class="summary-value">${this.formData.intensity}</span>
-                </div>
-                <div class="summary-item">
-                    <span class="summary-label">Variationen:</span>
-                    <span class="summary-value">${this.formData.variations}</span>
-                </div>
+                <p><strong>Kategorie:</strong> ${this.formData.category}, ${this.formData.sportType}</p>
+                <p><strong>Action:</strong> ${this.formData.actionType}</p>
+                <p><strong>Athlet:</strong> ${this.formData.gender}, ${this.formData.bodyType}</p>
+                <p><strong>Location:</strong> ${this.formData.location}</p>
+                <p><strong>Variationen:</strong> ${this.formData.variations}</p>
             `;
         }
     }
 
     async submit() {
         const submitBtn = document.getElementById('submitBtn');
-        if (submitBtn) {
-            submitBtn.disabled = true;
-            submitBtn.textContent = '⏳ Wird verarbeitet...';
-        }
+        submitBtn.disabled = true;
+        submitBtn.textContent = '⏳ Bild wird hochgeladen...';
 
         try {
-            // Upload image to get URL
-            console.log('📤 Uploading sports equipment image...');
             const base64 = await window.API.fileToBase64(this.uploadedFile);
             const uploadResult = await window.API.uploadImage(base64);
             
             if (!uploadResult.success) {
-                throw new Error('Bild-Upload fehlgeschlagen');
+                throw new Error(uploadResult.error || 'Bild-Upload fehlgeschlagen');
             }
 
             this.formData.imageUrl = uploadResult.imageUrl;
             console.log('✅ Image uploaded:', this.formData.imageUrl);
 
-            // Prepare project data
+            submitBtn.textContent = '🚀 Daten werden gesendet...';
+            this.collectFormData();
+
             const projectData = {
                 projectType: 'sports',
-                imageUrl: this.formData.imageUrl, // Only URL
+                imageUrl: this.formData.imageUrl,
                 specifications: this.formData,
-                variations: parseInt(this.formData.variations)
+                variations: this.formData.variations
             };
 
-            // Submit to API
             const result = await window.API.submitProject(projectData);
-            
-            if (result.success) {
-                alert('✅ Erfolgreich! Sport-Bilder werden generiert und in Google Drive gespeichert.');
-                setTimeout(() => {
-                    window.location.href = '/dashboard.html';
-                }, 2000);
-            } else {
-                throw new Error(result.error || 'Unbekannter Fehler');
-            }
 
+            if (result.success) {
+                alert('✅ Erfolgreich! Sport-Bilder werden generiert.');
+                setTimeout(() => { window.location.href = '/dashboard.html'; }, 2000);
+            } else {
+                throw new Error(result.error || 'Unbekannter Fehler beim Übermitteln des Projekts.');
+            }
         } catch (error) {
             console.error('❌ Submit error:', error);
             alert('Fehler: ' + error.message);
-            
-            if (submitBtn) {
-                submitBtn.disabled = false;
-                submitBtn.textContent = '🚀 Bilder generieren';
-            }
+            submitBtn.disabled = false;
+            submitBtn.textContent = '🚀 Bilder generieren';
         }
-    }
-
-    removeImage() {
-        this.uploadedFile = null;
-        this.formData.imageUrl = null;
-        
-        const imageFile = document.getElementById('imageFile');
-        if (imageFile) imageFile.value = '';
-        
-        const uploadPlaceholder = document.getElementById('uploadPlaceholder');
-        const imagePreview = document.getElementById('imagePreview');
-        
-        if (uploadPlaceholder) uploadPlaceholder.style.display = 'block';
-        if (imagePreview) imagePreview.style.display = 'none';
     }
 }
 
@@ -384,6 +321,3 @@ document.addEventListener('DOMContentLoaded', () => {
         window.sportsModule.init();
     }
 });
-
-// Export for global access
-window.SportsModule = SportsModule;
