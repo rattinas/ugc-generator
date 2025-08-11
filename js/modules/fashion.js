@@ -6,29 +6,44 @@ class BeautyModule {
         this.totalSteps = 5;
         this.uploadedFile = null;
         this.formData = {
-            imageUrl: null,
-            category: '',
-            shotType: '',
-            focusArea: '',
-            skinType: '',
-            skinTone: '',
-            makeupLevel: '',
-            modelAge: '',
-            skinFinish: '',
-            location: '',
-            lighting: '',
-            mood: '',
-            props: '',
-            specialRequirements: '',
-            variations: 1
+            imageUrl: null, category: '', shotType: '', focusArea: '', skinType: '',
+            skinTone: '', makeupLevel: '', modelAge: '', skinFinish: '', location: '',
+            lighting: '', mood: '', props: '', specialRequirements: '', variations: 1
         };
     }
 
     init() {
         console.log('💄 Initializing Beauty Module...');
+        // KORREKTUR: Zuerst das HTML für den Uploader rendern
+        this.renderUploaderComponent();
+        // Erst DANACH die Event-Listener initialisieren
         this.setupEventListeners();
         this.updateStepDisplay();
         this.checkDriveConfiguration();
+    }
+
+    renderUploaderComponent() {
+        const target = document.getElementById('imageUpload');
+        if (!target) {
+            console.error('Uploader target element #imageUpload not found!');
+            return;
+        }
+
+        const uploaderHTML = `
+            <div class="upload-area" id="uploadArea">
+                <input type="file" id="imageFile" accept="image/*" style="display: none;">
+                <div id="uploadPlaceholder">
+                    <div class="upload-icon">📸</div>
+                    <div class="upload-text">Klicken zum Hochladen</div>
+                    <div class="upload-subtext">PNG, JPG oder WebP • Max. 10MB</div>
+                </div>
+                <div id="imagePreview" style="display: none;">
+                    <img id="previewImg" style="max-width: 100%; max-height: 300px; border-radius: 8px;" alt="Vorschaubild">
+                    <button type="button" id="removeImageBtn" class="btn btn-small" style="margin-top: 10px;">Entfernen</button>
+                </div>
+            </div>
+        `;
+        target.innerHTML = uploaderHTML;
     }
 
     checkDriveConfiguration() {
@@ -41,17 +56,12 @@ class BeautyModule {
     }
 
     setupEventListeners() {
-        // Navigation & Globale Elemente
         document.getElementById('prevBtn')?.addEventListener('click', () => this.previousStep());
         document.getElementById('nextBtn')?.addEventListener('click', () => this.nextStep());
         document.getElementById('submitBtn')?.addEventListener('click', () => this.submit());
-
-        // Event-Listener für Upload-Komponenten
         document.getElementById('uploadArea')?.addEventListener('click', () => document.getElementById('imageFile')?.click());
         document.getElementById('imageFile')?.addEventListener('change', (e) => this.handleImageUpload(e));
         document.getElementById('removeImageBtn')?.addEventListener('click', () => this.removeImage());
-
-        // Formular-spezifische Listener
         document.getElementById('beautyCategory')?.addEventListener('change', () => this.collectFormData());
         document.querySelectorAll('.style-card[data-shot]').forEach(card => {
             card.addEventListener('click', () => this.selectShotType(card));
@@ -234,7 +244,6 @@ class BeautyModule {
     }
 }
 
-// Initialisierung
 document.addEventListener('DOMContentLoaded', () => {
     if (document.body.dataset.page === 'beauty') {
         window.beautyModule = new BeautyModule();
