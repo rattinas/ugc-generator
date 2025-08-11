@@ -5,49 +5,57 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jewelry Photography - AI Studio</title>
     
-    <!-- CSS -->
     <link rel="stylesheet" href="../css/styles.css">
     <link rel="stylesheet" href="../css/components.css">
     <link rel="stylesheet" href="../css/pages.css">
     
-    <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
     
-    <!-- Supabase -->
-    <script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <style>
+        /* Hilfsstile, um die Stufen korrekt anzuzeigen/auszublenden */
+        .form-step { display: none; }
+        .form-step.active { display: block; animation: fadeIn 0.5s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
 </head>
 <body data-page="jewelry">
     <div class="page-container">
-        <!-- Header -->
         <header id="mainHeader" class="main-header"></header>
 
-        <!-- Breadcrumb -->
         <nav class="breadcrumb">
             <a href="../dashboard.html">← Dashboard</a>
             <span>/</span>
             <span>Jewelry Photography</span>
         </nav>
 
-        <!-- Main Content -->
         <main class="container">
             <div class="page-header">
                 <h1>💎 Jewelry & Luxury</h1>
                 <p>Erstelle hochwertige Schmuck- und Luxusfotografie</p>
             </div>
 
-            <!-- Step Indicator -->
             <div id="stepIndicator"></div>
 
-            <!-- Form -->
             <form id="jewelryForm" class="multi-step-form">
-                <!-- Step 1: Upload -->
                 <div class="form-step active" data-step="1">
                     <h2>Schritt 1: Schmuckstück hochladen</h2>
-                    <div id="imageUpload"></div>
+
+                    <div class="upload-area" id="uploadArea">
+                        <input type="file" id="imageFile" accept="image/*" style="display: none;">
+                        <div id="uploadPlaceholder">
+                            <div class="upload-icon">📸</div>
+                            <div class="upload-text">Klicken zum Hochladen</div>
+                            <div class="upload-subtext">PNG, JPG oder WebP • Max. 10MB</div>
+                        </div>
+                        <div id="imagePreview" style="display: none;">
+                            <img id="previewImg" style="max-width: 100%; max-height: 300px; border-radius: 8px;" alt="Vorschaubild">
+                            <button type="button" id="removeImageBtn" class="btn btn-small" style="margin-top: 10px;">Entfernen</button>
+                        </div>
+                    </div>
                     
                     <div class="form-group">
-                        <label>Schmuck-Kategorie</label>
-                        <select id="jewelryCategory" required>
+                        <label for="jewelryCategory">Schmuck-Kategorie</label>
+                        <select id="jewelryCategory" class="form-control" required>
                             <option value="">Wähle eine Kategorie</option>
                             <option value="ring">Ring</option>
                             <option value="necklace">Halskette</option>
@@ -59,8 +67,8 @@
                     </div>
 
                     <div class="form-group">
-                        <label>Material</label>
-                        <select id="material">
+                        <label for="material">Material</label>
+                        <select id="material" class="form-control">
                             <option value="gold">Gold</option>
                             <option value="silver">Silber</option>
                             <option value="platinum">Platin</option>
@@ -71,41 +79,34 @@
                     </div>
                 </div>
 
-                <!-- Step 2: Presentation Style -->
                 <div class="form-step" data-step="2">
                     <h2>Schritt 2: Präsentationsstil</h2>
-                    
                     <div class="style-grid">
                         <div class="style-card" data-style="hero">
                             <div class="style-icon">✨</div>
                             <h4>Hero Shot</h4>
                             <p>Einzelstück perfekt inszeniert</p>
                         </div>
-                        
                         <div class="style-card" data-style="worn">
                             <div class="style-icon">👤</div>
                             <h4>Getragen</h4>
                             <p>Am Model präsentiert</p>
                         </div>
-                        
                         <div class="style-card" data-style="macro">
                             <div class="style-icon">🔍</div>
                             <h4>Macro Detail</h4>
                             <p>Extreme Nahaufnahme</p>
                         </div>
-                        
                         <div class="style-card" data-style="lifestyle">
                             <div class="style-icon">🌟</div>
                             <h4>Lifestyle</h4>
                             <p>Luxus-Kontext</p>
                         </div>
-                        
                         <div class="style-card" data-style="display">
                             <div class="style-icon">💼</div>
                             <h4>Display</h4>
                             <p>Schmuckschatulle/Vitrine</p>
                         </div>
-                        
                         <div class="style-card" data-style="collection">
                             <div class="style-icon">💍</div>
                             <h4>Kollektion</h4>
@@ -114,14 +115,12 @@
                     </div>
                 </div>
 
-                <!-- Step 3: Technical Details -->
                 <div class="form-step" data-step="3">
                     <h2>Schritt 3: Technische Details</h2>
-                    
                     <div class="form-grid">
                         <div class="form-group">
-                            <label>Fokus</label>
-                            <select id="focus">
+                            <label for="focus">Fokus</label>
+                            <select id="focus" class="form-control">
                                 <option value="overall">Gesamtansicht</option>
                                 <option value="detail">Detail/Gravur</option>
                                 <option value="gemstone">Edelstein</option>
@@ -129,10 +128,9 @@
                                 <option value="craftsmanship">Handwerkskunst</option>
                             </select>
                         </div>
-                        
                         <div class="form-group">
-                            <label>Beleuchtung</label>
-                            <select id="lighting">
+                            <label for="lighting">Beleuchtung</label>
+                            <select id="lighting" class="form-control">
                                 <option value="soft">Weiches Licht</option>
                                 <option value="dramatic">Dramatisch</option>
                                 <option value="sparkle">Funkeln/Brillanz</option>
@@ -140,10 +138,9 @@
                                 <option value="studio">Studio Multi-Light</option>
                             </select>
                         </div>
-                        
                         <div class="form-group">
-                            <label>Hintergrund</label>
-                            <select id="background">
+                            <label for="background">Hintergrund</label>
+                            <select id="background" class="form-control">
                                 <option value="black">Schwarz</option>
                                 <option value="white">Weiß</option>
                                 <option value="gradient">Gradient</option>
@@ -152,10 +149,9 @@
                                 <option value="mirror">Spiegel/Reflektion</option>
                             </select>
                         </div>
-                        
                         <div class="form-group">
-                            <label>Reflexionen</label>
-                            <select id="reflections">
+                            <label for="reflections">Reflexionen</label>
+                            <select id="reflections" class="form-control">
                                 <option value="controlled">Kontrolliert</option>
                                 <option value="enhanced">Verstärkt</option>
                                 <option value="minimal">Minimal</option>
@@ -165,14 +161,13 @@
                     </div>
                 </div>
 
-                <!-- Step 4: Model & Styling (if worn) -->
                 <div class="form-step" data-step="4">
-                    <h2>Schritt 4: Model & Styling</h2>
-                    
+                    <h2>Schritt 4: Model & Styling (Optional)</h2>
+                    <p>Dieser Schritt ist nur relevant, wenn du "Getragen" als Stil gewählt hast.</p>
                     <div class="form-grid">
                         <div class="form-group">
-                            <label>Model Sichtbarkeit</label>
-                            <select id="modelVisibility">
+                            <label for="modelVisibility">Model Sichtbarkeit</label>
+                            <select id="modelVisibility" class="form-control">
                                 <option value="hands-only">Nur Hände</option>
                                 <option value="neck-area">Halsbereich</option>
                                 <option value="partial">Teilweise</option>
@@ -180,10 +175,9 @@
                                 <option value="none">Kein Model</option>
                             </select>
                         </div>
-                        
                         <div class="form-group">
-                            <label>Styling</label>
-                            <select id="styling">
+                            <label for="styling">Styling</label>
+                            <select id="styling" class="form-control">
                                 <option value="elegant">Elegant</option>
                                 <option value="casual">Casual</option>
                                 <option value="formal">Formal/Abend</option>
@@ -191,20 +185,18 @@
                                 <option value="minimal">Minimalistisch</option>
                             </select>
                         </div>
-                        
                         <div class="form-group">
-                            <label>Hand Styling</label>
-                            <select id="handStyling">
+                            <label for="handStyling">Hand Styling</label>
+                            <select id="handStyling" class="form-control">
                                 <option value="manicured">Manikürt</option>
                                 <option value="natural">Natürlich</option>
                                 <option value="elegant">Elegant</option>
                                 <option value="masculine">Maskulin</option>
                             </select>
                         </div>
-                        
                         <div class="form-group">
-                            <label>Props</label>
-                            <select id="props">
+                            <label for="props">Props</label>
+                            <select id="props" class="form-control">
                                 <option value="none">Keine</option>
                                 <option value="flowers">Blumen</option>
                                 <option value="champagne">Champagner</option>
@@ -215,45 +207,33 @@
                     </div>
                 </div>
 
-                <!-- Step 5: Review & Submit -->
                 <div class="form-step" data-step="5">
                     <h2>Schritt 5: Überprüfen & Generieren</h2>
-                    
-                    <div id="summaryReview" class="summary-review"></div>
-                    
+                    <div id="summaryReview" class="summary-review" style="margin-bottom: 20px;"></div>
                     <div class="form-group">
-                        <label>Anzahl Variationen</label>
-                        <select id="variationCount">
+                        <label for="variations">Anzahl Variationen</label>
+                        <select id="variations" class="form-control">
                             <option value="1">1 Bild (2 Credits)</option>
                             <option value="2">2 Bilder (4 Credits)</option>
                             <option value="3">3 Bilder (6 Credits)</option>
                             <option value="4">4 Bilder (8 Credits)</option>
                         </select>
                     </div>
-                    
                     <div class="credits-info">
                         <p>Verfügbare Credits: <strong id="availableCredits">0</strong></p>
                         <p>Benötigte Credits: <strong id="requiredCredits">2</strong></p>
                     </div>
                 </div>
 
-                <!-- Navigation -->
-                <div class="form-navigation">
-                    <button type="button" class="btn btn-outline" id="prevBtn" style="display: none;">
-                        ← Zurück
-                    </button>
-                    <button type="button" class="btn btn-primary" id="nextBtn">
-                        Weiter →
-                    </button>
-                    <button type="submit" class="btn btn-accent" id="submitBtn" style="display: none;">
-                        🚀 Bilder generieren
-                    </button>
+                <div class="form-navigation" style="margin-top: 30px; display: flex; justify-content: space-between;">
+                    <button type="button" class="btn btn-outline" id="prevBtn">← Zurück</button>
+                    <button type="button" class="btn btn-primary" id="nextBtn">Weiter →</button>
+                    <button type="button" class="btn btn-accent" id="submitBtn">🚀 Bilder generieren</button>
                 </div>
             </form>
         </main>
     </div>
 
-    <!-- Scripts -->
     <script src="../js/config.js"></script>
     <script src="../js/auth.js"></script>
     <script src="../js/api.js"></script>
