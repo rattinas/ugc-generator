@@ -15,6 +15,8 @@
         .form-step { display: none; }
         .form-step.active { display: block; animation: fadeIn 0.5s; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+        .style-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
     </style>
 </head>
 <body data-page="food">
@@ -40,10 +42,9 @@
                 <p>Erstelle appetitliche Food-Fotografie für Restaurants und Verpackungen</p>
             </div>
 
-            <div class="multi-step-form">
+            <form id="foodForm" class="multi-step-form">
                 <div class="form-step active" data-step="1">
-                    <h2>Schritt 1: Food-Produkt hochladen</h2>
-                    
+                    <h2>Schritt 1: Produkt hochladen</h2>
                     <div class="upload-area" id="uploadArea">
                         <input type="file" id="imageFile" accept="image/*" style="display: none;">
                         <div id="uploadPlaceholder">
@@ -206,7 +207,7 @@
                     <h2>Schritt 5: Überprüfen & Generieren</h2>
                     <div class="form-group">
                         <label for="additionalDetails">Zusätzliche Details (optional)</label>
-                        <textarea id="additionalDetails" class="form-control" rows="4" placeholder="z.B. Extra Käse sichtbar, Dampf aufsteigend, frische Kräuter..."></textarea>
+                        <textarea id="additionalDetails" class="form-control" rows="4" placeholder="z.B. Extra Käse sichtbar, Dampf aufsteigend..."></textarea>
                     </div>
                     <div class="form-group">
                         <label for="variations">Anzahl Variationen</label>
@@ -225,7 +226,7 @@
                     <button type="button" class="btn btn-primary" id="nextBtn">Weiter →</button>
                     <button type="button" class="btn btn-accent" id="submitBtn">🚀 Bilder generieren</button>
                 </div>
-            </div>
+            </form>
         </main>
     </div>
 
