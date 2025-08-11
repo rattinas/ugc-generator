@@ -1,6 +1,6 @@
-// js/modules/fashion.js
+// js/modules/beauty.js
 
-class FashionModule {
+class BeautyModule {
     constructor() {
         this.currentStep = 1;
         this.totalSteps = 5;
@@ -8,23 +8,24 @@ class FashionModule {
         this.formData = {
             imageUrl: null,
             category: '',
-            style: '',
-            iphoneModel: '',
-            modelAction: '',
-            modelType: '',
-            bodyType: '',
-            ethnicity: '',
+            shotType: '',
+            focusArea: '',
+            skinType: '',
+            skinTone: '',
+            makeupLevel: '',
+            modelAge: '',
+            skinFinish: '',
             location: '',
             lighting: '',
             mood: '',
-            socialStyle: '',
-            instructions: '',
+            props: '',
+            specialRequirements: '',
             variations: 1
         };
     }
 
     init() {
-        console.log('👗 Initializing Fashion Module...');
+        console.log('💄 Initializing Beauty Module...');
         this.setupEventListeners();
         this.updateStepDisplay();
         this.checkDriveConfiguration();
@@ -44,24 +45,24 @@ class FashionModule {
         document.getElementById('prevBtn')?.addEventListener('click', () => this.previousStep());
         document.getElementById('nextBtn')?.addEventListener('click', () => this.nextStep());
         document.getElementById('submitBtn')?.addEventListener('click', () => this.submit());
-        document.querySelector('.logo')?.addEventListener('click', () => window.location.href = '/dashboard.html');
 
-        // Bild-Upload
+        // KORRIGIERT: Event-Listener für Upload-Komponenten hinzugefügt
         document.getElementById('uploadArea')?.addEventListener('click', () => document.getElementById('imageFile')?.click());
         document.getElementById('imageFile')?.addEventListener('change', (e) => this.handleImageUpload(e));
         document.getElementById('removeImageBtn')?.addEventListener('click', () => this.removeImage());
 
-        // Stil-Auswahl
-        document.querySelectorAll('.style-card').forEach(card => {
-            card.addEventListener('click', () => this.selectStyle(card));
+        // Formular-spezifische Listener
+        document.getElementById('beautyCategory')?.addEventListener('change', () => this.collectFormData());
+        document.querySelectorAll('.style-card[data-shot]').forEach(card => {
+            card.addEventListener('click', () => this.selectShotType(card));
         });
     }
 
+    // KORRIGIERT: Methode für Bild-Upload hinzugefügt
     async handleImageUpload(event) {
         const file = event.target.files[0];
         if (!file) return;
 
-        // Annahme: window.API.validateImageFile existiert, wie im product.js Beispiel
         const validation = window.API?.validateImageFile ? window.API.validateImageFile(file) : { valid: true };
         if (!validation.valid) {
             alert(validation.error || 'Ungültiges Bild');
@@ -82,10 +83,10 @@ class FashionModule {
         reader.readAsDataURL(file);
     }
 
+    // KORRIGIERT: Methode zum Entfernen des Bildes hinzugefügt
     removeImage() {
         this.uploadedFile = null;
         this.formData.imageUrl = null;
-        
         const imageFile = document.getElementById('imageFile');
         if (imageFile) imageFile.value = '';
         
@@ -93,34 +94,27 @@ class FashionModule {
         document.getElementById('imagePreview').style.display = 'none';
     }
 
-    selectStyle(card) {
-        document.querySelectorAll('.style-card').forEach(c => c.classList.remove('selected'));
+    selectShotType(card) {
+        document.querySelectorAll('.style-card[data-shot]').forEach(c => c.classList.remove('selected'));
         card.classList.add('selected');
-        
-        const style = card.dataset.style;
-        const iphoneOptions = document.getElementById('iphoneOptions');
-        if (iphoneOptions) {
-            iphoneOptions.style.display = style === 'iphone' ? 'block' : 'none';
-        }
     }
 
     collectFormData() {
-        // Diese Methode sammelt die Daten aus dem Formular.
-        // Sie wird vor der Validierung und der Zusammenfassung aufgerufen.
         this.formData = {
-            ...this.formData, // Behält imageUrl, falls bereits vorhanden
-            category: document.getElementById('productCategory')?.value,
-            style: document.querySelector('.style-card.selected')?.dataset.style || '',
-            iphoneModel: document.getElementById('iphoneModel')?.value,
-            modelAction: document.getElementById('modelAction')?.value,
-            modelType: document.getElementById('modelType')?.value,
-            bodyType: document.getElementById('bodyType')?.value,
-            ethnicity: document.getElementById('ethnicity')?.value,
+            ...this.formData,
+            category: document.getElementById('beautyCategory')?.value,
+            shotType: document.querySelector('.style-card.selected')?.dataset.shot || '',
+            focusArea: document.getElementById('focusArea')?.value,
+            skinType: document.getElementById('skinType')?.value,
+            skinTone: document.getElementById('skinTone')?.value,
+            makeupLevel: document.getElementById('makeupLevel')?.value,
+            modelAge: document.getElementById('modelAge')?.value,
+            skinFinish: document.getElementById('skinFinish')?.value,
             location: document.getElementById('location')?.value,
             lighting: document.getElementById('lighting')?.value,
             mood: document.getElementById('mood')?.value,
-            socialStyle: document.getElementById('socialStyle')?.value,
-            instructions: document.getElementById('additionalInstructions')?.value,
+            props: document.getElementById('props')?.value,
+            specialRequirements: document.getElementById('specialRequirements')?.value,
             variations: parseInt(document.getElementById('variations')?.value, 10) || 1,
         };
     }
@@ -154,40 +148,40 @@ class FashionModule {
     }
 
     validateCurrentStep() {
-        this.collectFormData(); // Immer die neusten Daten holen
+        this.collectFormData();
         switch(this.currentStep) {
             case 1:
+                // KORRIGIERT: Validierung für das hochgeladene Bild hinzugefügt
                 if (!this.uploadedFile) {
                     alert('Bitte lade ein Produktbild hoch!');
                     return false;
                 }
                 if (!this.formData.category) {
-                    alert('Bitte wähle eine Produktkategorie!');
+                    alert('Bitte wähle eine Kategorie!');
                     return false;
                 }
                 return true;
             case 2:
-                if (!this.formData.style) {
-                    alert('Bitte wähle einen Fotografie-Stil!');
+                if (!this.formData.shotType) {
+                    alert('Bitte wähle einen Aufnahmetyp!');
                     return false;
                 }
                 return true;
             default:
-                // Keine strikte Validierung für die übrigen Schritte
                 return true;
         }
     }
 
     updateSummary() {
         this.collectFormData();
-        const summaryContent = document.getElementById('summaryContent');
+        const summaryContent = document.getElementById('summaryReview');
         if (summaryContent) {
             summaryContent.innerHTML = `
-                <p><strong>Kategorie:</strong> ${this.formData.category}</p>
-                <p><strong>Stil:</strong> ${this.formData.style}${this.formData.style === 'iphone' ? ' (' + this.formData.iphoneModel + ')' : ''}</p>
-                <p><strong>Model:</strong> ${this.formData.modelType}, ${this.formData.bodyType}, ${this.formData.ethnicity}</p>
-                <p><strong>Aktion:</strong> ${this.formData.modelAction}</p>
-                <p><strong>Location:</strong> ${this.formData.location} bei ${this.formData.lighting}</p>
+                <h3>Zusammenfassung</h3>
+                <p><strong>Produkt:</strong> ${this.formData.category}</p>
+                <p><strong>Aufnahmetyp:</strong> ${this.formData.shotType}</p>
+                <p><strong>Fokus:</strong> ${this.formData.focusArea} auf ${this.formData.skinTone} Haut</p>
+                <p><strong>Setting:</strong> ${this.formData.location} mit ${this.formData.lighting} Beleuchtung</p>
                 <p><strong>Variationen:</strong> ${this.formData.variations}</p>
             `;
         }
@@ -202,37 +196,33 @@ class FashionModule {
 
         try {
             // Schritt 1: Bild hochladen, um URL zu erhalten
-            console.log('📤 Uploading fashion image...');
-            // Annahme: window.API.fileToBase64 und window.API.uploadImage existieren
+            if (!this.uploadedFile) throw new Error('Kein Bild zum Hochladen ausgewählt.');
+            
             const base64 = await window.API.fileToBase64(this.uploadedFile);
             const uploadResult = await window.API.uploadImage(base64);
             
             if (!uploadResult.success) {
                 throw new Error(uploadResult.error || 'Bild-Upload fehlgeschlagen');
             }
-
             this.formData.imageUrl = uploadResult.imageUrl;
             console.log('✅ Image uploaded:', this.formData.imageUrl);
 
-            // Schritt 2: Finale Daten mit der Bild-URL an den Server/Webhook senden
+            // Schritt 2: Finale Daten mit der Bild-URL an den Server senden
             if (submitBtn) submitBtn.textContent = '🚀 Daten werden gesendet...';
-            this.collectFormData(); // Alle finalen Daten sammeln
+            this.collectFormData();
 
             const projectData = {
-                projectType: 'fashion',
-                imageUrl: this.formData.imageUrl, // Nur die URL wird gesendet
+                projectType: 'beauty',
+                imageUrl: this.formData.imageUrl,
                 specifications: this.formData,
                 variations: this.formData.variations
             };
 
-            // Annahme: window.API.submitProject existiert
             const result = await window.API.submitProject(projectData);
             
             if (result.success) {
-                alert('✅ Erfolgreich! Fashion-Bilder werden generiert und in Google Drive gespeichert.');
-                setTimeout(() => {
-                    window.location.href = '/dashboard.html';
-                }, 2000);
+                alert('✅ Erfolgreich! Beauty-Bilder werden generiert und in Google Drive gespeichert.');
+                setTimeout(() => window.location.href = '/dashboard.html', 2000);
             } else {
                 throw new Error(result.error || 'Unbekannter Fehler beim Übermitteln des Projekts.');
             }
@@ -249,10 +239,10 @@ class FashionModule {
     }
 }
 
-// Initialisierung bei Laden der Seite
+// Initialisierung
 document.addEventListener('DOMContentLoaded', () => {
-    if (document.body.dataset.page === 'fashion') {
-        window.fashionModule = new FashionModule();
-        window.fashionModule.init();
+    if (document.body.dataset.page === 'beauty') {
+        window.beautyModule = new BeautyModule();
+        window.beautyModule.init();
     }
 });
