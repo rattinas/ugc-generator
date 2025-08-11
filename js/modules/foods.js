@@ -46,38 +46,13 @@ class FoodModule {
         document.getElementById('submitBtn')?.addEventListener('click', () => this.submit());
         document.querySelector('.logo')?.addEventListener('click', () => window.location.href = '/dashboard.html');
 
-        // Bild-Upload - EXAKT WIE IN FASHION.JS
-        const uploadArea = document.getElementById('uploadArea');
-        const imageFile = document.getElementById('imageFile');
-        const removeBtn = document.getElementById('removeImageBtn');
-        
-        // Upload Area Click Handler
-        if (uploadArea && imageFile) {
-            uploadArea.addEventListener('click', (e) => {
-                // Verhindere Trigger wenn Remove Button geklickt wurde
-                if (e.target.id !== 'removeImageBtn' && !e.target.closest('#removeImageBtn')) {
-                    imageFile.click();
-                }
-            });
-        }
-        
-        // File Input Change Handler
-        if (imageFile) {
-            imageFile.addEventListener('change', (e) => this.handleImageUpload(e));
-        }
-        
-        // Remove Button Handler
-        if (removeBtn) {
-            removeBtn.addEventListener('click', (e) => {
-                e.stopPropagation(); // Verhindere Bubble zum uploadArea
-                this.removeImage();
-            });
-        }
+        // Bild-Upload - EXAKT WIE IN FASHION.JS!!!
+        document.getElementById('uploadArea')?.addEventListener('click', () => document.getElementById('imageFile')?.click());
+        document.getElementById('imageFile')?.addEventListener('change', (e) => this.handleImageUpload(e));
+        document.getElementById('removeImageBtn')?.addEventListener('click', () => this.removeImage());
 
         // Formular-Interaktionen
         document.getElementById('foodCategory')?.addEventListener('change', (e) => this.updateCategoryDefaults(e.target.value));
-        
-        // Style Cards
         document.querySelectorAll('.style-card').forEach(card => {
             card.addEventListener('click', () => this.selectStyle(card));
         });
@@ -161,18 +136,18 @@ class FoodModule {
     collectFormData() {
         this.formData = {
             ...this.formData,
-            category: document.getElementById('foodCategory')?.value || '',
-            productName: document.getElementById('foodName')?.value || '',
+            category: document.getElementById('foodCategory')?.value,
+            productName: document.getElementById('foodName')?.value,
             style: document.querySelector('.style-card.selected')?.dataset.style || '',
-            cameraAngle: document.getElementById('cameraAngle')?.value || '',
-            presentation: document.getElementById('presentation')?.value || '',
-            effects: document.getElementById('effects')?.value || '',
-            props: document.getElementById('props')?.value || '',
-            surface: document.getElementById('surface')?.value || '',
-            lighting: document.getElementById('lighting')?.value || '',
-            colorPalette: document.getElementById('colorPalette')?.value || '',
-            season: document.getElementById('season')?.value || '',
-            additionalDetails: document.getElementById('additionalDetails')?.value || '',
+            cameraAngle: document.getElementById('cameraAngle')?.value,
+            presentation: document.getElementById('presentation')?.value,
+            effects: document.getElementById('effects')?.value,
+            props: document.getElementById('props')?.value,
+            surface: document.getElementById('surface')?.value,
+            lighting: document.getElementById('lighting')?.value,
+            colorPalette: document.getElementById('colorPalette')?.value,
+            season: document.getElementById('season')?.value,
+            additionalDetails: document.getElementById('additionalDetails')?.value,
             variations: parseInt(document.getElementById('variations')?.value, 10) || 1
         };
     }
@@ -251,7 +226,6 @@ class FoodModule {
         }
 
         try {
-            // Schritt 1: Bild hochladen
             console.log('📤 Uploading food image...');
             const base64 = await window.API.fileToBase64(this.uploadedFile);
             const uploadResult = await window.API.uploadImage(base64);
@@ -263,7 +237,6 @@ class FoodModule {
             this.formData.imageUrl = uploadResult.imageUrl;
             console.log('✅ Image uploaded:', this.formData.imageUrl);
 
-            // Schritt 2: Projekt-Daten senden
             if (submitBtn) submitBtn.textContent = '🚀 Daten werden gesendet...';
             this.collectFormData();
 
@@ -278,12 +251,13 @@ class FoodModule {
 
             if (result.success) {
                 alert('✅ Erfolgreich! Food-Bilder werden generiert und in Google Drive gespeichert.');
-                setTimeout(() => { 
-                    window.location.href = '/dashboard.html'; 
+                setTimeout(() => {
+                    window.location.href = '/dashboard.html';
                 }, 2000);
             } else {
                 throw new Error(result.error || 'Unbekannter Fehler beim Übermitteln des Projekts.');
             }
+
         } catch (error) {
             console.error('❌ Submit error:', error);
             alert('Fehler: ' + error.message);
