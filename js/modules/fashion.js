@@ -231,10 +231,9 @@ class FashionModule {
             this.formData.imageUrl = uploadResult.imageUrl;
             console.log('✅ Image uploaded:', this.formData.imageUrl);
 
-            // Prepare project data
+            // Prepare project data - NO base64, only URL
             const projectData = {
                 projectType: 'fashion',
-                image: null, // Don't send base64
                 imageUrl: this.formData.imageUrl, // Only send URL
                 specifications: this.formData,
                 variations: parseInt(this.formData.variations)
