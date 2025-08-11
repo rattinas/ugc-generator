@@ -5,20 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fashion Photography - AI Studio</title>
     
-    <!-- CSS -->
-    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/styles.css"> 
     <link rel="stylesheet" href="../css/components.css">
     <link rel="stylesheet" href="../css/pages.css">
     
-    <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        /* Zusätzliche Stile, um die Funktionalität sicherzustellen */
+        .form-step { display: none; }
+        .form-step.active { display: block; animation: fadeIn 0.5s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+        .style-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
+    </style>
 </head>
 <body data-page="fashion">
     <div class="page-container">
-        <!-- Header -->
         <header class="main-header">
             <div class="header-content">
-                <h1 class="logo" onclick="window.location.href='/dashboard.html'">
+                <h1 class="logo" style="cursor: pointer;">
                     AI<span>STUDIO</span>
                 </h1>
                 <div class="user-menu">
@@ -27,35 +32,32 @@
             </div>
         </header>
 
-        <!-- Main Content -->
         <main class="container">
             <div class="page-header">
                 <h1>👗 Fashion & Apparel</h1>
                 <p>Erstelle professionelle Fashion-Fotografie mit erweiterten Optionen</p>
             </div>
 
-            <!-- Multi-Step Form -->
             <div class="multi-step-form">
-                <!-- Step 1: Image Upload -->
                 <div class="form-step active" data-step="1">
                     <h2>Schritt 1: Fashion-Produkt hochladen</h2>
                     
                     <div class="upload-area" id="uploadArea">
-                        <input type="file" id="imageFile" accept="image/*" style="display: none;">
+                        <input type="file" id="imageFile" accept="image/png, image/jpeg, image/webp" style="display: none;">
                         <div id="uploadPlaceholder">
                             <div class="upload-icon">📸</div>
                             <div class="upload-text">Klicken zum Hochladen</div>
                             <div class="upload-subtext">PNG, JPG oder WebP • Max. 10MB</div>
                         </div>
                         <div id="imagePreview" style="display: none;">
-                            <img id="previewImg" style="max-width: 100%; max-height: 300px; border-radius: 8px;">
-                            <button type="button" onclick="removeImage()" class="btn btn-small" style="margin-top: 10px;">Entfernen</button>
+                            <img id="previewImg" style="max-width: 100%; max-height: 300px; border-radius: 8px;" alt="Vorschaubild">
+                            <button type="button" id="removeImageBtn" class="btn btn-small" style="margin-top: 10px;">Entfernen</button>
                         </div>
                     </div>
                     
                     <div class="form-group" style="margin-top: 20px;">
-                        <label>Produktkategorie *</label>
-                        <select id="productCategory" required>
+                        <label for="productCategory">Produktkategorie *</label>
+                        <select id="productCategory" class="form-control" required>
                             <option value="">Wähle eine Kategorie</option>
                             <option value="shirt">Shirt/Hemd</option>
                             <option value="dress">Kleid</option>
@@ -70,7 +72,6 @@
                     </div>
                 </div>
 
-                <!-- Step 2: Photography Style -->
                 <div class="form-step" data-step="2">
                     <h2>Schritt 2: Fotografie-Stil</h2>
                     
@@ -80,31 +81,26 @@
                             <h4>Professional</h4>
                             <p>Studio-Qualität mit perfekter Beleuchtung</p>
                         </div>
-                        
                         <div class="style-card" data-style="ugc">
                             <div class="style-icon">📱</div>
                             <h4>UGC Content</h4>
                             <p>Authentisch, wie von Kunden gemacht</p>
                         </div>
-                        
                         <div class="style-card" data-style="mirror-selfie">
                             <div class="style-icon">🪞</div>
                             <h4>Spiegel-Selfie</h4>
                             <p>Trendy Mirror-Selfie Style</p>
                         </div>
-                        
                         <div class="style-card" data-style="iphone">
                             <div class="style-icon">📲</div>
                             <h4>iPhone Shot</h4>
                             <p>Mobile Photography Look</p>
                         </div>
-                        
                         <div class="style-card" data-style="lifestyle">
                             <div class="style-icon">🌟</div>
                             <h4>Lifestyle</h4>
                             <p>Natürlicher Alltags-Look</p>
                         </div>
-                        
                         <div class="style-card" data-style="editorial">
                             <div class="style-icon">📖</div>
                             <h4>Editorial</h4>
@@ -112,10 +108,9 @@
                         </div>
                     </div>
                     
-                    <!-- iPhone Model Selection (appears when iPhone style selected) -->
                     <div id="iphoneOptions" style="display: none; margin-top: 20px;">
-                        <label>iPhone Modell:</label>
-                        <select id="iphoneModel">
+                        <label for="iphoneModel">iPhone Modell:</label>
+                        <select id="iphoneModel" class="form-control">
                             <option value="iphone-15-pro">iPhone 15 Pro</option>
                             <option value="iphone-14-pro">iPhone 14 Pro</option>
                             <option value="iphone-13-pro">iPhone 13 Pro</option>
@@ -125,14 +120,12 @@
                     </div>
                 </div>
 
-                <!-- Step 3: Model & Action -->
                 <div class="form-step" data-step="3">
                     <h2>Schritt 3: Model & Aktion</h2>
-                    
                     <div class="form-grid">
                         <div class="form-group">
-                            <label>Aktion/Pose</label>
-                            <select id="modelAction">
+                            <label for="modelAction">Aktion/Pose</label>
+                            <select id="modelAction" class="form-control">
                                 <option value="wearing">Trägt das Produkt</option>
                                 <option value="holding">Hält das Produkt</option>
                                 <option value="trying-on">Probiert an</option>
@@ -143,10 +136,9 @@
                                 <option value="casual-selfie">Casual Selfie</option>
                             </select>
                         </div>
-                        
                         <div class="form-group">
-                            <label>Model Typ</label>
-                            <select id="modelType">
+                            <label for="modelType">Model Typ</label>
+                            <select id="modelType" class="form-control">
                                 <option value="female-young">Weiblich (18-25)</option>
                                 <option value="female-adult">Weiblich (25-35)</option>
                                 <option value="female-mature">Weiblich (35+)</option>
@@ -157,10 +149,9 @@
                                 <option value="group">Gruppe</option>
                             </select>
                         </div>
-                        
                         <div class="form-group">
-                            <label>Körpertyp</label>
-                            <select id="bodyType">
+                            <label for="bodyType">Körpertyp</label>
+                            <select id="bodyType" class="form-control">
                                 <option value="slim">Schlank</option>
                                 <option value="athletic">Athletisch</option>
                                 <option value="average">Durchschnitt</option>
@@ -169,10 +160,9 @@
                                 <option value="diverse">Diverse</option>
                             </select>
                         </div>
-                        
                         <div class="form-group">
-                            <label>Ethnizität</label>
-                            <select id="ethnicity">
+                            <label for="ethnicity">Ethnizität</label>
+                            <select id="ethnicity" class="form-control">
                                 <option value="caucasian">Kaukasisch</option>
                                 <option value="african">Afrikanisch</option>
                                 <option value="asian">Asiatisch</option>
@@ -185,14 +175,12 @@
                     </div>
                 </div>
 
-                <!-- Step 4: Scene & Environment -->
                 <div class="form-step" data-step="4">
                     <h2>Schritt 4: Szene & Umgebung</h2>
-                    
                     <div class="form-grid">
                         <div class="form-group">
-                            <label>Location</label>
-                            <select id="location">
+                            <label for="location">Location</label>
+                            <select id="location" class="form-control">
                                 <option value="studio">Studio (Clean)</option>
                                 <option value="bedroom">Schlafzimmer</option>
                                 <option value="bathroom">Badezimmer (für Spiegel)</option>
@@ -205,10 +193,9 @@
                                 <option value="store">Umkleidekabine</option>
                             </select>
                         </div>
-                        
                         <div class="form-group">
-                            <label>Tageszeit/Licht</label>
-                            <select id="lighting">
+                            <label for="lighting">Tageszeit/Licht</label>
+                            <select id="lighting" class="form-control">
                                 <option value="natural">Natürliches Tageslicht</option>
                                 <option value="golden-hour">Golden Hour</option>
                                 <option value="studio">Studio-Beleuchtung</option>
@@ -218,10 +205,9 @@
                                 <option value="ring-light">Ring Light (Influencer)</option>
                             </select>
                         </div>
-                        
                         <div class="form-group">
-                            <label>Stimmung</label>
-                            <select id="mood">
+                            <label for="mood">Stimmung</label>
+                            <select id="mood" class="form-control">
                                 <option value="casual">Casual/Entspannt</option>
                                 <option value="confident">Selbstbewusst</option>
                                 <option value="playful">Verspielt</option>
@@ -231,10 +217,9 @@
                                 <option value="glamorous">Glamourös</option>
                             </select>
                         </div>
-                        
                         <div class="form-group">
-                            <label>Social Media Style</label>
-                            <select id="socialStyle">
+                            <label for="socialStyle">Social Media Style</label>
+                            <select id="socialStyle" class="form-control">
                                 <option value="instagram">Instagram Feed</option>
                                 <option value="instagram-story">Instagram Story</option>
                                 <option value="tiktok">TikTok Style</option>
@@ -245,19 +230,18 @@
                     </div>
                 </div>
 
-                <!-- Step 5: Details & Submit -->
                 <div class="form-step" data-step="5">
                     <h2>Schritt 5: Details & Generieren</h2>
                     
                     <div class="form-group">
-                        <label>Zusätzliche Anweisungen (optional)</label>
-                        <textarea id="additionalInstructions" rows="4" 
-                                  placeholder="z.B. Model soll lächeln, Handy in der Hand halten, bestimmte Pose..."></textarea>
+                        <label for="additionalInstructions">Zusätzliche Anweisungen (optional)</label>
+                        <textarea id="additionalInstructions" rows="4" class="form-control"
+                            placeholder="z.B. Model soll lächeln, Handy in der Hand halten, bestimmte Pose..."></textarea>
                     </div>
                     
                     <div class="form-group">
-                        <label>Anzahl Variationen</label>
-                        <select id="variations">
+                        <label for="variations">Anzahl Variationen</label>
+                        <select id="variations" class="form-control">
                             <option value="1">1 Bild</option>
                             <option value="2">2 Bilder</option>
                             <option value="3">3 Bilder</option>
@@ -265,267 +249,312 @@
                         </select>
                     </div>
                     
-                    <!-- Summary -->
-                    <div class="summary-review" style="margin: 20px 0; padding: 20px; background: #f5f5f5; border-radius: 8px;">
+                    <div class="summary-review" style="margin: 20px 0; padding: 20px; background: #f3f4f6; border-radius: 8px;">
                         <h3>Zusammenfassung</h3>
-                        <div id="summaryContent"></div>
+                        <div id="summaryContent"><p>Wird geladen...</p></div>
                     </div>
                 </div>
 
-                <!-- Navigation -->
                 <div class="form-navigation" style="margin-top: 30px; display: flex; justify-content: space-between;">
-                    <button type="button" class="btn btn-outline" id="prevBtn" onclick="previousStep()">
-                        ← Zurück
-                    </button>
-                    <button type="button" class="btn btn-primary" id="nextBtn" onclick="nextStep()">
-                        Weiter →
-                    </button>
-                    <button type="button" class="btn btn-accent" id="submitBtn" onclick="submitToMake()" style="display: none;">
-                        🚀 Bilder generieren
-                    </button>
+                    <button type="button" class="btn btn-outline" id="prevBtn">← Zurück</button>
+                    <button type="button" class="btn btn-primary" id="nextBtn">Weiter →</button>
+                    <button type="button" class="btn btn-accent" id="submitBtn" style="display: none;">🚀 Bilder generieren</button>
                 </div>
             </div>
         </main>
     </div>
 
     <script>
-        let currentStep = 1;
-        const totalSteps = 5;
-        let uploadedImage = null;
-        let formData = {};
+        class FashionModule {
+            constructor() {
+                this.currentStep = 1;
+                this.totalSteps = 5;
+                this.uploadedFile = null; // Speichert das File-Objekt
+                this.formData = {
+                    base64Image: null,
+                    category: '',
+                    style: '',
+                    iphoneModel: '',
+                    modelAction: '',
+                    modelType: '',
+                    bodyType: '',
+                    ethnicity: '',
+                    location: '',
+                    lighting: '',
+                    mood: '',
+                    socialStyle: '',
+                    instructions: '',
+                    variations: 1
+                };
+            }
 
-        // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            updateStepDisplay();
-            setupEventListeners();
-        });
+            init() {
+                console.log('🎨 Initializing Fashion Module...');
+                this.setupEventListeners();
+                this.updateStepDisplay();
+                this.checkDriveConfiguration();
+            }
 
-        function setupEventListeners() {
-            // Image Upload
-            document.getElementById('uploadArea').addEventListener('click', () => {
-                document.getElementById('imageFile').click();
-            });
+            checkDriveConfiguration() {
+                const driveFolder = localStorage.getItem('drive_folder_link');
+                if (!driveFolder) {
+                    if (confirm('Google Drive Ordner ist nicht konfiguriert. Möchtest du ihn jetzt einrichten?')) {
+                        window.location.href = '/dashboard.html';
+                    }
+                }
+            }
 
-            document.getElementById('imageFile').addEventListener('change', handleImageUpload);
+            setupEventListeners() {
+                // Navigations-Buttons
+                document.getElementById('prevBtn')?.addEventListener('click', () => this.previousStep());
+                document.getElementById('nextBtn')?.addEventListener('click', () => this.nextStep());
+                document.getElementById('submitBtn')?.addEventListener('click', () => this.submit());
 
-            // Style Cards
-            document.querySelectorAll('.style-card').forEach(card => {
-                card.addEventListener('click', function() {
-                    document.querySelectorAll('.style-card').forEach(c => c.classList.remove('selected'));
-                    this.classList.add('selected');
-                    
-                    const style = this.dataset.style;
-                    formData.style = style;
-                    
-                    // Show iPhone options if iPhone style selected
-                    document.getElementById('iphoneOptions').style.display = 
-                        style === 'iphone' ? 'block' : 'none';
+                // Logo-Klick
+                document.querySelector('.logo')?.addEventListener('click', () => window.location.href = '/dashboard.html');
+
+                // Step 1: Bild-Upload
+                document.getElementById('uploadArea')?.addEventListener('click', () => document.getElementById('imageFile')?.click());
+                document.getElementById('imageFile')?.addEventListener('change', (e) => this.handleImageUpload(e));
+                document.getElementById('removeImageBtn')?.addEventListener('click', () => this.removeImage());
+
+                // Step 2: Stil-Auswahl
+                document.querySelectorAll('.style-card').forEach(card => {
+                    card.addEventListener('click', () => this.selectStyle(card));
                 });
-            });
-        }
 
-        function handleImageUpload(e) {
-            const file = e.target.files[0];
-            if (file && file.type.startsWith('image/')) {
+                // Alle Formularfelder überwachen
+                document.querySelectorAll('select, textarea').forEach(input => {
+                    input.addEventListener('change', (e) => this.collectFormData());
+                });
+            }
+
+            handleImageUpload(event) {
+                const file = event.target.files[0];
+                if (!file || !file.type.startsWith('image/')) {
+                    this.removeImage();
+                    return;
+                }
+                
+                // Annahme: Es gibt eine globale Validierungsfunktion. Wenn nicht, entfernen oder anpassen.
+                // const validation = window.API?.validateImageFile(file);
+                // if (!validation?.valid) {
+                //     alert(validation?.error || 'Ungültiges Bild');
+                //     return;
+                // }
+
+                this.uploadedFile = file;
+
                 const reader = new FileReader();
                 reader.onload = (e) => {
-                    uploadedImage = e.target.result;
-                    document.getElementById('previewImg').src = uploadedImage;
-                    document.getElementById('uploadPlaceholder').style.display = 'none';
-                    document.getElementById('imagePreview').style.display = 'block';
+                    this.formData.base64Image = e.target.result; // Speichere Base64 für die Vorschau und den Versand
+                    const previewImg = document.getElementById('previewImg');
+                    if (previewImg) {
+                        previewImg.src = e.target.result;
+                        document.getElementById('uploadPlaceholder').style.display = 'none';
+                        document.getElementById('imagePreview').style.display = 'block';
+                    }
                 };
                 reader.readAsDataURL(file);
             }
-        }
+            
+            removeImage() {
+                this.uploadedFile = null;
+                this.formData.base64Image = null;
+                const imageFileInput = document.getElementById('imageFile');
+                if(imageFileInput) imageFileInput.value = '';
+                
+                document.getElementById('uploadPlaceholder').style.display = 'block';
+                document.getElementById('imagePreview').style.display = 'none';
+            }
+            
+            selectStyle(card) {
+                document.querySelectorAll('.style-card').forEach(c => c.classList.remove('selected'));
+                card.classList.add('selected');
+                this.formData.style = card.dataset.style;
 
-        function removeImage() {
-            uploadedImage = null;
-            document.getElementById('imageFile').value = '';
-            document.getElementById('uploadPlaceholder').style.display = 'block';
-            document.getElementById('imagePreview').style.display = 'none';
-        }
+                const iphoneOptions = document.getElementById('iphoneOptions');
+                if (iphoneOptions) {
+                    iphoneOptions.style.display = this.formData.style === 'iphone' ? 'block' : 'none';
+                }
+                this.collectFormData();
+            }
 
-        function nextStep() {
-            if (validateCurrentStep()) {
-                if (currentStep < totalSteps) {
-                    currentStep++;
-                    updateStepDisplay();
-                    
-                    if (currentStep === totalSteps) {
-                        updateSummary();
+            collectFormData() {
+                // Sammelt die Daten von allen Feldern
+                this.formData.category = document.getElementById('productCategory')?.value;
+                this.formData.iphoneModel = this.formData.style === 'iphone' ? document.getElementById('iphoneModel')?.value : '';
+                this.formData.modelAction = document.getElementById('modelAction')?.value;
+                this.formData.modelType = document.getElementById('modelType')?.value;
+                this.formData.bodyType = document.getElementById('bodyType')?.value;
+                this.formData.ethnicity = document.getElementById('ethnicity')?.value;
+                this.formData.location = document.getElementById('location')?.value;
+                this.formData.lighting = document.getElementById('lighting')?.value;
+                this.formData.mood = document.getElementById('mood')?.value;
+                this.formData.socialStyle = document.getElementById('socialStyle')?.value;
+                this.formData.instructions = document.getElementById('additionalInstructions')?.value;
+                this.formData.variations = document.getElementById('variations')?.value;
+            }
+            
+            nextStep() {
+                if (this.validateCurrentStep()) {
+                    if (this.currentStep < this.totalSteps) {
+                        this.currentStep++;
+                        this.updateStepDisplay();
+                        
+                        if (this.currentStep === this.totalSteps) {
+                            this.updateSummary();
+                        }
                     }
                 }
             }
-        }
 
-        function previousStep() {
-            if (currentStep > 1) {
-                currentStep--;
-                updateStepDisplay();
-            }
-        }
-
-        function updateStepDisplay() {
-            // Hide all steps
-            document.querySelectorAll('.form-step').forEach(step => {
-                step.classList.remove('active');
-            });
-            
-            // Show current step
-            document.querySelector(`[data-step="${currentStep}"]`).classList.add('active');
-            
-            // Update navigation buttons
-            document.getElementById('prevBtn').style.display = currentStep === 1 ? 'none' : 'block';
-            document.getElementById('nextBtn').style.display = currentStep === totalSteps ? 'none' : 'block';
-            document.getElementById('submitBtn').style.display = currentStep === totalSteps ? 'block' : 'none';
-        }
-
-        function validateCurrentStep() {
-            switch(currentStep) {
-                case 1:
-                    if (!uploadedImage) {
-                        alert('Bitte lade ein Bild hoch!');
-                        return false;
-                    }
-                    formData.category = document.getElementById('productCategory').value;
-                    if (!formData.category) {
-                        alert('Bitte wähle eine Produktkategorie!');
-                        return false;
-                    }
-                    return true;
-                    
-                case 2:
-                    if (!formData.style) {
-                        alert('Bitte wähle einen Fotografie-Stil!');
-                        return false;
-                    }
-                    if (formData.style === 'iphone') {
-                        formData.iphoneModel = document.getElementById('iphoneModel').value;
-                    }
-                    return true;
-                    
-                case 3:
-                    formData.modelAction = document.getElementById('modelAction').value;
-                    formData.modelType = document.getElementById('modelType').value;
-                    formData.bodyType = document.getElementById('bodyType').value;
-                    formData.ethnicity = document.getElementById('ethnicity').value;
-                    return true;
-                    
-                case 4:
-                    formData.location = document.getElementById('location').value;
-                    formData.lighting = document.getElementById('lighting').value;
-                    formData.mood = document.getElementById('mood').value;
-                    formData.socialStyle = document.getElementById('socialStyle').value;
-                    return true;
-                    
-                case 5:
-                    formData.instructions = document.getElementById('additionalInstructions').value;
-                    formData.variations = document.getElementById('variations').value;
-                    return true;
-                    
-                default:
-                    return true;
-            }
-        }
-
-        function updateSummary() {
-            const summary = `
-                <p><strong>Kategorie:</strong> ${formData.category}</p>
-                <p><strong>Stil:</strong> ${formData.style}${formData.iphoneModel ? ' (' + formData.iphoneModel + ')' : ''}</p>
-                <p><strong>Aktion:</strong> ${formData.modelAction}</p>
-                <p><strong>Model:</strong> ${formData.modelType}</p>
-                <p><strong>Location:</strong> ${formData.location}</p>
-                <p><strong>Variationen:</strong> ${formData.variations}</p>
-            `;
-            document.getElementById('summaryContent').innerHTML = summary;
-        }
-
-        async function submitToMake() {
-            const btn = document.getElementById('submitBtn');
-            btn.disabled = true;
-            btn.textContent = '⏳ Wird gesendet...';
-
-            try {
-                // Get Drive folder from localStorage
-                const driveFolder = localStorage.getItem('drive_folder_link');
-                if (!driveFolder) {
-                    alert('Bitte konfiguriere zuerst deinen Google Drive Ordner im Dashboard!');
-                    window.location.href = '/dashboard.html';
-                    return;
+            previousStep() {
+                if (this.currentStep > 1) {
+                    this.currentStep--;
+                    this.updateStepDisplay();
                 }
+            }
 
-                // Prepare data for Make.com
-                const webhookData = {
-                    webhook_type: 'fashion_photography',
-                    image: uploadedImage,
-                    drive_folder: driveFolder,
-                    specifications: formData,
-                    prompt_matrix: generatePromptMatrix(),
-                    timestamp: new Date().toISOString(),
-                    user: localStorage.getItem('ai_studio_user') ? JSON.parse(localStorage.getItem('ai_studio_user')).email : 'unknown'
+            updateStepDisplay() {
+                document.querySelectorAll('.form-step').forEach(step => step.classList.remove('active'));
+                const currentStepElement = document.querySelector(`[data-step="${this.currentStep}"]`);
+                if (currentStepElement) {
+                    currentStepElement.classList.add('active');
+                }
+                
+                document.getElementById('prevBtn').style.display = this.currentStep === 1 ? 'none' : 'block';
+                document.getElementById('nextBtn').style.display = this.currentStep === this.totalSteps ? 'none' : 'block';
+                document.getElementById('submitBtn').style.display = this.currentStep === this.totalSteps ? 'block' : 'none';
+            }
+
+            validateCurrentStep() {
+                this.collectFormData(); // Sicherstellen, dass die neuesten Daten erfasst sind
+                switch(this.currentStep) {
+                    case 1:
+                        if (!this.formData.base64Image) {
+                            alert('Bitte lade ein Bild hoch!');
+                            return false;
+                        }
+                        if (!this.formData.category) {
+                            alert('Bitte wähle eine Produktkategorie!');
+                            return false;
+                        }
+                        return true;
+                    case 2:
+                        if (!this.formData.style) {
+                            alert('Bitte wähle einen Fotografie-Stil!');
+                            return false;
+                        }
+                        return true;
+                    default:
+                        // Für die restlichen Schritte ist keine strikte Validierung erforderlich
+                        return true;
+                }
+            }
+            
+            updateSummary() {
+                this.collectFormData();
+                const summaryContent = document.getElementById('summaryContent');
+                if (summaryContent) {
+                    summaryContent.innerHTML = `
+                        <p><strong>Produktbild:</strong> ${this.uploadedFile ? this.uploadedFile.name : 'Vorhanden'}</p>
+                        <p><strong>Kategorie:</strong> ${this.formData.category || 'Nicht gewählt'}</p>
+                        <p><strong>Stil:</strong> ${this.formData.style || 'Nicht gewählt'}${this.formData.iphoneModel ? ' (' + this.formData.iphoneModel + ')' : ''}</p>
+                        <p><strong>Model & Pose:</strong> ${this.formData.modelType}, ${this.formData.modelAction}</p>
+                        <p><strong>Location:</strong> ${this.formData.location || 'Nicht gewählt'}</p>
+                        <p><strong>Anzahl Bilder:</strong> ${this.formData.variations}</p>
+                    `;
+                }
+            }
+
+            generatePromptMatrix() {
+                const {
+                    category, style, iphoneModel, modelAction, modelType, bodyType,
+                    ethnicity, location, lighting, mood, socialStyle, instructions
+                } = this.formData;
+
+                const action = modelAction === 'wearing' ? 'wearing and showcasing' :
+                             modelAction === 'holding' ? 'holding and presenting' : modelAction;
+
+                let prompt = `Professional fashion photography: A ${modelType} model (${ethnicity}, ${bodyType} body type) is ${action} a ${category}. `;
+                
+                const styleMap = {
+                    'professional': `The style is high-end professional studio quality with perfect lighting.`,
+                    'ugc': `The style is authentic user-generated content, looking casual and relatable, with phone camera quality.`,
+                    'mirror-selfie': `A trendy mirror selfie style, the model is holding a phone and taking the picture in a mirror.`,
+                    'iphone': `The photo has a modern mobile photography aesthetic, as if shot on an ${iphoneModel || 'iPhone'}.`,
+                    'lifestyle': `A natural, everyday lifestyle look.`,
+                    'editorial': `A high-fashion, editorial magazine style.`
                 };
+                prompt += styleMap[style] || '';
 
-                console.log('Sending to Make.com:', webhookData);
-
-                // Send to webhook
-                const response = await fetch('/api/webhook', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(webhookData)
-                });
-
-                if (response.ok) {
-                    alert('✅ Erfolgreich! Bilder werden generiert und in deinem Google Drive Ordner gespeichert.');
-                    setTimeout(() => window.location.href = '/dashboard.html', 2000);
-                } else {
-                    throw new Error('Webhook failed');
+                prompt += ` The setting is a ${location}. The lighting is ${lighting} creating a ${mood} mood.`;
+                
+                if (socialStyle !== 'none') {
+                    prompt += ` The composition should be optimized for ${socialStyle}.`;
                 }
+                
+                if (instructions) {
+                    prompt += ` Additional instructions: ${instructions}.`;
+                }
+                
+                return prompt.replace(/\s+/g, ' ').trim();
+            }
 
-            } catch (error) {
-                alert('❌ Fehler: ' + error.message);
-                btn.disabled = false;
-                btn.textContent = '🚀 Bilder generieren';
+            async submit() {
+                const btn = document.getElementById('submitBtn');
+                btn.disabled = true;
+                btn.textContent = '⏳ Wird gesendet...';
+
+                try {
+                    const driveFolder = localStorage.getItem('drive_folder_link');
+                    if (!driveFolder) {
+                        throw new Error('Bitte konfiguriere zuerst deinen Google Drive Ordner im Dashboard!');
+                    }
+
+                    const webhookData = {
+                        webhook_type: 'fashion_photography',
+                        image: this.formData.base64Image, // Base64-String des Bildes
+                        drive_folder: driveFolder,
+                        specifications: this.formData, // Enthält alle Formular-Daten
+                        prompt_matrix: this.generatePromptMatrix(),
+                        timestamp: new Date().toISOString(),
+                        user: localStorage.getItem('ai_studio_user') ? JSON.parse(localStorage.getItem('ai_studio_user')).email : 'unknown'
+                    };
+
+                    console.log('Sending to Webhook:', webhookData);
+
+                    // Annahme: Es gibt einen Server-Endpunkt unter /api/webhook
+                    const response = await fetch('/api/webhook', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(webhookData)
+                    });
+
+                    if (response.ok) {
+                        alert('✅ Erfolgreich! Bilder werden generiert und in deinem Google Drive Ordner gespeichert.');
+                        setTimeout(() => window.location.href = '/dashboard.html', 2000);
+                    } else {
+                        const errorData = await response.json();
+                        throw new Error(errorData.message || 'Webhook-Anfrage fehlgeschlagen.');
+                    }
+
+                } catch (error) {
+                    alert('❌ Fehler: ' + error.message);
+                    btn.disabled = false;
+                    btn.textContent = '🚀 Bilder generieren';
+                }
             }
         }
 
-        function generatePromptMatrix() {
-            // Generate detailed prompt based on PROMPT_MATRIX structure
-            const action = formData.modelAction === 'wearing' ? 'wearing and showcasing' :
-                          formData.modelAction === 'holding' ? 'holding and presenting' :
-                          formData.modelAction === 'trying-on' ? 'trying on' :
-                          formData.modelAction;
-
-            let basePrompt = `Professional fashion photography: ${formData.modelType} model ${action} ${formData.category}. `;
-            
-            // Add style-specific elements
-            if (formData.style === 'ugc') {
-                basePrompt += 'Authentic user-generated content style, casual and relatable, shot with phone camera quality. ';
-            } else if (formData.style === 'mirror-selfie') {
-                basePrompt += 'Mirror selfie style, model holding phone, visible phone in mirror reflection, trendy pose. ';
-            } else if (formData.style === 'iphone') {
-                basePrompt += `Shot with ${formData.iphoneModel || 'iPhone'}, mobile photography aesthetic, natural handheld look. `;
-            } else if (formData.style === 'professional') {
-                basePrompt += 'Studio quality, perfect lighting, high-end fashion photography. ';
+        // Initialize when DOM is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            if (document.body.dataset.page === 'fashion') {
+                window.fashionApp = new FashionModule();
+                window.fashionApp.init();
             }
-            
-            // Add environment
-            basePrompt += `Location: ${formData.location}, ${formData.lighting} lighting, ${formData.mood} mood. `;
-            
-            // Add model details
-            basePrompt += `Model: ${formData.bodyType} body type, ${formData.ethnicity} ethnicity. `;
-            
-            // Add social media style if selected
-            if (formData.socialStyle !== 'none') {
-                basePrompt += `Optimized for ${formData.socialStyle}. `;
-            }
-            
-            // Add custom instructions
-            if (formData.instructions) {
-                basePrompt += formData.instructions;
-            }
-            
-            return basePrompt;
-        }
+        });
     </script>
 </body>
 </html>
