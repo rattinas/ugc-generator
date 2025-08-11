@@ -4,109 +4,106 @@ class FashionModule {
     constructor() {
         this.currentStep = 1;
         this.totalSteps = 5;
+        this.uploadedFile = null;
         this.formData = {
-            image: null,
             imageUrl: null,
+            category: '',
             style: '',
-            scene: '',
-            model: {},
-            styling: {},
-            technical: {},
+            iphoneModel: null,
+            modelAction: '',
+            modelType: '',
+            bodyType: '',
+            ethnicity: '',
+            location: '',
+            lighting: '',
+            mood: '',
+            socialStyle: '',
+            instructions: '',
             variations: 1
         };
     }
 
     init() {
-        this.checkAuth();
+        console.log('🎨 Initializing Fashion Module...');
         this.setupEventListeners();
-        this.renderHeader();
-        this.renderStepIndicator();
-        this.initializeImageUpload();
+        this.updateStepDisplay();
+        this.checkDriveConfiguration();
     }
 
-    async checkAuth() {
-        if (!window.auth || !await window.auth.isAuthenticated()) {
-            window.location.href = '/';
-            return false;
-        }
-        return true;
-    }
-
-    renderHeader() {
-        const user = window.auth?.getUser();
-        const header = document.getElementById('mainHeader');
-        if (header) {
-            header.innerHTML = UIComponents.renderHeader(user);
-        }
-    }
-
-    renderStepIndicator() {
-        const steps = ['Upload', 'Style', 'Scene', 'Model', 'Review'];
-        const indicator = document.getElementById('stepIndicator');
-        if (indicator) {
-            indicator.innerHTML = UIComponents.renderStepIndicator(steps, this.currentStep);
+    checkDriveConfiguration() {
+        const driveFolder = localStorage.getItem('drive_folder_link');
+        if (!driveFolder) {
+            if (confirm('Google Drive Ordner nicht konfiguriert. Jetzt einrichten?')) {
+                window.location.href = '/dashboard.html';
+            }
         }
     }
 
     setupEventListeners() {
-        // Navigation buttons
-        document.getElementById('nextBtn')?.addEventListener('click', () => this.nextStep());
-        document.getElementById('prevBtn')?.addEventListener('click', () => this.prevStep());
-        document.getElementById('submitBtn')?.addEventListener('click', () => this.submitForm());
+        // Image Upload
+        const uploadArea = document.getElementById('uploadArea');
+        const imageFile = document.getElementById('imageFile');
+        
+        uploadArea?.addEventListener('click', () => {
+            imageFile?.click();
+        });
 
-        // Style selection
+        imageFile?.addEventListener('change', (e) => this.handleImageUpload(e));
+
+        // Style Cards
         document.querySelectorAll('.style-card').forEach(card => {
-            card.addEventListener('click', (e) => {
-                document.querySelectorAll('.style-card').forEach(c => c.classList.remove('selected'));
-                e.currentTarget.classList.add('selected');
-                this.formData.style = e.currentTarget.dataset.style;
-            });
+            card.addEventListener('click', () => this.selectStyle(card));
         });
 
-        // Scene selection
-        document.querySelectorAll('.scene-card').forEach(card => {
-            card.addEventListener('click', (e) => {
-                document.querySelectorAll('.scene-card').forEach(c => c.classList.remove('selected'));
-                e.currentTarget.classList.add('selected');
-                this.formData.scene = e.currentTarget.dataset.scene;
-            });
-        });
+        // Navigation
+        document.getElementById('prevBtn')?.addEventListener('click', () => this.previousStep());
+        document.getElementById('nextBtn')?.addEventListener('click', () => this.nextStep());
+        document.getElementById('submitBtn')?.addEventListener('click', () => this.submit());
 
-        // Variation count
-        document.getElementById('variationCount')?.addEventListener('change', (e) => {
-            this.formData.variations = parseInt(e.target.value);
-            this.updateCreditsDisplay();
+        // Form Inputs
+        document.getElementById('productCategory')?.addEventListener('change', (e) => {
+            this.formData.category = e.target.value;
         });
     }
 
-    initializeImageUpload() {
-        const uploadDiv = document.getElementById('imageUpload');
-        if (uploadDiv) {
-            uploadDiv.innerHTML = UIComponents.renderImageUpload('fashionImage');
-            
-            document.getElementById('fashionImage')?.addEventListener('change', async (e) => {
-                const file = e.target.files[0];
-                if (file) {
-                    const validation = window.API.validateImageFile(file);
-                    if (!validation.valid) {
-                        UIComponents.showNotification(validation.error, 'error');
-                        return;
-                    }
+    async handleImageUpload(event) {
+        const file = event.target.files[0];
+        if (!file) return;
 
-                    // Show preview
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        document.getElementById('fashionImageImg').src = e.target.result;
-                        document.getElementById('fashionImagePlaceholder').style.display = 'none';
-                        document.getElementById('fashionImagePreview').style.display = 'flex';
-                        document.getElementById('fashionImageArea').classList.add('has-image');
-                    };
-                    reader.readAsDataURL(file);
+        // Validate file
+        const validation = window.API?.validateImageFile(file);
+        if (!validation?.valid) {
+            alert(validation?.error || 'Ungültiges Bild');
+            return;
+        }
 
-                    // Store file
-                    this.formData.image = file;
-                }
-            });
+        this.uploadedFile = file;
+
+        // Show preview
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const previewImg = document.getElementById('previewImg');
+            if (previewImg) {
+                previewImg.src = e.target.result;
+                document.getElementById('uploadPlaceholder').style.display = 'none';
+                document.getElementById('imagePreview').style.display = 'block';
+            }
+        };
+        reader.readAsDataURL(file);
+    }
+
+    selectStyle(card) {
+        // Remove previous selection
+        document.querySelectorAll('.style-card').forEach(c => c.classList.remove('selected'));
+        
+        // Add selection
+        card.classList.add('selected');
+        this.formData.style = card.dataset.style;
+
+        // Show iPhone options if needed
+        const iphoneOptions = document.getElementById('iphoneOptions');
+        if (iphoneOptions) {
+            iphoneOptions.style.display = this.formData.style === 'iphone' ? 'block' : 'none';
         }
     }
 
@@ -114,183 +111,180 @@ class FashionModule {
         if (this.validateCurrentStep()) {
             if (this.currentStep < this.totalSteps) {
                 this.currentStep++;
-                this.showStep(this.currentStep);
-                this.renderStepIndicator();
+                this.updateStepDisplay();
+                
+                if (this.currentStep === this.totalSteps) {
+                    this.updateSummary();
+                }
             }
         }
     }
 
-    prevStep() {
+    previousStep() {
         if (this.currentStep > 1) {
             this.currentStep--;
-            this.showStep(this.currentStep);
-            this.renderStepIndicator();
+            this.updateStepDisplay();
         }
     }
 
-    showStep(step) {
+    updateStepDisplay() {
         // Hide all steps
-        document.querySelectorAll('.form-step').forEach(s => {
-            s.classList.remove('active');
+        document.querySelectorAll('.form-step').forEach(step => {
+            step.classList.remove('active');
         });
-
+        
         // Show current step
-        document.querySelector(`[data-step="${step}"]`)?.classList.add('active');
-
+        const currentStepElement = document.querySelector(`[data-step="${this.currentStep}"]`);
+        if (currentStepElement) {
+            currentStepElement.classList.add('active');
+        }
+        
         // Update navigation buttons
         const prevBtn = document.getElementById('prevBtn');
         const nextBtn = document.getElementById('nextBtn');
         const submitBtn = document.getElementById('submitBtn');
-
-        if (prevBtn) prevBtn.style.display = step === 1 ? 'none' : 'block';
-        if (nextBtn) nextBtn.style.display = step === this.totalSteps ? 'none' : 'block';
-        if (submitBtn) submitBtn.style.display = step === this.totalSteps ? 'block' : 'none';
-
-        // Update review if on last step
-        if (step === this.totalSteps) {
-            this.updateReview();
-        }
+        
+        if (prevBtn) prevBtn.style.display = this.currentStep === 1 ? 'none' : 'block';
+        if (nextBtn) nextBtn.style.display = this.currentStep === this.totalSteps ? 'none' : 'block';
+        if (submitBtn) submitBtn.style.display = this.currentStep === this.totalSteps ? 'block' : 'none';
     }
 
     validateCurrentStep() {
         switch(this.currentStep) {
             case 1:
-                if (!this.formData.image) {
-                    UIComponents.showNotification('Bitte lade ein Bild hoch', 'error');
+                if (!this.uploadedFile) {
+                    alert('Bitte lade ein Bild hoch!');
+                    return false;
+                }
+                this.formData.category = document.getElementById('productCategory')?.value;
+                if (!this.formData.category) {
+                    alert('Bitte wähle eine Produktkategorie!');
                     return false;
                 }
                 return true;
+
             case 2:
                 if (!this.formData.style) {
-                    UIComponents.showNotification('Bitte wähle einen Style', 'error');
+                    alert('Bitte wähle einen Fotografie-Stil!');
                     return false;
                 }
+                if (this.formData.style === 'iphone') {
+                    this.formData.iphoneModel = document.getElementById('iphoneModel')?.value;
+                }
                 return true;
+
             case 3:
-                if (!this.formData.scene) {
-                    UIComponents.showNotification('Bitte wähle eine Szene', 'error');
-                    return false;
-                }
+                this.formData.modelAction = document.getElementById('modelAction')?.value;
+                this.formData.modelType = document.getElementById('modelType')?.value;
+                this.formData.bodyType = document.getElementById('bodyType')?.value;
+                this.formData.ethnicity = document.getElementById('ethnicity')?.value;
                 return true;
+
             case 4:
-                // Collect model data
-                this.formData.model = {
-                    age: document.getElementById('modelAge')?.value,
-                    gender: document.getElementById('modelGender')?.value,
-                    ethnicity: document.getElementById('modelEthnicity')?.value,
-                    body: document.getElementById('modelBody')?.value,
-                    hair: document.getElementById('modelHair')?.value,
-                    makeup: document.getElementById('modelMakeup')?.value,
-                    expression: document.getElementById('modelExpression')?.value,
-                    pose: document.getElementById('modelPose')?.value
-                };
+                this.formData.location = document.getElementById('location')?.value;
+                this.formData.lighting = document.getElementById('lighting')?.value;
+                this.formData.mood = document.getElementById('mood')?.value;
+                this.formData.socialStyle = document.getElementById('socialStyle')?.value;
                 return true;
+
+            case 5:
+                this.formData.instructions = document.getElementById('additionalInstructions')?.value;
+                this.formData.variations = document.getElementById('variations')?.value;
+                return true;
+
             default:
                 return true;
         }
     }
 
-    updateReview() {
-        const review = document.getElementById('summaryReview');
-        if (review) {
-            review.innerHTML = `
-                <h3>Zusammenfassung</h3>
-                <div class="summary-item">
-                    <span class="summary-label">Style:</span>
-                    <span class="summary-value">${this.formData.style || 'Nicht gewählt'}</span>
-                </div>
-                <div class="summary-item">
-                    <span class="summary-label">Szene:</span>
-                    <span class="summary-value">${this.formData.scene || 'Nicht gewählt'}</span>
-                </div>
-                <div class="summary-item">
-                    <span class="summary-label">Model:</span>
-                    <span class="summary-value">${this.formData.model.age || 'Standard'} / ${this.formData.model.gender || 'Diverse'}</span>
-                </div>
-                <div class="summary-item">
-                    <span class="summary-label">Variationen:</span>
-                    <span class="summary-value">${this.formData.variations}</span>
-                </div>
+    updateSummary() {
+        const summaryContent = document.getElementById('summaryContent');
+        if (summaryContent) {
+            summaryContent.innerHTML = `
+                <p><strong>Kategorie:</strong> ${this.formData.category}</p>
+                <p><strong>Stil:</strong> ${this.formData.style}${this.formData.iphoneModel ? ' (' + this.formData.iphoneModel + ')' : ''}</p>
+                <p><strong>Aktion:</strong> ${this.formData.modelAction}</p>
+                <p><strong>Model:</strong> ${this.formData.modelType}</p>
+                <p><strong>Location:</strong> ${this.formData.location}</p>
+                <p><strong>Variationen:</strong> ${this.formData.variations}</p>
             `;
         }
-
-        this.updateCreditsDisplay();
     }
 
-    updateCreditsDisplay() {
-        const user = window.auth?.getUser();
-        const availableCredits = user?.profile?.credits || 0;
-        const requiredCredits = this.formData.variations * 2; // Fashion uses 2 credits
-
-        document.getElementById('availableCredits').textContent = availableCredits;
-        document.getElementById('requiredCredits').textContent = requiredCredits;
-
+    async submit() {
         const submitBtn = document.getElementById('submitBtn');
         if (submitBtn) {
-            submitBtn.disabled = availableCredits < requiredCredits;
-            if (availableCredits < requiredCredits) {
-                submitBtn.textContent = 'Nicht genug Credits';
+            submitBtn.disabled = true;
+            submitBtn.textContent = '⏳ Wird verarbeitet...';
+        }
+
+        try {
+            // First upload image to get URL
+            console.log('📤 Uploading image...');
+            const base64 = await window.API.fileToBase64(this.uploadedFile);
+            const uploadResult = await window.API.uploadImage(base64);
+            
+            if (!uploadResult.success) {
+                throw new Error('Bild-Upload fehlgeschlagen');
+            }
+
+            this.formData.imageUrl = uploadResult.imageUrl;
+            console.log('✅ Image uploaded:', this.formData.imageUrl);
+
+            // Prepare project data
+            const projectData = {
+                projectType: 'fashion',
+                image: null, // Don't send base64
+                imageUrl: this.formData.imageUrl, // Only send URL
+                specifications: this.formData,
+                variations: parseInt(this.formData.variations)
+            };
+
+            // Submit to API
+            const result = await window.API.submitProject(projectData);
+            
+            if (result.success) {
+                alert('✅ Erfolgreich! Bilder werden generiert und in Google Drive gespeichert.');
+                setTimeout(() => {
+                    window.location.href = '/dashboard.html';
+                }, 2000);
             } else {
+                throw new Error(result.error || 'Unbekannter Fehler');
+            }
+
+        } catch (error) {
+            console.error('❌ Submit error:', error);
+            alert('Fehler: ' + error.message);
+            
+            if (submitBtn) {
+                submitBtn.disabled = false;
                 submitBtn.textContent = '🚀 Bilder generieren';
             }
         }
     }
 
-    async submitForm() {
-        try {
-            UIComponents.showLoading(true);
-
-            // Convert image to base64
-            const base64 = await window.API.fileToBase64(this.formData.image);
-
-            // Prepare submission data
-            const submissionData = {
-                user: window.auth?.getUser()?.email,
-                projectType: 'fashion',
-                image: base64,
-                specifications: {
-                    style: this.formData.style,
-                    scene: this.formData.scene,
-                    model: this.formData.model,
-                    variations: this.formData.variations
-                },
-                credits_needed: this.formData.variations * 2
-            };
-
-            // Submit via API
-            const result = await window.API.submitProject(submissionData);
-
-            if (result.success) {
-                // Save to database
-                await window.db?.createProject({
-                    name: `Fashion - ${this.formData.style}`,
-                    type: 'fashion',
-                    specifications: submissionData.specifications,
-                    imageUrl: result.imageUrl,
-                    credits_needed: submissionData.credits_needed
-                });
-
-                UIComponents.showNotification('Projekt erfolgreich erstellt! Bilder werden generiert...', 'success');
-                
-                // Redirect to dashboard after 2 seconds
-                setTimeout(() => {
-                    window.location.href = '/dashboard.html';
-                }, 2000);
-            } else {
-                throw new Error(result.error);
-            }
-
-        } catch (error) {
-            console.error('Submit error:', error);
-            UIComponents.showNotification(error.message, 'error');
-        } finally {
-            UIComponents.showLoading(false);
-        }
+    removeImage() {
+        this.uploadedFile = null;
+        this.formData.imageUrl = null;
+        
+        const imageFile = document.getElementById('imageFile');
+        if (imageFile) imageFile.value = '';
+        
+        const uploadPlaceholder = document.getElementById('uploadPlaceholder');
+        const imagePreview = document.getElementById('imagePreview');
+        
+        if (uploadPlaceholder) uploadPlaceholder.style.display = 'block';
+        if (imagePreview) imagePreview.style.display = 'none';
     }
 }
 
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
-    const fashionModule = new FashionModule();
-    fashionModule.init();
+    if (document.body.dataset.page === 'fashion') {
+        window.fashionModule = new FashionModule();
+        window.fashionModule.init();
+    }
 });
+
+// Export for global access
+window.FashionModule = FashionModule;
