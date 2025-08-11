@@ -5,45 +5,42 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Food Photography - AI Studio</title>
     
-    <!-- CSS -->
     <link rel="stylesheet" href="../css/styles.css">
     <link rel="stylesheet" href="../css/components.css">
     <link rel="stylesheet" href="../css/pages.css">
     
-    <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        /* Hilfsstile, um die Stufen korrekt anzuzeigen/auszublenden */
+        .form-step { display: none; }
+        .form-step.active { display: block; animation: fadeIn 0.5s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
 </head>
 <body data-page="food">
     <div class="page-container">
-        <!-- Header -->
         <header class="main-header">
             <div class="header-content">
-                <h1 class="logo" onclick="window.location.href='/dashboard.html'">
-                    AI<span>STUDIO</span>
-                </h1>
+                <h1 class="logo">AI<span>STUDIO</span></h1>
                 <div class="user-menu">
                     <span id="userEmail">User</span>
                 </div>
             </div>
         </header>
 
-        <!-- Breadcrumb -->
         <nav class="breadcrumb">
             <a href="../dashboard.html">← Dashboard</a>
             <span>/</span>
             <span>Food Photography</span>
         </nav>
 
-        <!-- Main Content -->
         <main class="container">
             <div class="page-header">
                 <h1>🍔 Food & Beverage</h1>
                 <p>Erstelle appetitliche Food-Fotografie für Restaurants und Verpackungen</p>
             </div>
 
-            <!-- Multi-Step Form -->
             <div class="multi-step-form">
-                <!-- Step 1: Upload -->
                 <div class="form-step active" data-step="1">
                     <h2>Schritt 1: Food-Produkt hochladen</h2>
                     
@@ -55,14 +52,14 @@
                             <div class="upload-subtext">PNG, JPG oder WebP • Max. 10MB</div>
                         </div>
                         <div id="imagePreview" style="display: none;">
-                            <img id="previewImg" style="max-width: 100%; max-height: 300px; border-radius: 8px;">
-                            <button type="button" onclick="foodModule.removeImage()" class="btn btn-small" style="margin-top: 10px;">Entfernen</button>
+                            <img id="previewImg" style="max-width: 100%; max-height: 300px; border-radius: 8px;" alt="Vorschaubild">
+                            <button type="button" id="removeImageBtn" class="btn btn-small" style="margin-top: 10px;">Entfernen</button>
                         </div>
                     </div>
                     
                     <div class="form-group" style="margin-top: 20px;">
-                        <label>Food-Kategorie</label>
-                        <select id="foodCategory" required>
+                        <label for="foodCategory">Food-Kategorie</label>
+                        <select id="foodCategory" class="form-control" required>
                             <option value="">Wähle eine Kategorie</option>
                             <option value="dish">Fertiggericht</option>
                             <option value="ingredients">Zutaten</option>
@@ -74,46 +71,39 @@
                     </div>
                     
                     <div class="form-group">
-                        <label>Produktname (optional)</label>
-                        <input type="text" id="foodName" placeholder="z.B. Burger, Pasta, Smoothie...">
+                        <label for="foodName">Produktname (optional)</label>
+                        <input type="text" id="foodName" class="form-control" placeholder="z.B. Burger, Pasta, Smoothie...">
                     </div>
                 </div>
 
-                <!-- Step 2: Style Selection -->
                 <div class="form-step" data-step="2">
                     <h2>Schritt 2: Food Style</h2>
-                    
                     <div class="style-grid">
                         <div class="style-card" data-style="restaurant">
                             <div class="style-icon">🍽️</div>
                             <h4>Restaurant</h4>
                             <p>Fine Dining Präsentation</p>
                         </div>
-                        
                         <div class="style-card" data-style="homemade">
                             <div class="style-icon">🏠</div>
                             <h4>Hausgemacht</h4>
                             <p>Gemütlich & authentisch</p>
                         </div>
-                        
                         <div class="style-card" data-style="fastfood">
                             <div class="style-icon">🍟</div>
                             <h4>Fast Food</h4>
                             <p>Appetitlich & schnell</p>
                         </div>
-                        
                         <div class="style-card" data-style="healthy">
                             <div class="style-icon">🥗</div>
                             <h4>Healthy</h4>
                             <p>Frisch & gesund</p>
                         </div>
-                        
                         <div class="style-card" data-style="packaging">
                             <div class="style-icon">📦</div>
                             <h4>Verpackung</h4>
                             <p>Produkt-Hero Shot</p>
                         </div>
-                        
                         <div class="style-card" data-style="action">
                             <div class="style-icon">👨‍🍳</div>
                             <h4>Action</h4>
@@ -122,34 +112,30 @@
                     </div>
                 </div>
 
-                <!-- Step 3: Composition -->
                 <div class="form-step" data-step="3">
                     <h2>Schritt 3: Komposition & Winkel</h2>
-                    
                     <div class="form-grid">
                         <div class="form-group">
-                            <label>Kamerawinkel</label>
-                            <select id="cameraAngle">
+                            <label for="cameraAngle">Kamerawinkel</label>
+                            <select id="cameraAngle" class="form-control">
                                 <option value="overhead">Overhead (von oben)</option>
                                 <option value="45-degree">45 Grad</option>
                                 <option value="eye-level">Augenhöhe</option>
                                 <option value="close-up">Nahaufnahme</option>
                             </select>
                         </div>
-                        
                         <div class="form-group">
-                            <label>Präsentation</label>
-                            <select id="presentation">
+                            <label for="presentation">Präsentation</label>
+                            <select id="presentation" class="form-control">
                                 <option value="plated">Angerichtet</option>
                                 <option value="ingredients">Mit Zutaten</option>
                                 <option value="process">Zubereitung</option>
                                 <option value="lifestyle">Lifestyle Setting</option>
                             </select>
                         </div>
-                        
                         <div class="form-group">
-                            <label>Dampf/Effekte</label>
-                            <select id="effects">
+                            <label for="effects">Dampf/Effekte</label>
+                            <select id="effects" class="form-control">
                                 <option value="none">Keine</option>
                                 <option value="steam">Dampf sichtbar</option>
                                 <option value="sizzle">Brutzeln</option>
@@ -157,10 +143,9 @@
                                 <option value="melt">Schmelzen</option>
                             </select>
                         </div>
-                        
                         <div class="form-group">
-                            <label>Props</label>
-                            <select id="props">
+                            <label for="props">Props</label>
+                            <select id="props" class="form-control">
                                 <option value="minimal">Minimal</option>
                                 <option value="utensils">Besteck</option>
                                 <option value="ingredients">Zutaten</option>
@@ -171,14 +156,12 @@
                     </div>
                 </div>
 
-                <!-- Step 4: Environment & Lighting -->
                 <div class="form-step" data-step="4">
                     <h2>Schritt 4: Umgebung & Beleuchtung</h2>
-                    
                     <div class="form-grid">
                         <div class="form-group">
-                            <label>Oberfläche</label>
-                            <select id="surface">
+                            <label for="surface">Oberfläche</label>
+                            <select id="surface" class="form-control">
                                 <option value="marble">Marmor</option>
                                 <option value="wood">Holz</option>
                                 <option value="slate">Schiefer</option>
@@ -186,10 +169,9 @@
                                 <option value="rustic">Rustikal</option>
                             </select>
                         </div>
-                        
                         <div class="form-group">
-                            <label>Beleuchtung</label>
-                            <select id="lighting">
+                            <label for="lighting">Beleuchtung</label>
+                            <select id="lighting" class="form-control">
                                 <option value="natural">Natürliches Licht</option>
                                 <option value="warm">Warm & gemütlich</option>
                                 <option value="bright">Hell & frisch</option>
@@ -197,10 +179,9 @@
                                 <option value="golden">Golden Hour</option>
                             </select>
                         </div>
-                        
                         <div class="form-group">
-                            <label>Farbpalette</label>
-                            <select id="colorPalette">
+                            <label for="colorPalette">Farbpalette</label>
+                            <select id="colorPalette" class="form-control">
                                 <option value="vibrant">Lebendig</option>
                                 <option value="muted">Gedämpft</option>
                                 <option value="warm">Warm</option>
@@ -208,10 +189,9 @@
                                 <option value="monochrome">Monochrom</option>
                             </select>
                         </div>
-                        
                         <div class="form-group">
-                            <label>Saison</label>
-                            <select id="season">
+                            <label for="season">Saison</label>
+                            <select id="season" class="form-control">
                                 <option value="neutral">Neutral</option>
                                 <option value="spring">Frühling</option>
                                 <option value="summer">Sommer</option>
@@ -222,46 +202,33 @@
                     </div>
                 </div>
 
-                <!-- Step 5: Review & Submit -->
                 <div class="form-step" data-step="5">
                     <h2>Schritt 5: Überprüfen & Generieren</h2>
-                    
                     <div class="form-group">
-                        <label>Zusätzliche Details (optional)</label>
-                        <textarea id="additionalDetails" rows="4" 
-                                  placeholder="z.B. Extra Käse sichtbar, Dampf aufsteigend, frische Kräuter..."></textarea>
+                        <label for="additionalDetails">Zusätzliche Details (optional)</label>
+                        <textarea id="additionalDetails" class="form-control" rows="4" placeholder="z.B. Extra Käse sichtbar, Dampf aufsteigend, frische Kräuter..."></textarea>
                     </div>
-                    
-                    <div id="summaryReview" class="summary-review"></div>
-                    
                     <div class="form-group">
-                        <label>Anzahl Variationen</label>
-                        <select id="variationCount">
+                        <label for="variations">Anzahl Variationen</label>
+                        <select id="variations" class="form-control">
                             <option value="1">1 Bild</option>
                             <option value="2">2 Bilder</option>
                             <option value="3">3 Bilder</option>
                             <option value="4">4 Bilder</option>
                         </select>
                     </div>
+                    <div id="summaryReview" class="summary-review" style="margin-top: 20px;"></div>
                 </div>
 
-                <!-- Navigation -->
-                <div class="form-navigation">
-                    <button type="button" class="btn btn-outline" id="prevBtn" style="display: none;">
-                        ← Zurück
-                    </button>
-                    <button type="button" class="btn btn-primary" id="nextBtn">
-                        Weiter →
-                    </button>
-                    <button type="submit" class="btn btn-accent" id="submitBtn" style="display: none;">
-                        🚀 Bilder generieren
-                    </button>
+                <div class="form-navigation" style="margin-top: 30px; display: flex; justify-content: space-between;">
+                    <button type="button" class="btn btn-outline" id="prevBtn">← Zurück</button>
+                    <button type="button" class="btn btn-primary" id="nextBtn">Weiter →</button>
+                    <button type="button" class="btn btn-accent" id="submitBtn">🚀 Bilder generieren</button>
                 </div>
             </div>
         </main>
     </div>
 
-    <!-- Scripts -->
     <script src="../js/config.js"></script>
     <script src="../js/api.js"></script>
     <script src="../js/modules/food.js"></script>
