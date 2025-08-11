@@ -1,4 +1,4 @@
-// food.js - Food Photography Module
+// js/modules/food.js
 
 class FoodModule {
     constructor() {
@@ -40,46 +40,37 @@ class FoodModule {
     }
 
     setupEventListeners() {
-        // Image Upload
-        const uploadArea = document.getElementById('uploadArea');
-        const imageFile = document.getElementById('imageFile');
-        
-        if (uploadArea && imageFile) {
-            uploadArea.addEventListener('click', () => imageFile.click());
-            imageFile.addEventListener('change', (e) => this.handleImageUpload(e));
-        }
-
-        // Category selection
-        document.getElementById('foodCategory')?.addEventListener('change', (e) => {
-            this.formData.category = e.target.value;
-            this.updateCategoryDefaults(e.target.value);
-        });
-
-        // Style cards
-        document.querySelectorAll('.style-card[data-style]').forEach(card => {
-            card.addEventListener('click', () => this.selectStyle(card));
-        });
-
-        // Navigation
+        // Navigation & Globale Elemente
         document.getElementById('prevBtn')?.addEventListener('click', () => this.previousStep());
         document.getElementById('nextBtn')?.addEventListener('click', () => this.nextStep());
         document.getElementById('submitBtn')?.addEventListener('click', () => this.submit());
+        document.querySelector('.logo')?.addEventListener('click', () => window.location.href = '/dashboard.html');
+
+        // Bild-Upload
+        document.getElementById('uploadArea')?.addEventListener('click', () => document.getElementById('imageFile')?.click());
+        document.getElementById('imageFile')?.addEventListener('change', (e) => this.handleImageUpload(e));
+        document.getElementById('removeImageBtn')?.addEventListener('click', () => this.removeImage());
+
+        // Formular-Interaktionen
+        document.getElementById('foodCategory')?.addEventListener('change', (e) => this.updateCategoryDefaults(e.target.value));
+        document.querySelectorAll('.style-card').forEach(card => {
+            card.addEventListener('click', () => this.selectStyle(card));
+        });
     }
 
     async handleImageUpload(event) {
         const file = event.target.files[0];
         if (!file) return;
 
-        // Validate file
-        const validation = window.API?.validateImageFile(file);
-        if (!validation?.valid) {
-            alert(validation?.error || 'Ungültiges Bild');
+        // Annahme: window.API.validateImageFile existiert
+        const validation = window.API?.validateImageFile ? window.API.validateImageFile(file) : { valid: true };
+        if (!validation.valid) {
+            alert(validation.error || 'Ungültiges Bild');
             return;
         }
 
         this.uploadedFile = file;
 
-        // Show preview
         const reader = new FileReader();
         reader.onload = (e) => {
             const previewImg = document.getElementById('previewImg');
@@ -92,40 +83,42 @@ class FoodModule {
         reader.readAsDataURL(file);
     }
 
-    selectStyle(card) {
-        document.querySelectorAll('.style-card[data-style]').forEach(c => c.classList.remove('selected'));
-        card.classList.add('selected');
-        this.formData.style = card.dataset.style;
+    removeImage() {
+        this.uploadedFile = null;
+        this.formData.imageUrl = null;
+        const imageFile = document.getElementById('imageFile');
+        if (imageFile) imageFile.value = '';
+        document.getElementById('uploadPlaceholder').style.display = 'block';
+        document.getElementById('imagePreview').style.display = 'none';
+    }
 
-        // Adjust settings based on style
+    selectStyle(card) {
+        document.querySelectorAll('.style-card').forEach(c => c.classList.remove('selected'));
+        card.classList.add('selected');
         this.updateStyleDefaults(card.dataset.style);
     }
 
     updateCategoryDefaults(category) {
+        // Diese Logik bleibt erhalten, da sie spezifisch für Food ist.
         const defaults = {
-            'dish': { angle: '45-degree', presentation: 'plated', lighting: 'natural' },
-            'beverage': { angle: 'eye-level', effects: 'condensation', props: 'minimal' },
-            'ingredients': { angle: 'overhead', presentation: 'ingredients', surface: 'wood' },
-            'packaged': { angle: 'eye-level', presentation: 'lifestyle', lighting: 'studio' },
-            'baked': { angle: '45-degree', effects: 'steam', lighting: 'warm' },
-            'dessert': { angle: 'close-up', presentation: 'plated', props: 'minimal' }
+            'dish': { cameraAngle: '45-degree', presentation: 'plated', lighting: 'natural' },
+            'beverage': { cameraAngle: 'eye-level', effects: 'condensation', props: 'minimal' },
+            'ingredients': { cameraAngle: 'overhead', presentation: 'ingredients', surface: 'wood' },
+            'packaged': { cameraAngle: 'eye-level', presentation: 'lifestyle', lighting: 'studio' },
+            'baked': { cameraAngle: '45-degree', effects: 'steam', lighting: 'warm' },
+            'dessert': { cameraAngle: 'close-up', presentation: 'plated', props: 'minimal' }
         };
-
         const categoryDefaults = defaults[category];
         if (categoryDefaults) {
-            // Apply defaults to form
-            if (categoryDefaults.angle) {
-                const angleSelect = document.getElementById('cameraAngle');
-                if (angleSelect) angleSelect.value = categoryDefaults.angle;
-            }
-            if (categoryDefaults.presentation) {
-                const presentationSelect = document.getElementById('presentation');
-                if (presentationSelect) presentationSelect.value = categoryDefaults.presentation;
-            }
+            Object.keys(categoryDefaults).forEach(key => {
+                const element = document.getElementById(key);
+                if (element) element.value = categoryDefaults[key];
+            });
         }
     }
 
     updateStyleDefaults(style) {
+        // Diese Logik bleibt ebenfalls erhalten.
         const styleDefaults = {
             'restaurant': { surface: 'marble', lighting: 'warm', props: 'utensils' },
             'homemade': { surface: 'wood', lighting: 'natural', props: 'minimal' },
@@ -134,10 +127,8 @@ class FoodModule {
             'packaging': { surface: 'white', lighting: 'studio', props: 'none' },
             'action': { effects: 'steam', lighting: 'dramatic', presentation: 'process' }
         };
-
         const defaults = styleDefaults[style];
         if (defaults) {
-            // Apply style-specific defaults
             Object.keys(defaults).forEach(key => {
                 const element = document.getElementById(key);
                 if (element) element.value = defaults[key];
@@ -145,12 +136,30 @@ class FoodModule {
         }
     }
 
+    collectFormData() {
+        this.formData = {
+            ...this.formData,
+            category: document.getElementById('foodCategory')?.value,
+            productName: document.getElementById('foodName')?.value,
+            style: document.querySelector('.style-card.selected')?.dataset.style || '',
+            cameraAngle: document.getElementById('cameraAngle')?.value,
+            presentation: document.getElementById('presentation')?.value,
+            effects: document.getElementById('effects')?.value,
+            props: document.getElementById('props')?.value,
+            surface: document.getElementById('surface')?.value,
+            lighting: document.getElementById('lighting')?.value,
+            colorPalette: document.getElementById('colorPalette')?.value,
+            season: document.getElementById('season')?.value,
+            additionalDetails: document.getElementById('additionalDetails')?.value,
+            variations: parseInt(document.getElementById('variations')?.value, 10) || 1
+        };
+    }
+
     nextStep() {
         if (this.validateCurrentStep()) {
             if (this.currentStep < this.totalSteps) {
                 this.currentStep++;
                 this.updateStepDisplay();
-                
                 if (this.currentStep === this.totalSteps) {
                     this.updateSummary();
                 }
@@ -161,180 +170,3 @@ class FoodModule {
     previousStep() {
         if (this.currentStep > 1) {
             this.currentStep--;
-            this.updateStepDisplay();
-        }
-    }
-
-    updateStepDisplay() {
-        // Hide all steps
-        document.querySelectorAll('.form-step').forEach(step => {
-            step.classList.remove('active');
-        });
-        
-        // Show current step
-        const currentStepElement = document.querySelector(`[data-step="${this.currentStep}"]`);
-        if (currentStepElement) {
-            currentStepElement.classList.add('active');
-        }
-        
-        // Update navigation buttons
-        const prevBtn = document.getElementById('prevBtn');
-        const nextBtn = document.getElementById('nextBtn');
-        const submitBtn = document.getElementById('submitBtn');
-        
-        if (prevBtn) prevBtn.style.display = this.currentStep === 1 ? 'none' : 'block';
-        if (nextBtn) nextBtn.style.display = this.currentStep === this.totalSteps ? 'none' : 'block';
-        if (submitBtn) submitBtn.style.display = this.currentStep === this.totalSteps ? 'block' : 'none';
-    }
-
-    validateCurrentStep() {
-        switch(this.currentStep) {
-            case 1:
-                if (!this.uploadedFile) {
-                    alert('Bitte lade ein Food-Produkt hoch!');
-                    return false;
-                }
-                this.formData.category = document.getElementById('foodCategory')?.value;
-                this.formData.productName = document.getElementById('foodName')?.value;
-                if (!this.formData.category) {
-                    alert('Bitte wähle eine Food-Kategorie!');
-                    return false;
-                }
-                return true;
-
-            case 2:
-                if (!this.formData.style) {
-                    alert('Bitte wähle einen Food Style!');
-                    return false;
-                }
-                return true;
-
-            case 3:
-                this.formData.cameraAngle = document.getElementById('cameraAngle')?.value;
-                this.formData.presentation = document.getElementById('presentation')?.value;
-                this.formData.effects = document.getElementById('effects')?.value;
-                this.formData.props = document.getElementById('props')?.value;
-                return true;
-
-            case 4:
-                this.formData.surface = document.getElementById('surface')?.value;
-                this.formData.lighting = document.getElementById('lighting')?.value;
-                this.formData.colorPalette = document.getElementById('colorPalette')?.value;
-                this.formData.season = document.getElementById('season')?.value;
-                return true;
-
-            case 5:
-                this.formData.additionalDetails = document.getElementById('additionalDetails')?.value;
-                this.formData.variations = document.getElementById('variationCount')?.value;
-                return true;
-
-            default:
-                return true;
-        }
-    }
-
-    updateSummary() {
-        const summaryContent = document.getElementById('summaryReview');
-        if (summaryContent) {
-            summaryContent.innerHTML = `
-                <h3>Zusammenfassung</h3>
-                <div class="summary-item">
-                    <span class="summary-label">Produkt:</span>
-                    <span class="summary-value">${this.formData.productName || this.formData.category}</span>
-                </div>
-                <div class="summary-item">
-                    <span class="summary-label">Style:</span>
-                    <span class="summary-value">${this.formData.style}</span>
-                </div>
-                <div class="summary-item">
-                    <span class="summary-label">Winkel:</span>
-                    <span class="summary-value">${this.formData.cameraAngle}</span>
-                </div>
-                <div class="summary-item">
-                    <span class="summary-label">Präsentation:</span>
-                    <span class="summary-value">${this.formData.presentation}</span>
-                </div>
-                <div class="summary-item">
-                    <span class="summary-label">Variationen:</span>
-                    <span class="summary-value">${this.formData.variations}</span>
-                </div>
-            `;
-        }
-    }
-
-    async submit() {
-        const submitBtn = document.getElementById('submitBtn');
-        if (submitBtn) {
-            submitBtn.disabled = true;
-            submitBtn.textContent = '⏳ Wird verarbeitet...';
-        }
-
-        try {
-            // Upload image to get URL
-            console.log('📤 Uploading food image...');
-            const base64 = await window.API.fileToBase64(this.uploadedFile);
-            const uploadResult = await window.API.uploadImage(base64);
-            
-            if (!uploadResult.success) {
-                throw new Error('Bild-Upload fehlgeschlagen');
-            }
-
-            this.formData.imageUrl = uploadResult.imageUrl;
-            console.log('✅ Image uploaded:', this.formData.imageUrl);
-
-            // Prepare project data
-            const projectData = {
-                projectType: 'food',
-                imageUrl: this.formData.imageUrl, // Only URL
-                specifications: this.formData,
-                variations: parseInt(this.formData.variations)
-            };
-
-            // Submit to API
-            const result = await window.API.submitProject(projectData);
-            
-            if (result.success) {
-                alert('✅ Erfolgreich! Food-Bilder werden generiert und in Google Drive gespeichert.');
-                setTimeout(() => {
-                    window.location.href = '/dashboard.html';
-                }, 2000);
-            } else {
-                throw new Error(result.error || 'Unbekannter Fehler');
-            }
-
-        } catch (error) {
-            console.error('❌ Submit error:', error);
-            alert('Fehler: ' + error.message);
-            
-            if (submitBtn) {
-                submitBtn.disabled = false;
-                submitBtn.textContent = '🚀 Bilder generieren';
-            }
-        }
-    }
-
-    removeImage() {
-        this.uploadedFile = null;
-        this.formData.imageUrl = null;
-        
-        const imageFile = document.getElementById('imageFile');
-        if (imageFile) imageFile.value = '';
-        
-        const uploadPlaceholder = document.getElementById('uploadPlaceholder');
-        const imagePreview = document.getElementById('imagePreview');
-        
-        if (uploadPlaceholder) uploadPlaceholder.style.display = 'block';
-        if (imagePreview) imagePreview.style.display = 'none';
-    }
-}
-
-// Initialize when DOM is ready
-document.addEventListener('DOMContentLoaded', () => {
-    if (document.body.dataset.page === 'food') {
-        window.foodModule = new FoodModule();
-        window.foodModule.init();
-    }
-});
-
-// Export for global access
-window.FoodModule = FoodModule;
