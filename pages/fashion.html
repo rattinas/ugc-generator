@@ -10,41 +10,11 @@
     <link rel="stylesheet" href="../css/pages.css">
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
-    
     <style>
         .form-step { display: none; }
         .form-step.active { display: block; animation: fadeIn 0.5s; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        .upload-area {
-            border: 2px dashed #d1d5db;
-            border-radius: 12px;
-            padding: 40px 24px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            background-color: #f9fafb;
-            margin-bottom: 20px;
-        }
-        .upload-area:hover {
-            border-color: #1a1a2e; /* Primary color */
-            background-color: #f3f4f6;
-        }
-        .upload-icon {
-            font-size: 48px;
-            line-height: 1;
-            margin-bottom: 16px;
-        }
-        .upload-text {
-            font-size: 16px;
-            font-weight: 600;
-            color: #111827;
-        }
-        .upload-subtext {
-            font-size: 14px;
-            color: #6b7280;
-            margin-top: 4px;
-        }
+        .upload-area{border:2px dashed #d1d5db;border-radius:12px;padding:40px 24px;text-align:center;cursor:pointer;transition:all .3s ease;background-color:#f9fafb;margin-bottom:20px}.upload-area:hover{border-color:#1a1a2e;background-color:#f3f4f6}.upload-icon{font-size:48px;line-height:1;margin-bottom:16px}.upload-text{font-size:16px;font-weight:600;color:#111827}.upload-subtext{font-size:14px;color:#6b7280;margin-top:4px}
     </style>
 </head>
 <body data-page="beauty">
@@ -61,20 +31,9 @@
                 <div class="form-step active" data-step="1">
                     <h2>Schritt 1: Beauty-Produkt hochladen</h2>
                     
-                    <div class="upload-area" id="uploadArea">
-                        <input type="file" id="imageFile" accept="image/*" style="display: none;">
-                        <div id="uploadPlaceholder">
-                            <div class="upload-icon">📸</div>
-                            <div class="upload-text">Klicken zum Hochladen</div>
-                            <div class="upload-subtext">PNG, JPG oder WebP • Max. 10MB</div>
-                        </div>
-                        <div id="imagePreview" style="display: none;">
-                            <img id="previewImg" style="max-width: 100%; max-height: 300px; border-radius: 8px;" alt="Vorschaubild">
-                            <button type="button" id="removeImageBtn" class="btn btn-small" style="margin-top: 10px;">Entfernen</button>
-                        </div>
-                    </div>
+                    <div id="imageUpload"></div>
                     
-                    <div class="form-group">
+                    <div class="form-group" style="margin-top: 20px;">
                         <label for="beautyCategory">Produktkategorie *</label>
                         <select id="beautyCategory" class="form-control" required>
                             <option value="">Wähle eine Kategorie</option>
@@ -91,36 +50,12 @@
                 <div class="form-step" data-step="2">
                     <h2>Schritt 2: Aufnahmetyp</h2>
                     <div class="style-grid">
-                        <div class="style-card" data-shot="application">
-                            <div class="style-icon">✨</div>
-                            <h4>Application</h4>
-                            <p>Produkt wird aufgetragen</p>
-                        </div>
-                        <div class="style-card" data-shot="texture">
-                            <div class="style-icon">💧</div>
-                            <h4>Texture</h4>
-                            <p>Produkt-Textur im Fokus</p>
-                        </div>
-                        <div class="style-card" data-shot="result">
-                            <div class="style-icon">⭐</div>
-                            <h4>Result</h4>
-                            <p>Fertiges Ergebnis zeigen</p>
-                        </div>
-                        <div class="style-card" data-shot="before-after">
-                            <div class="style-icon">🔄</div>
-                            <h4>Before/After</h4>
-                            <p>Transformation zeigen</p>
-                        </div>
-                        <div class="style-card" data-shot="lifestyle">
-                            <div class="style-icon">🌸</div>
-                            <h4>Lifestyle</h4>
-                            <p>Beauty Routine Kontext</p>
-                        </div>
-                        <div class="style-card" data-shot="macro">
-                            <div class="style-icon">🔍</div>
-                            <h4>Macro</h4>
-                            <p>Extreme Nahaufnahme</p>
-                        </div>
+                        <div class="style-card" data-shot="application"><div class="style-icon">✨</div><h4>Application</h4><p>Produkt wird aufgetragen</p></div>
+                        <div class="style-card" data-shot="texture"><div class="style-icon">💧</div><h4>Texture</h4><p>Produkt-Textur im Fokus</p></div>
+                        <div class="style-card" data-shot="result"><div class="style-icon">⭐</div><h4>Result</h4><p>Fertiges Ergebnis zeigen</p></div>
+                        <div class="style-card" data-shot="before-after"><div class="style-icon">🔄</div><h4>Before/After</h4><p>Transformation zeigen</p></div>
+                        <div class="style-card" data-shot="lifestyle"><div class="style-icon">🌸</div><h4>Lifestyle</h4><p>Beauty Routine Kontext</p></div>
+                        <div class="style-card" data-shot="macro"><div class="style-icon">🔍</div><h4>Macro</h4><p>Extreme Nahaufnahme</p></div>
                     </div>
                 </div>
 
@@ -129,64 +64,27 @@
                     <div class="form-grid">
                         <div class="form-group">
                             <label for="focusArea">Fokusbereich</label>
-                            <select id="focusArea" class="form-control">
-                                <option value="full-face">Ganzes Gesicht</option>
-                                <option value="eyes">Augenpartie</option>
-                                <option value="lips">Lippen</option>
-                                <option value="skin">Haut/Wangen</option>
-                                <option value="hands">Hände/Nägel</option>
-                                <option value="hair">Haare</option>
-                            </select>
+                            <select id="focusArea" class="form-control"><option value="full-face">Ganzes Gesicht</option><option value="eyes">Augenpartie</option><option value="lips">Lippen</option><option value="skin">Haut/Wangen</option><option value="hands">Hände/Nägel</option><option value="hair">Haare</option></select>
                         </div>
                         <div class="form-group">
                             <label for="skinType">Hauttyp</label>
-                            <select id="skinType" class="form-control">
-                                <option value="normal">Normal</option>
-                                <option value="dry">Trocken</option>
-                                <option value="oily">Ölig</option>
-                                <option value="combination">Mischhaut</option>
-                                <option value="sensitive">Empfindlich</option>
-                            </select>
+                            <select id="skinType" class="form-control"><option value="normal">Normal</option><option value="dry">Trocken</option><option value="oily">Ölig</option><option value="combination">Mischhaut</option><option value="sensitive">Empfindlich</option></select>
                         </div>
                         <div class="form-group">
                             <label for="skinTone">Hautton</label>
-                            <select id="skinTone" class="form-control">
-                                <option value="fair">Hell</option>
-                                <option value="light">Light</option>
-                                <option value="medium">Medium</option>
-                                <option value="tan">Tan</option>
-                                <option value="deep">Deep</option>
-                                <option value="dark">Dark</option>
-                            </select>
+                            <select id="skinTone" class="form-control"><option value="fair">Hell</option><option value="light">Light</option><option value="medium">Medium</option><option value="tan">Tan</option><option value="deep">Deep</option><option value="dark">Dark</option></select>
                         </div>
                         <div class="form-group">
                             <label for="makeupLevel">Makeup Level</label>
-                            <select id="makeupLevel" class="form-control">
-                                <option value="no-makeup">No-Makeup Look</option>
-                                <option value="natural">Natürlich</option>
-                                <option value="everyday">Alltag</option>
-                                <option value="glam">Glamourös</option>
-                                <option value="editorial">Editorial/Artistic</option>
-                            </select>
+                            <select id="makeupLevel" class="form-control"><option value="no-makeup">No-Makeup Look</option><option value="natural">Natürlich</option><option value="everyday">Alltag</option><option value="glam">Glamourös</option><option value="editorial">Editorial/Artistic</option></select>
                         </div>
                         <div class="form-group">
                             <label for="modelAge">Alter</label>
-                            <select id="modelAge" class="form-control">
-                                <option value="18-25">18-25 Jahre</option>
-                                <option value="25-35">25-35 Jahre</option>
-                                <option value="35-45">35-45 Jahre</option>
-                                <option value="45-55">45-55 Jahre</option>
-                                <option value="55+">55+ Jahre</option>
-                            </select>
+                            <select id="modelAge" class="form-control"><option value="18-25">18-25 Jahre</option><option value="25-35">25-35 Jahre</option><option value="35-45">35-45 Jahre</option><option value="45-55">45-55 Jahre</option><option value="55+">55+ Jahre</option></select>
                         </div>
                         <div class="form-group">
                             <label for="skinFinish">Finish</label>
-                            <select id="skinFinish" class="form-control">
-                                <option value="matte">Matt</option>
-                                <option value="dewy">Dewy/Frisch</option>
-                                <option value="glowing">Glowing</option>
-                                <option value="natural">Natürlich</option>
-                            </select>
+                            <select id="skinFinish" class="form-control"><option value="matte">Matt</option><option value="dewy">Dewy/Frisch</option><option value="glowing">Glowing</option><option value="natural">Natürlich</option></select>
                         </div>
                     </div>
                 </div>
@@ -196,50 +94,24 @@
                     <div class="form-grid">
                         <div class="form-group">
                             <label for="location">Location</label>
-                            <select id="location" class="form-control">
-                                <option value="bathroom">Badezimmer</option>
-                                <option value="vanity">Schminktisch</option>
-                                <option value="studio">Studio</option>
-                                <option value="spa">Spa/Wellness</option>
-                                <option value="bedroom">Schlafzimmer</option>
-                                <option value="outdoor">Outdoor/Natürlich</option>
-                            </select>
+                            <select id="location" class="form-control"><option value="bathroom">Badezimmer</option><option value="vanity">Schminktisch</option><option value="studio">Studio</option><option value="spa">Spa/Wellness</option><option value="bedroom">Schlafzimmer</option><option value="outdoor">Outdoor/Natürlich</option></select>
                         </div>
                         <div class="form-group">
                             <label for="lighting">Beleuchtung</label>
-                            <select id="lighting" class="form-control">
-                                <option value="natural">Natürliches Tageslicht</option>
-                                <option value="ring-light">Ring Light</option>
-                                <option value="beauty-dish">Beauty Dish</option>
-                                <option value="soft-box">Soft Box</option>
-                                <option value="golden-hour">Golden Hour</option>
-                            </select>
+                            <select id="lighting" class="form-control"><option value="natural">Natürliches Tageslicht</option><option value="ring-light">Ring Light</option><option value="beauty-dish">Beauty Dish</option><option value="soft-box">Soft Box</option><option value="golden-hour">Golden Hour</option></select>
                         </div>
                         <div class="form-group">
                             <label for="mood">Stimmung</label>
-                            <select id="mood" class="form-control">
-                                <option value="fresh">Frisch & Clean</option>
-                                <option value="luxurious">Luxuriös</option>
-                                <option value="natural">Natürlich</option>
-                                <option value="dramatic">Dramatisch</option>
-                                <option value="minimal">Minimalistisch</option>
-                            </select>
+                            <select id="mood" class="form-control"><option value="fresh">Frisch & Clean</option><option value="luxurious">Luxuriös</option><option value="natural">Natürlich</option><option value="dramatic">Dramatisch</option><option value="minimal">Minimalistisch</option></select>
                         </div>
                         <div class="form-group">
                             <label for="props">Props</label>
-                            <select id="props" class="form-control">
-                                <option value="none">Keine</option>
-                                <option value="flowers">Blumen</option>
-                                <option value="mirror">Spiegel</option>
-                                <option value="brushes">Pinsel & Tools</option>
-                                <option value="towels">Handtücher</option>
-                                <option value="multiple">Mehrere Produkte</option>
-                            </select>
+                            <select id="props" class="form-control"><option value="none">Keine</option><option value="flowers">Blumen</option><option value="mirror">Spiegel</option><option value="brushes">Pinsel & Tools</option><option value="towels">Handtücher</option><option value="multiple">Mehrere Produkte</option></select>
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="specialRequirements">Spezielle Anforderungen (optional)</label>
-                        <textarea id="specialRequirements" class="form-control" rows="3" placeholder="z.B. Swatch auf Arm, Spray-Nebel sichtbar, Pinsel in Bewegung..."></textarea>
+                        <textarea id="specialRequirements" class="form-control" rows="3" placeholder="z.B. Swatch auf Arm, Spray-Nebel sichtbar..."></textarea>
                     </div>
                 </div>
 
@@ -248,12 +120,7 @@
                     <div id="summaryReview" class="summary-review" style="margin-bottom: 20px; padding: 20px; background: #f5f5f5; border-radius: 8px;"></div>
                     <div class="form-group">
                         <label for="variations">Anzahl Variationen</label>
-                        <select id="variations" class="form-control">
-                            <option value="1">1 Bild</option>
-                            <option value="2">2 Bilder</option>
-                            <option value="3">3 Bilder</option>
-                            <option value="4">4 Bilder</option>
-                        </select>
+                        <select id="variations" class="form-control"><option value="1">1 Bild</option><option value="2">2 Bilder</option><option value="3">3 Bilder</option><option value="4">4 Bilder</option></select>
                     </div>
                 </div>
 
