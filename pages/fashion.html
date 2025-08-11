@@ -10,11 +10,41 @@
     <link rel="stylesheet" href="../css/pages.css">
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+    
     <style>
-        /* Hilfsstile, um die Stufen korrekt anzuzeigen/auszublenden */
         .form-step { display: none; }
         .form-step.active { display: block; animation: fadeIn 0.5s; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .upload-area {
+            border: 2px dashed #d1d5db;
+            border-radius: 12px;
+            padding: 40px 24px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background-color: #f9fafb;
+            margin-bottom: 20px;
+        }
+        .upload-area:hover {
+            border-color: #1a1a2e; /* Primary color */
+            background-color: #f3f4f6;
+        }
+        .upload-icon {
+            font-size: 48px;
+            line-height: 1;
+            margin-bottom: 16px;
+        }
+        .upload-text {
+            font-size: 16px;
+            font-weight: 600;
+            color: #111827;
+        }
+        .upload-subtext {
+            font-size: 14px;
+            color: #6b7280;
+            margin-top: 4px;
+        }
     </style>
 </head>
 <body data-page="beauty">
@@ -44,7 +74,7 @@
                         </div>
                     </div>
                     
-                    <div class="form-group" style="margin-top: 20px;">
+                    <div class="form-group">
                         <label for="beautyCategory">Produktkategorie *</label>
                         <select id="beautyCategory" class="form-control" required>
                             <option value="">Wähle eine Kategorie</option>
