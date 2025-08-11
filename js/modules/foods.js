@@ -1,100 +1,146 @@
-// ============================================
 // food.js - Food Photography Module
-// ============================================
 
-class FoodPhotography {
+class FoodModule {
     constructor() {
-        this.agent = AI_AGENTS.food;
         this.currentStep = 1;
         this.totalSteps = 5;
+        this.uploadedFile = null;
         this.formData = {
-            image: null,
+            imageUrl: null,
             category: '',
+            productName: '',
             style: '',
-            composition: {},
-            environment: {},
+            cameraAngle: '',
+            presentation: '',
+            effects: '',
+            props: '',
+            surface: '',
+            lighting: '',
+            colorPalette: '',
+            season: '',
+            additionalDetails: '',
             variations: 1
         };
     }
 
     init() {
-        this.checkAuth();
+        console.log('🍔 Initializing Food Module...');
         this.setupEventListeners();
-        this.renderHeader();
-        this.renderStepIndicator();
-        this.initializeImageUpload();
+        this.updateStepDisplay();
+        this.checkDriveConfiguration();
     }
 
-    async checkAuth() {
-        if (!window.auth || !await window.auth.isAuthenticated()) {
-            window.location.href = '/';
-            return false;
-        }
-        return true;
-    }
-
-    renderHeader() {
-        const user = window.auth?.getUser();
-        const header = document.getElementById('mainHeader');
-        if (header) {
-            header.innerHTML = UIComponents.renderHeader(user);
-        }
-    }
-
-    renderStepIndicator() {
-        const steps = ['Upload', 'Style', 'Komposition', 'Setting', 'Review'];
-        const indicator = document.getElementById('stepIndicator');
-        if (indicator) {
-            indicator.innerHTML = UIComponents.renderStepIndicator(steps, this.currentStep);
+    checkDriveConfiguration() {
+        const driveFolder = localStorage.getItem('drive_folder_link');
+        if (!driveFolder) {
+            if (confirm('Google Drive Ordner nicht konfiguriert. Jetzt einrichten?')) {
+                window.location.href = '/dashboard.html';
+            }
         }
     }
 
     setupEventListeners() {
-        // Navigation
-        document.getElementById('nextBtn')?.addEventListener('click', () => this.nextStep());
-        document.getElementById('prevBtn')?.addEventListener('click', () => this.prevStep());
-        document.getElementById('submitBtn')?.addEventListener('click', () => this.submitForm());
+        // Image Upload
+        const uploadArea = document.getElementById('uploadArea');
+        const imageFile = document.getElementById('imageFile');
+        
+        if (uploadArea && imageFile) {
+            uploadArea.addEventListener('click', () => imageFile.click());
+            imageFile.addEventListener('change', (e) => this.handleImageUpload(e));
+        }
+
+        // Category selection
+        document.getElementById('foodCategory')?.addEventListener('change', (e) => {
+            this.formData.category = e.target.value;
+            this.updateCategoryDefaults(e.target.value);
+        });
 
         // Style cards
         document.querySelectorAll('.style-card[data-style]').forEach(card => {
-            card.addEventListener('click', (e) => {
-                document.querySelectorAll('.style-card').forEach(c => c.classList.remove('selected'));
-                e.currentTarget.classList.add('selected');
-                this.formData.style = e.currentTarget.dataset.style;
-            });
+            card.addEventListener('click', () => this.selectStyle(card));
         });
 
-        // Variations
-        document.getElementById('variationCount')?.addEventListener('change', (e) => {
-            this.formData.variations = parseInt(e.target.value);
-            this.updateCreditsDisplay();
-        });
+        // Navigation
+        document.getElementById('prevBtn')?.addEventListener('click', () => this.previousStep());
+        document.getElementById('nextBtn')?.addEventListener('click', () => this.nextStep());
+        document.getElementById('submitBtn')?.addEventListener('click', () => this.submit());
     }
 
-    initializeImageUpload() {
-        const uploadDiv = document.getElementById('imageUpload');
-        if (uploadDiv) {
-            uploadDiv.innerHTML = UIComponents.renderImageUpload('foodImage');
-            
-            document.getElementById('foodImage')?.addEventListener('change', async (e) => {
-                const file = e.target.files[0];
-                if (file) {
-                    const validation = window.API.validateImageFile(file);
-                    if (!validation.valid) {
-                        UIComponents.showNotification(validation.error, 'error');
-                        return;
-                    }
+    async handleImageUpload(event) {
+        const file = event.target.files[0];
+        if (!file) return;
 
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        document.getElementById('foodImageImg').src = e.target.result;
-                        document.getElementById('foodImagePlaceholder').style.display = 'none';
-                        document.getElementById('foodImagePreview').style.display = 'flex';
-                        document.getElementById('foodImageArea').classList.add('has-image');
-                    };
-                    reader.readAsDataURL(file);
-                    this.formData.image = file;
-                }
+        // Validate file
+        const validation = window.API?.validateImageFile(file);
+        if (!validation?.valid) {
+            alert(validation?.error || 'Ungültiges Bild');
+            return;
+        }
+
+        this.uploadedFile = file;
+
+        // Show preview
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const previewImg = document.getElementById('previewImg');
+            if (previewImg) {
+                previewImg.src = e.target.result;
+                document.getElementById('uploadPlaceholder').style.display = 'none';
+                document.getElementById('imagePreview').style.display = 'block';
+            }
+        };
+        reader.readAsDataURL(file);
+    }
+
+    selectStyle(card) {
+        document.querySelectorAll('.style-card[data-style]').forEach(c => c.classList.remove('selected'));
+        card.classList.add('selected');
+        this.formData.style = card.dataset.style;
+
+        // Adjust settings based on style
+        this.updateStyleDefaults(card.dataset.style);
+    }
+
+    updateCategoryDefaults(category) {
+        const defaults = {
+            'dish': { angle: '45-degree', presentation: 'plated', lighting: 'natural' },
+            'beverage': { angle: 'eye-level', effects: 'condensation', props: 'minimal' },
+            'ingredients': { angle: 'overhead', presentation: 'ingredients', surface: 'wood' },
+            'packaged': { angle: 'eye-level', presentation: 'lifestyle', lighting: 'studio' },
+            'baked': { angle: '45-degree', effects: 'steam', lighting: 'warm' },
+            'dessert': { angle: 'close-up', presentation: 'plated', props: 'minimal' }
+        };
+
+        const categoryDefaults = defaults[category];
+        if (categoryDefaults) {
+            // Apply defaults to form
+            if (categoryDefaults.angle) {
+                const angleSelect = document.getElementById('cameraAngle');
+                if (angleSelect) angleSelect.value = categoryDefaults.angle;
+            }
+            if (categoryDefaults.presentation) {
+                const presentationSelect = document.getElementById('presentation');
+                if (presentationSelect) presentationSelect.value = categoryDefaults.presentation;
+            }
+        }
+    }
+
+    updateStyleDefaults(style) {
+        const styleDefaults = {
+            'restaurant': { surface: 'marble', lighting: 'warm', props: 'utensils' },
+            'homemade': { surface: 'wood', lighting: 'natural', props: 'minimal' },
+            'fastfood': { surface: 'white', lighting: 'bright', effects: 'sizzle' },
+            'healthy': { surface: 'white', lighting: 'natural', colorPalette: 'vibrant' },
+            'packaging': { surface: 'white', lighting: 'studio', props: 'none' },
+            'action': { effects: 'steam', lighting: 'dramatic', presentation: 'process' }
+        };
+
+        const defaults = styleDefaults[style];
+        if (defaults) {
+            // Apply style-specific defaults
+            Object.keys(defaults).forEach(key => {
+                const element = document.getElementById(key);
+                if (element) element.value = defaults[key];
             });
         }
     }
@@ -103,52 +149,110 @@ class FoodPhotography {
         if (this.validateCurrentStep()) {
             if (this.currentStep < this.totalSteps) {
                 this.currentStep++;
-                this.showStep(this.currentStep);
-                this.renderStepIndicator();
+                this.updateStepDisplay();
+                
+                if (this.currentStep === this.totalSteps) {
+                    this.updateSummary();
+                }
             }
         }
     }
 
-    prevStep() {
+    previousStep() {
         if (this.currentStep > 1) {
             this.currentStep--;
-            this.showStep(this.currentStep);
-            this.renderStepIndicator();
+            this.updateStepDisplay();
         }
     }
 
-    showStep(step) {
-        document.querySelectorAll('.form-step').forEach(s => s.classList.remove('active'));
-        document.querySelector(`[data-step="${step}"]`)?.classList.add('active');
-
+    updateStepDisplay() {
+        // Hide all steps
+        document.querySelectorAll('.form-step').forEach(step => {
+            step.classList.remove('active');
+        });
+        
+        // Show current step
+        const currentStepElement = document.querySelector(`[data-step="${this.currentStep}"]`);
+        if (currentStepElement) {
+            currentStepElement.classList.add('active');
+        }
+        
+        // Update navigation buttons
         const prevBtn = document.getElementById('prevBtn');
         const nextBtn = document.getElementById('nextBtn');
         const submitBtn = document.getElementById('submitBtn');
-
-        if (prevBtn) prevBtn.style.display = step === 1 ? 'none' : 'block';
-        if (nextBtn) nextBtn.style.display = step === this.totalSteps ? 'none' : 'block';
-        if (submitBtn) submitBtn.style.display = step === this.totalSteps ? 'block' : 'none';
-
-        if (step === this.totalSteps) this.updateReview();
+        
+        if (prevBtn) prevBtn.style.display = this.currentStep === 1 ? 'none' : 'block';
+        if (nextBtn) nextBtn.style.display = this.currentStep === this.totalSteps ? 'none' : 'block';
+        if (submitBtn) submitBtn.style.display = this.currentStep === this.totalSteps ? 'block' : 'none';
     }
 
     validateCurrentStep() {
-        // Basic validation
-        return true;
+        switch(this.currentStep) {
+            case 1:
+                if (!this.uploadedFile) {
+                    alert('Bitte lade ein Food-Produkt hoch!');
+                    return false;
+                }
+                this.formData.category = document.getElementById('foodCategory')?.value;
+                this.formData.productName = document.getElementById('foodName')?.value;
+                if (!this.formData.category) {
+                    alert('Bitte wähle eine Food-Kategorie!');
+                    return false;
+                }
+                return true;
+
+            case 2:
+                if (!this.formData.style) {
+                    alert('Bitte wähle einen Food Style!');
+                    return false;
+                }
+                return true;
+
+            case 3:
+                this.formData.cameraAngle = document.getElementById('cameraAngle')?.value;
+                this.formData.presentation = document.getElementById('presentation')?.value;
+                this.formData.effects = document.getElementById('effects')?.value;
+                this.formData.props = document.getElementById('props')?.value;
+                return true;
+
+            case 4:
+                this.formData.surface = document.getElementById('surface')?.value;
+                this.formData.lighting = document.getElementById('lighting')?.value;
+                this.formData.colorPalette = document.getElementById('colorPalette')?.value;
+                this.formData.season = document.getElementById('season')?.value;
+                return true;
+
+            case 5:
+                this.formData.additionalDetails = document.getElementById('additionalDetails')?.value;
+                this.formData.variations = document.getElementById('variationCount')?.value;
+                return true;
+
+            default:
+                return true;
+        }
     }
 
-    updateReview() {
-        const review = document.getElementById('summaryReview');
-        if (review) {
-            review.innerHTML = `
+    updateSummary() {
+        const summaryContent = document.getElementById('summaryReview');
+        if (summaryContent) {
+            summaryContent.innerHTML = `
                 <h3>Zusammenfassung</h3>
                 <div class="summary-item">
-                    <span class="summary-label">Kategorie:</span>
-                    <span class="summary-value">${this.formData.category || 'N/A'}</span>
+                    <span class="summary-label">Produkt:</span>
+                    <span class="summary-value">${this.formData.productName || this.formData.category}</span>
                 </div>
                 <div class="summary-item">
                     <span class="summary-label">Style:</span>
-                    <span class="summary-value">${this.formData.style || 'N/A'}</span>
+                    <span class="summary-value">${this.formData.style}</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Winkel:</span>
+                    <span class="summary-value">${this.formData.cameraAngle}</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Präsentation:</span>
+                    <span class="summary-value">${this.formData.presentation}</span>
                 </div>
                 <div class="summary-item">
                     <span class="summary-label">Variationen:</span>
@@ -156,49 +260,81 @@ class FoodPhotography {
                 </div>
             `;
         }
-        this.updateCreditsDisplay();
     }
 
-    updateCreditsDisplay() {
-        const user = window.auth?.getUser();
-        const credits = user?.profile?.credits || 0;
-        const required = this.formData.variations * 1;
-
-        document.getElementById('availableCredits').textContent = credits;
-        document.getElementById('requiredCredits').textContent = required;
-
+    async submit() {
         const submitBtn = document.getElementById('submitBtn');
         if (submitBtn) {
-            submitBtn.disabled = credits < required;
-            submitBtn.textContent = credits < required ? 'Nicht genug Credits' : '🚀 Bilder generieren';
+            submitBtn.disabled = true;
+            submitBtn.textContent = '⏳ Wird verarbeitet...';
         }
-    }
 
-    async submitForm() {
         try {
-            UIComponents.showLoading(true);
-            const base64 = await window.API.fileToBase64(this.formData.image);
+            // Upload image to get URL
+            console.log('📤 Uploading food image...');
+            const base64 = await window.API.fileToBase64(this.uploadedFile);
+            const uploadResult = await window.API.uploadImage(base64);
+            
+            if (!uploadResult.success) {
+                throw new Error('Bild-Upload fehlgeschlagen');
+            }
 
-            const submissionData = {
-                user: window.auth?.getUser()?.email,
+            this.formData.imageUrl = uploadResult.imageUrl;
+            console.log('✅ Image uploaded:', this.formData.imageUrl);
+
+            // Prepare project data
+            const projectData = {
                 projectType: 'food',
-                image: base64,
+                imageUrl: this.formData.imageUrl, // Only URL
                 specifications: this.formData,
-                credits_needed: this.formData.variations * 1,
-                agent: 'food'
+                variations: parseInt(this.formData.variations)
             };
 
-            const result = await window.API.submitProject(submissionData);
+            // Submit to API
+            const result = await window.API.submitProject(projectData);
+            
             if (result.success) {
-                UIComponents.showNotification('Food-Projekt erfolgreich erstellt!', 'success');
-                setTimeout(() => window.location.href = '/dashboard.html', 2000);
+                alert('✅ Erfolgreich! Food-Bilder werden generiert und in Google Drive gespeichert.');
+                setTimeout(() => {
+                    window.location.href = '/dashboard.html';
+                }, 2000);
             } else {
-                throw new Error(result.error);
+                throw new Error(result.error || 'Unbekannter Fehler');
             }
+
         } catch (error) {
-            UIComponents.showNotification(error.message, 'error');
-        } finally {
-            UIComponents.showLoading(false);
+            console.error('❌ Submit error:', error);
+            alert('Fehler: ' + error.message);
+            
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = '🚀 Bilder generieren';
+            }
         }
     }
+
+    removeImage() {
+        this.uploadedFile = null;
+        this.formData.imageUrl = null;
+        
+        const imageFile = document.getElementById('imageFile');
+        if (imageFile) imageFile.value = '';
+        
+        const uploadPlaceholder = document.getElementById('uploadPlaceholder');
+        const imagePreview = document.getElementById('imagePreview');
+        
+        if (uploadPlaceholder) uploadPlaceholder.style.display = 'block';
+        if (imagePreview) imagePreview.style.display = 'none';
+    }
 }
+
+// Initialize when DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+    if (document.body.dataset.page === 'food') {
+        window.foodModule = new FoodModule();
+        window.foodModule.init();
+    }
+});
+
+// Export for global access
+window.FoodModule = FoodModule;
