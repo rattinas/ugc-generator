@@ -12,14 +12,20 @@
     
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
-    
-    <!-- Supabase -->
-    <script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 </head>
 <body data-page="food">
     <div class="page-container">
         <!-- Header -->
-        <header id="mainHeader" class="main-header"></header>
+        <header class="main-header">
+            <div class="header-content">
+                <h1 class="logo" onclick="window.location.href='/dashboard.html'">
+                    AI<span>STUDIO</span>
+                </h1>
+                <div class="user-menu">
+                    <span id="userEmail">User</span>
+                </div>
+            </div>
+        </header>
 
         <!-- Breadcrumb -->
         <nav class="breadcrumb">
@@ -35,17 +41,26 @@
                 <p>Erstelle appetitliche Food-Fotografie für Restaurants und Verpackungen</p>
             </div>
 
-            <!-- Step Indicator -->
-            <div id="stepIndicator"></div>
-
-            <!-- Form -->
-            <form id="foodForm" class="multi-step-form">
+            <!-- Multi-Step Form -->
+            <div class="multi-step-form">
                 <!-- Step 1: Upload -->
                 <div class="form-step active" data-step="1">
                     <h2>Schritt 1: Food-Produkt hochladen</h2>
-                    <div id="imageUpload"></div>
                     
-                    <div class="form-group">
+                    <div class="upload-area" id="uploadArea">
+                        <input type="file" id="imageFile" accept="image/*" style="display: none;">
+                        <div id="uploadPlaceholder">
+                            <div class="upload-icon">📸</div>
+                            <div class="upload-text">Klicken zum Hochladen</div>
+                            <div class="upload-subtext">PNG, JPG oder WebP • Max. 10MB</div>
+                        </div>
+                        <div id="imagePreview" style="display: none;">
+                            <img id="previewImg" style="max-width: 100%; max-height: 300px; border-radius: 8px;">
+                            <button type="button" onclick="foodModule.removeImage()" class="btn btn-small" style="margin-top: 10px;">Entfernen</button>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group" style="margin-top: 20px;">
                         <label>Food-Kategorie</label>
                         <select id="foodCategory" required>
                             <option value="">Wähle eine Kategorie</option>
@@ -56,6 +71,11 @@
                             <option value="baked">Backwaren</option>
                             <option value="dessert">Dessert</option>
                         </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Produktname (optional)</label>
+                        <input type="text" id="foodName" placeholder="z.B. Burger, Pasta, Smoothie...">
                     </div>
                 </div>
 
@@ -206,21 +226,22 @@
                 <div class="form-step" data-step="5">
                     <h2>Schritt 5: Überprüfen & Generieren</h2>
                     
+                    <div class="form-group">
+                        <label>Zusätzliche Details (optional)</label>
+                        <textarea id="additionalDetails" rows="4" 
+                                  placeholder="z.B. Extra Käse sichtbar, Dampf aufsteigend, frische Kräuter..."></textarea>
+                    </div>
+                    
                     <div id="summaryReview" class="summary-review"></div>
                     
                     <div class="form-group">
                         <label>Anzahl Variationen</label>
                         <select id="variationCount">
-                            <option value="1">1 Bild (1 Credit)</option>
-                            <option value="2">2 Bilder (2 Credits)</option>
-                            <option value="3">3 Bilder (3 Credits)</option>
-                            <option value="4">4 Bilder (4 Credits)</option>
+                            <option value="1">1 Bild</option>
+                            <option value="2">2 Bilder</option>
+                            <option value="3">3 Bilder</option>
+                            <option value="4">4 Bilder</option>
                         </select>
-                    </div>
-                    
-                    <div class="credits-info">
-                        <p>Verfügbare Credits: <strong id="availableCredits">0</strong></p>
-                        <p>Benötigte Credits: <strong id="requiredCredits">1</strong></p>
                     </div>
                 </div>
 
@@ -236,15 +257,13 @@
                         🚀 Bilder generieren
                     </button>
                 </div>
-            </form>
+            </div>
         </main>
     </div>
 
     <!-- Scripts -->
     <script src="../js/config.js"></script>
-    <script src="../js/auth.js"></script>
     <script src="../js/api.js"></script>
-    <script src="../js/components.js"></script>
     <script src="../js/modules/food.js"></script>
 </body>
 </html>
