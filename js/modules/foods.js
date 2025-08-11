@@ -41,131 +41,84 @@ class FoodModule {
 
     setupEventListeners() {
         // Navigation & Globale Elemente
-        const prevBtn = document.getElementById('prevBtn');
-        const nextBtn = document.getElementById('nextBtn');
-        const submitBtn = document.getElementById('submitBtn');
-        
-        if (prevBtn) prevBtn.addEventListener('click', () => this.previousStep());
-        if (nextBtn) nextBtn.addEventListener('click', () => this.nextStep());
-        if (submitBtn) submitBtn.addEventListener('click', () => this.submit());
-        
-        const logo = document.querySelector('.logo');
-        if (logo) logo.addEventListener('click', () => window.location.href = '/dashboard.html');
+        document.getElementById('prevBtn')?.addEventListener('click', () => this.previousStep());
+        document.getElementById('nextBtn')?.addEventListener('click', () => this.nextStep());
+        document.getElementById('submitBtn')?.addEventListener('click', () => this.submit());
+        document.querySelector('.logo')?.addEventListener('click', () => window.location.href = '/dashboard.html');
 
-        // Bild-Upload - WICHTIGE FIXES
+        // Bild-Upload - EXAKT WIE IN FASHION.JS
         const uploadArea = document.getElementById('uploadArea');
         const imageFile = document.getElementById('imageFile');
-        const removeImageBtn = document.getElementById('removeImageBtn');
+        const removeBtn = document.getElementById('removeImageBtn');
         
-        // Fix 1: Direkter Click-Handler auf uploadArea
+        // Upload Area Click Handler
         if (uploadArea && imageFile) {
             uploadArea.addEventListener('click', (e) => {
-                // Verhindere Click wenn auf Remove-Button geklickt wird
-                if (e.target.id === 'removeImageBtn') return;
-                console.log('Upload area clicked - triggering file input');
-                imageFile.click();
-            });
-            
-            // Fix 2: Change-Handler direkt auf das Input-Element
-            imageFile.addEventListener('change', (e) => {
-                console.log('File input changed', e.target.files);
-                this.handleImageUpload(e);
+                // Verhindere Trigger wenn Remove Button geklickt wurde
+                if (e.target.id !== 'removeImageBtn' && !e.target.closest('#removeImageBtn')) {
+                    imageFile.click();
+                }
             });
         }
         
-        // Remove Image Button
-        if (removeImageBtn) {
-            removeImageBtn.addEventListener('click', (e) => {
+        // File Input Change Handler
+        if (imageFile) {
+            imageFile.addEventListener('change', (e) => this.handleImageUpload(e));
+        }
+        
+        // Remove Button Handler
+        if (removeBtn) {
+            removeBtn.addEventListener('click', (e) => {
                 e.stopPropagation(); // Verhindere Bubble zum uploadArea
                 this.removeImage();
             });
         }
 
         // Formular-Interaktionen
-        const foodCategory = document.getElementById('foodCategory');
-        if (foodCategory) {
-            foodCategory.addEventListener('change', (e) => this.updateCategoryDefaults(e.target.value));
-        }
+        document.getElementById('foodCategory')?.addEventListener('change', (e) => this.updateCategoryDefaults(e.target.value));
         
         // Style Cards
         document.querySelectorAll('.style-card').forEach(card => {
             card.addEventListener('click', () => this.selectStyle(card));
         });
-        
-        // Fix 3: Stelle sicher, dass uploadArea als clickable styled ist
-        if (uploadArea) {
-            uploadArea.style.cursor = 'pointer';
-        }
     }
 
     async handleImageUpload(event) {
         const file = event.target.files[0];
-        if (!file) {
-            console.log('No file selected');
+        if (!file) return;
+
+        const validation = window.API?.validateImageFile ? window.API.validateImageFile(file) : { valid: true };
+        if (!validation.valid) {
+            alert(validation.error || 'Ungültiges Bild');
             return;
-        }
-
-        console.log('Processing file:', file.name, file.type, file.size);
-
-        // Validierung
-        const maxSize = 10 * 1024 * 1024; // 10MB
-        if (file.size > maxSize) {
-            alert('Datei zu groß! Maximum ist 10MB.');
-            return;
-        }
-
-        if (!file.type.startsWith('image/')) {
-            alert('Bitte nur Bilddateien hochladen!');
-            return;
-        }
-
-        // Wenn API Validierung vorhanden ist, nutze sie
-        if (window.API?.validateImageFile) {
-            const validation = window.API.validateImageFile(file);
-            if (!validation.valid) {
-                alert(validation.error || 'Ungültiges Bild');
-                return;
-            }
         }
 
         this.uploadedFile = file;
-        console.log('File accepted:', file.name);
 
-        // Vorschau anzeigen
         const reader = new FileReader();
         reader.onload = (e) => {
             const previewImg = document.getElementById('previewImg');
-            const uploadPlaceholder = document.getElementById('uploadPlaceholder');
-            const imagePreview = document.getElementById('imagePreview');
-            
-            if (previewImg && uploadPlaceholder && imagePreview) {
+            if (previewImg) {
                 previewImg.src = e.target.result;
-                uploadPlaceholder.style.display = 'none';
-                imagePreview.style.display = 'block';
-                console.log('Preview displayed');
+                document.getElementById('uploadPlaceholder').style.display = 'none';
+                document.getElementById('imagePreview').style.display = 'block';
             }
         };
         reader.readAsDataURL(file);
     }
 
     removeImage() {
-        console.log('Removing image');
         this.uploadedFile = null;
         this.formData.imageUrl = null;
-        
         const imageFile = document.getElementById('imageFile');
-        const uploadPlaceholder = document.getElementById('uploadPlaceholder');
-        const imagePreview = document.getElementById('imagePreview');
-        
         if (imageFile) imageFile.value = '';
-        if (uploadPlaceholder) uploadPlaceholder.style.display = 'block';
-        if (imagePreview) imagePreview.style.display = 'none';
+        document.getElementById('uploadPlaceholder').style.display = 'block';
+        document.getElementById('imagePreview').style.display = 'none';
     }
 
     selectStyle(card) {
         document.querySelectorAll('.style-card').forEach(c => c.classList.remove('selected'));
         card.classList.add('selected');
-        this.formData.style = card.dataset.style;
         this.updateStyleDefaults(card.dataset.style);
     }
 
@@ -178,7 +131,6 @@ class FoodModule {
             'baked': { cameraAngle: '45-degree', effects: 'steam', lighting: 'warm' },
             'dessert': { cameraAngle: 'close-up', presentation: 'plated', props: 'minimal' }
         };
-        
         const categoryDefaults = defaults[category];
         if (categoryDefaults) {
             Object.keys(categoryDefaults).forEach(key => {
@@ -197,7 +149,6 @@ class FoodModule {
             'packaging': { surface: 'white', lighting: 'studio', props: 'none' },
             'action': { effects: 'steam', lighting: 'dramatic', presentation: 'process' }
         };
-        
         const defaults = styleDefaults[style];
         if (defaults) {
             Object.keys(defaults).forEach(key => {
@@ -246,30 +197,15 @@ class FoodModule {
     }
 
     updateStepDisplay() {
-        // Alle Steps ausblenden
-        document.querySelectorAll('.form-step').forEach(step => {
-            step.classList.remove('active');
-        });
-        
-        // Aktuellen Step anzeigen
-        const currentStepElement = document.querySelector(`[data-step="${this.currentStep}"]`);
-        if (currentStepElement) {
-            currentStepElement.classList.add('active');
-        }
-        
-        // Navigation Buttons anpassen
-        const prevBtn = document.getElementById('prevBtn');
-        const nextBtn = document.getElementById('nextBtn');
-        const submitBtn = document.getElementById('submitBtn');
-        
-        if (prevBtn) prevBtn.style.display = this.currentStep === 1 ? 'none' : 'block';
-        if (nextBtn) nextBtn.style.display = this.currentStep === this.totalSteps ? 'none' : 'block';
-        if (submitBtn) submitBtn.style.display = this.currentStep === this.totalSteps ? 'block' : 'none';
+        document.querySelectorAll('.form-step').forEach(step => step.classList.remove('active'));
+        document.querySelector(`[data-step="${this.currentStep}"]`)?.classList.add('active');
+        document.getElementById('prevBtn').style.display = this.currentStep === 1 ? 'none' : 'block';
+        document.getElementById('nextBtn').style.display = this.currentStep === this.totalSteps ? 'none' : 'block';
+        document.getElementById('submitBtn').style.display = this.currentStep === this.totalSteps ? 'block' : 'none';
     }
 
     validateCurrentStep() {
         this.collectFormData();
-        
         switch(this.currentStep) {
             case 1:
                 if (!this.uploadedFile) {
@@ -297,40 +233,27 @@ class FoodModule {
         const summaryContent = document.getElementById('summaryReview');
         if (summaryContent) {
             summaryContent.innerHTML = `
-                <div class="summary-box">
-                    <h3>📋 Zusammenfassung</h3>
-                    <div class="summary-details">
-                        <p><strong>🍽️ Produkt:</strong> ${this.formData.productName || this.formData.category}</p>
-                        <p><strong>🎨 Style:</strong> ${this.formData.style}</p>
-                        <p><strong>📐 Winkel:</strong> ${this.formData.cameraAngle}</p>
-                        <p><strong>🍴 Präsentation:</strong> ${this.formData.presentation}</p>
-                        <p><strong>💡 Beleuchtung:</strong> ${this.formData.lighting}</p>
-                        <p><strong>🎭 Effekte:</strong> ${this.formData.effects}</p>
-                        <p><strong>🖼️ Variationen:</strong> ${this.formData.variations}</p>
-                        ${this.formData.additionalDetails ? `<p><strong>📝 Details:</strong> ${this.formData.additionalDetails}</p>` : ''}
-                    </div>
-                </div>
+                <h3>Zusammenfassung</h3>
+                <p><strong>Produkt:</strong> ${this.formData.productName || this.formData.category}</p>
+                <p><strong>Style:</strong> ${this.formData.style}</p>
+                <p><strong>Winkel:</strong> ${this.formData.cameraAngle}</p>
+                <p><strong>Präsentation:</strong> ${this.formData.presentation}</p>
+                <p><strong>Variationen:</strong> ${this.formData.variations}</p>
             `;
         }
     }
 
     async submit() {
         const submitBtn = document.getElementById('submitBtn');
-        if (!submitBtn) return;
-        
-        submitBtn.disabled = true;
-        submitBtn.textContent = '⏳ Bild wird hochgeladen...';
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.textContent = '⏳ Bild wird hochgeladen...';
+        }
 
         try {
-            // Prüfe ob API verfügbar ist
-            if (!window.API) {
-                throw new Error('API nicht verfügbar. Bitte Seite neu laden.');
-            }
-
-            // Bild zu Base64 konvertieren
+            // Schritt 1: Bild hochladen
+            console.log('📤 Uploading food image...');
             const base64 = await window.API.fileToBase64(this.uploadedFile);
-            
-            // Bild hochladen
             const uploadResult = await window.API.uploadImage(base64);
             
             if (!uploadResult.success) {
@@ -340,10 +263,10 @@ class FoodModule {
             this.formData.imageUrl = uploadResult.imageUrl;
             console.log('✅ Image uploaded:', this.formData.imageUrl);
 
-            submitBtn.textContent = '🚀 Daten werden gesendet...';
+            // Schritt 2: Projekt-Daten senden
+            if (submitBtn) submitBtn.textContent = '🚀 Daten werden gesendet...';
             this.collectFormData();
 
-            // Projekt-Daten vorbereiten
             const projectData = {
                 projectType: 'food',
                 imageUrl: this.formData.imageUrl,
@@ -351,11 +274,9 @@ class FoodModule {
                 variations: this.formData.variations
             };
 
-            // Projekt übermitteln
             const result = await window.API.submitProject(projectData);
 
             if (result.success) {
-                submitBtn.textContent = '✅ Erfolgreich!';
                 alert('✅ Erfolgreich! Food-Bilder werden generiert und in Google Drive gespeichert.');
                 setTimeout(() => { 
                     window.location.href = '/dashboard.html'; 
@@ -366,17 +287,18 @@ class FoodModule {
         } catch (error) {
             console.error('❌ Submit error:', error);
             alert('Fehler: ' + error.message);
-            submitBtn.disabled = false;
-            submitBtn.textContent = '🚀 Bilder generieren';
+            
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = '🚀 Bilder generieren';
+            }
         }
     }
 }
 
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('DOM loaded, checking page...');
     if (document.body.dataset.page === 'food') {
-        console.log('Food page detected, initializing module...');
         window.foodModule = new FoodModule();
         window.foodModule.init();
     }
