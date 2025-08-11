@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fashion Photography - AI Studio</title>
+    <title>Beauty Photography - AI Studio</title>
     
     <link rel="stylesheet" href="../css/styles.css">
     <link rel="stylesheet" href="../css/components.css">
@@ -17,26 +17,19 @@
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
-<body data-page="fashion">
+<body data-page="beauty">
     <div class="page-container">
-        <header class="main-header">
-            <div class="header-content">
-                <h1 class="logo">AI<span>STUDIO</span></h1>
-                <div class="user-menu">
-                    <span id="userEmail">User</span>
-                </div>
-            </div>
-        </header>
+        <header id="mainHeader" class="main-header"></header>
 
         <main class="container">
             <div class="page-header">
-                <h1>👗 Fashion & Apparel</h1>
-                <p>Erstelle professionelle Fashion-Fotografie mit erweiterten Optionen</p>
+                <h1>💄 Beauty & Cosmetics</h1>
+                <p>Erstelle professionelle Beauty-Fotografie für Kosmetik und Skincare</p>
             </div>
 
-            <div class="multi-step-form">
+            <form id="beautyForm" class="multi-step-form">
                 <div class="form-step active" data-step="1">
-                    <h2>Schritt 1: Fashion-Produkt hochladen</h2>
+                    <h2>Schritt 1: Beauty-Produkt hochladen</h2>
                     
                     <div class="upload-area" id="uploadArea">
                         <input type="file" id="imageFile" accept="image/*" style="display: none;">
@@ -52,186 +45,177 @@
                     </div>
                     
                     <div class="form-group" style="margin-top: 20px;">
-                        <label for="productCategory">Produktkategorie *</label>
-                        <select id="productCategory" class="form-control" required>
+                        <label for="beautyCategory">Produktkategorie *</label>
+                        <select id="beautyCategory" class="form-control" required>
                             <option value="">Wähle eine Kategorie</option>
-                            <option value="shirt">Shirt/Hemd</option>
-                            <option value="dress">Kleid</option>
-                            <option value="pants">Hose</option>
-                            <option value="jacket">Jacke</option>
-                            <option value="shoes">Schuhe</option>
-                            <option value="bag">Tasche</option>
-                            <option value="accessories">Accessoires</option>
-                            <option value="sportswear">Sportbekleidung</option>
-                            <option value="underwear">Unterwäsche</option>
+                            <option value="makeup">Makeup</option>
+                            <option value="skincare">Skincare</option>
+                            <option value="haircare">Haircare</option>
+                            <option value="nails">Nägel</option>
+                            <option value="fragrance">Parfüm</option>
+                            <option value="tools">Beauty Tools</option>
                         </select>
                     </div>
                 </div>
 
                 <div class="form-step" data-step="2">
-                    <h2>Schritt 2: Fotografie-Stil</h2>
-                    
+                    <h2>Schritt 2: Aufnahmetyp</h2>
                     <div class="style-grid">
-                        <div class="style-card" data-style="professional">
-                            <div class="style-icon">📷</div>
-                            <h4>Professional</h4>
-                            <p>Studio-Qualität mit perfekter Beleuchtung</p>
+                        <div class="style-card" data-shot="application">
+                            <div class="style-icon">✨</div>
+                            <h4>Application</h4>
+                            <p>Produkt wird aufgetragen</p>
                         </div>
-                        <div class="style-card" data-style="ugc">
-                            <div class="style-icon">📱</div>
-                            <h4>UGC Content</h4>
-                            <p>Authentisch, wie von Kunden gemacht</p>
+                        <div class="style-card" data-shot="texture">
+                            <div class="style-icon">💧</div>
+                            <h4>Texture</h4>
+                            <p>Produkt-Textur im Fokus</p>
                         </div>
-                        <div class="style-card" data-style="mirror-selfie">
-                            <div class="style-icon">🪞</div>
-                            <h4>Spiegel-Selfie</h4>
-                            <p>Trendy Mirror-Selfie Style</p>
+                        <div class="style-card" data-shot="result">
+                            <div class="style-icon">⭐</div>
+                            <h4>Result</h4>
+                            <p>Fertiges Ergebnis zeigen</p>
                         </div>
-                        <div class="style-card" data-style="iphone">
-                            <div class="style-icon">📲</div>
-                            <h4>iPhone Shot</h4>
-                            <p>Mobile Photography Look</p>
+                        <div class="style-card" data-shot="before-after">
+                            <div class="style-icon">🔄</div>
+                            <h4>Before/After</h4>
+                            <p>Transformation zeigen</p>
                         </div>
-                        <div class="style-card" data-style="lifestyle">
-                            <div class="style-icon">🌟</div>
+                        <div class="style-card" data-shot="lifestyle">
+                            <div class="style-icon">🌸</div>
                             <h4>Lifestyle</h4>
-                            <p>Natürlicher Alltags-Look</p>
+                            <p>Beauty Routine Kontext</p>
                         </div>
-                        <div class="style-card" data-style="editorial">
-                            <div class="style-icon">📖</div>
-                            <h4>Editorial</h4>
-                            <p>High-Fashion Magazin Style</p>
+                        <div class="style-card" data-shot="macro">
+                            <div class="style-icon">🔍</div>
+                            <h4>Macro</h4>
+                            <p>Extreme Nahaufnahme</p>
                         </div>
-                    </div>
-                    
-                    <div id="iphoneOptions" style="display: none; margin-top: 20px;">
-                        <label for="iphoneModel">iPhone Modell:</label>
-                        <select id="iphoneModel" class="form-control">
-                            <option value="iphone-15-pro">iPhone 15 Pro</option>
-                            <option value="iphone-14-pro">iPhone 14 Pro</option>
-                            <option value="iphone-13-pro">iPhone 13 Pro</option>
-                            <option value="iphone-12">iPhone 12</option>
-                            <option value="android">Android Flagship</option>
-                        </select>
                     </div>
                 </div>
 
                 <div class="form-step" data-step="3">
-                    <h2>Schritt 3: Model & Aktion</h2>
+                    <h2>Schritt 3: Model & Look</h2>
                     <div class="form-grid">
                         <div class="form-group">
-                            <label for="modelAction">Aktion/Pose</label>
-                            <select id="modelAction" class="form-control">
-                                <option value="wearing">Trägt das Produkt</option>
-                                <option value="holding">Hält das Produkt</option>
-                                <option value="trying-on">Probiert an</option>
-                                <option value="walking">Gehend/Laufend</option>
-                                <option value="sitting">Sitzend</option>
-                                <option value="posing">Posierend</option>
-                                <option value="mirror-pose">Spiegel-Pose</option>
-                                <option value="casual-selfie">Casual Selfie</option>
+                            <label for="focusArea">Fokusbereich</label>
+                            <select id="focusArea" class="form-control">
+                                <option value="full-face">Ganzes Gesicht</option>
+                                <option value="eyes">Augenpartie</option>
+                                <option value="lips">Lippen</option>
+                                <option value="skin">Haut/Wangen</option>
+                                <option value="hands">Hände/Nägel</option>
+                                <option value="hair">Haare</option>
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="modelType">Model Typ</label>
-                            <select id="modelType" class="form-control">
-                                <option value="female-young">Weiblich (18-25)</option>
-                                <option value="female-adult">Weiblich (25-35)</option>
-                                <option value="female-mature">Weiblich (35+)</option>
-                                <option value="male-young">Männlich (18-25)</option>
-                                <option value="male-adult">Männlich (25-35)</option>
-                                <option value="male-mature">Männlich (35+)</option>
-                                <option value="diverse">Diverse/Non-Binary</option>
-                                <option value="group">Gruppe</option>
+                            <label for="skinType">Hauttyp</label>
+                            <select id="skinType" class="form-control">
+                                <option value="normal">Normal</option>
+                                <option value="dry">Trocken</option>
+                                <option value="oily">Ölig</option>
+                                <option value="combination">Mischhaut</option>
+                                <option value="sensitive">Empfindlich</option>
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="bodyType">Körpertyp</label>
-                            <select id="bodyType" class="form-control">
-                                <option value="slim">Schlank</option>
-                                <option value="athletic">Athletisch</option>
-                                <option value="average">Durchschnitt</option>
-                                <option value="curvy">Kurvig</option>
-                                <option value="plus-size">Plus Size</option>
-                                <option value="diverse">Diverse</option>
+                            <label for="skinTone">Hautton</label>
+                            <select id="skinTone" class="form-control">
+                                <option value="fair">Hell</option>
+                                <option value="light">Light</option>
+                                <option value="medium">Medium</option>
+                                <option value="tan">Tan</option>
+                                <option value="deep">Deep</option>
+                                <option value="dark">Dark</option>
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="ethnicity">Ethnizität</label>
-                            <select id="ethnicity" class="form-control">
-                                <option value="caucasian">Kaukasisch</option>
-                                <option value="african">Afrikanisch</option>
-                                <option value="asian">Asiatisch</option>
-                                <option value="latin">Lateinamerikanisch</option>
-                                <option value="middle-eastern">Nahöstlich</option>
-                                <option value="mixed">Gemischt</option>
-                                <option value="diverse">Diverse</option>
+                            <label for="makeupLevel">Makeup Level</label>
+                            <select id="makeupLevel" class="form-control">
+                                <option value="no-makeup">No-Makeup Look</option>
+                                <option value="natural">Natürlich</option>
+                                <option value="everyday">Alltag</option>
+                                <option value="glam">Glamourös</option>
+                                <option value="editorial">Editorial/Artistic</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="modelAge">Alter</label>
+                            <select id="modelAge" class="form-control">
+                                <option value="18-25">18-25 Jahre</option>
+                                <option value="25-35">25-35 Jahre</option>
+                                <option value="35-45">35-45 Jahre</option>
+                                <option value="45-55">45-55 Jahre</option>
+                                <option value="55+">55+ Jahre</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="skinFinish">Finish</label>
+                            <select id="skinFinish" class="form-control">
+                                <option value="matte">Matt</option>
+                                <option value="dewy">Dewy/Frisch</option>
+                                <option value="glowing">Glowing</option>
+                                <option value="natural">Natürlich</option>
                             </select>
                         </div>
                     </div>
                 </div>
 
                 <div class="form-step" data-step="4">
-                    <h2>Schritt 4: Szene & Umgebung</h2>
+                    <h2>Schritt 4: Setting & Beleuchtung</h2>
                     <div class="form-grid">
                         <div class="form-group">
                             <label for="location">Location</label>
                             <select id="location" class="form-control">
-                                <option value="studio">Studio (Clean)</option>
+                                <option value="bathroom">Badezimmer</option>
+                                <option value="vanity">Schminktisch</option>
+                                <option value="studio">Studio</option>
+                                <option value="spa">Spa/Wellness</option>
                                 <option value="bedroom">Schlafzimmer</option>
-                                <option value="bathroom">Badezimmer (für Spiegel)</option>
-                                <option value="street">Straße/Urban</option>
-                                <option value="home">Zuhause</option>
-                                <option value="cafe">Café</option>
-                                <option value="park">Park/Natur</option>
-                                <option value="gym">Fitnessstudio</option>
-                                <option value="office">Büro</option>
-                                <option value="store">Umkleidekabine</option>
+                                <option value="outdoor">Outdoor/Natürlich</option>
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="lighting">Tageszeit/Licht</label>
+                            <label for="lighting">Beleuchtung</label>
                             <select id="lighting" class="form-control">
                                 <option value="natural">Natürliches Tageslicht</option>
+                                <option value="ring-light">Ring Light</option>
+                                <option value="beauty-dish">Beauty Dish</option>
+                                <option value="soft-box">Soft Box</option>
                                 <option value="golden-hour">Golden Hour</option>
-                                <option value="studio">Studio-Beleuchtung</option>
-                                <option value="flash">Blitz (Phone)</option>
-                                <option value="indoor">Indoor Ambient</option>
-                                <option value="night">Nacht/Party</option>
-                                <option value="ring-light">Ring Light (Influencer)</option>
                             </select>
                         </div>
                         <div class="form-group">
                             <label for="mood">Stimmung</label>
                             <select id="mood" class="form-control">
-                                <option value="casual">Casual/Entspannt</option>
-                                <option value="confident">Selbstbewusst</option>
-                                <option value="playful">Verspielt</option>
-                                <option value="elegant">Elegant</option>
-                                <option value="edgy">Edgy/Cool</option>
+                                <option value="fresh">Frisch & Clean</option>
+                                <option value="luxurious">Luxuriös</option>
                                 <option value="natural">Natürlich</option>
-                                <option value="glamorous">Glamourös</option>
+                                <option value="dramatic">Dramatisch</option>
+                                <option value="minimal">Minimalistisch</option>
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="socialStyle">Social Media Style</label>
-                            <select id="socialStyle" class="form-control">
-                                <option value="instagram">Instagram Feed</option>
-                                <option value="instagram-story">Instagram Story</option>
-                                <option value="tiktok">TikTok Style</option>
-                                <option value="pinterest">Pinterest Aesthetic</option>
-                                <option value="none">Kein spezifischer Style</option>
+                            <label for="props">Props</label>
+                            <select id="props" class="form-control">
+                                <option value="none">Keine</option>
+                                <option value="flowers">Blumen</option>
+                                <option value="mirror">Spiegel</option>
+                                <option value="brushes">Pinsel & Tools</option>
+                                <option value="towels">Handtücher</option>
+                                <option value="multiple">Mehrere Produkte</option>
                             </select>
                         </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="specialRequirements">Spezielle Anforderungen (optional)</label>
+                        <textarea id="specialRequirements" class="form-control" rows="3" placeholder="z.B. Swatch auf Arm, Spray-Nebel sichtbar, Pinsel in Bewegung..."></textarea>
                     </div>
                 </div>
 
                 <div class="form-step" data-step="5">
-                    <h2>Schritt 5: Details & Generieren</h2>
-                    <div class="form-group">
-                        <label for="additionalInstructions">Zusätzliche Anweisungen (optional)</label>
-                        <textarea id="additionalInstructions" class="form-control" rows="4" placeholder="z.B. Model soll lächeln, Handy in der Hand halten, bestimmte Pose..."></textarea>
-                    </div>
+                    <h2>Schritt 5: Überprüfen & Generieren</h2>
+                    <div id="summaryReview" class="summary-review" style="margin-bottom: 20px; padding: 20px; background: #f5f5f5; border-radius: 8px;"></div>
                     <div class="form-group">
                         <label for="variations">Anzahl Variationen</label>
                         <select id="variations" class="form-control">
@@ -241,23 +225,21 @@
                             <option value="4">4 Bilder</option>
                         </select>
                     </div>
-                    <div class="summary-review" style="margin: 20px 0; padding: 20px; background: #f5f5f5; border-radius: 8px;">
-                        <h3>Zusammenfassung</h3>
-                        <div id="summaryContent"></div>
-                    </div>
                 </div>
 
                 <div class="form-navigation" style="margin-top: 30px; display: flex; justify-content: space-between;">
-                    <button type="button" class="btn btn-outline" id="prevBtn">← Zurück</button>
+                    <button type="button" class="btn btn-outline" id="prevBtn" style="display: none;">← Zurück</button>
                     <button type="button" class="btn btn-primary" id="nextBtn">Weiter →</button>
                     <button type="button" class="btn btn-accent" id="submitBtn" style="display: none;">🚀 Bilder generieren</button>
                 </div>
-            </div>
+            </form>
         </main>
     </div>
 
     <script src="../js/config.js"></script>
+    <script src="../js/auth.js"></script>
     <script src="../js/api.js"></script>
-    <script src="../js/modules/fashion.js"></script>
+    <script src="../js/components.js"></script>
+    <script src="../js/modules/beauty.js"></script>
 </body>
 </html>
