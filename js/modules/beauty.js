@@ -6,7 +6,9 @@ class BeautyModule {
         this.totalSteps = 5;
         this.uploadedFile = null;
         this.formData = {
-            imageUrl: null, category: '', shotType: '', focusArea: '', skinType: '',
+            imageUrl: null, category: '', shotType: '', 
+            modelType: '', // NEU: Feld für Geschlecht hinzugefügt
+            focusArea: '', skinType: '',
             skinTone: '', makeupLevel: '', modelAge: '', skinFinish: '', location: '',
             lighting: '', mood: '', props: '', specialRequirements: '', variations: 1
         };
@@ -14,9 +16,7 @@ class BeautyModule {
 
     init() {
         console.log('💄 Initializing Beauty Module...');
-        // KORREKTUR: Zuerst das HTML für den Uploader rendern
         this.renderUploaderComponent();
-        // Erst DANACH die Event-Listener initialisieren
         this.setupEventListeners();
         this.updateStepDisplay();
         this.checkDriveConfiguration();
@@ -28,8 +28,7 @@ class BeautyModule {
             console.error('Uploader target element #imageUpload not found!');
             return;
         }
-
-        const uploaderHTML = `
+        target.innerHTML = `
             <div class="upload-area" id="uploadArea">
                 <input type="file" id="imageFile" accept="image/*" style="display: none;">
                 <div id="uploadPlaceholder">
@@ -41,9 +40,7 @@ class BeautyModule {
                     <img id="previewImg" style="max-width: 100%; max-height: 300px; border-radius: 8px;" alt="Vorschaubild">
                     <button type="button" id="removeImageBtn" class="btn btn-small" style="margin-top: 10px;">Entfernen</button>
                 </div>
-            </div>
-        `;
-        target.innerHTML = uploaderHTML;
+            </div>`;
     }
 
     checkDriveConfiguration() {
@@ -62,9 +59,12 @@ class BeautyModule {
         document.getElementById('uploadArea')?.addEventListener('click', () => document.getElementById('imageFile')?.click());
         document.getElementById('imageFile')?.addEventListener('change', (e) => this.handleImageUpload(e));
         document.getElementById('removeImageBtn')?.addEventListener('click', () => this.removeImage());
-        document.getElementById('beautyCategory')?.addEventListener('change', () => this.collectFormData());
         document.querySelectorAll('.style-card[data-shot]').forEach(card => {
             card.addEventListener('click', () => this.selectShotType(card));
+        });
+        // Event Listener für alle relevanten Formularfelder, um Daten aktuell zu halten
+        document.querySelectorAll('#beautyCategory, #modelType, #focusArea, #skinType, #skinTone, #makeupLevel, #modelAge, #skinFinish, #location, #lighting, #mood, #props, #specialRequirements, #variationCount').forEach(el => {
+            el.addEventListener('change', () => this.collectFormData());
         });
     }
 
@@ -77,9 +77,7 @@ class BeautyModule {
             alert(validation.error || 'Ungültiges Bild');
             return;
         }
-
         this.uploadedFile = file;
-
         const reader = new FileReader();
         reader.onload = (e) => {
             const previewImg = document.getElementById('previewImg');
@@ -112,6 +110,7 @@ class BeautyModule {
             ...this.formData,
             category: document.getElementById('beautyCategory')?.value,
             shotType: document.querySelector('.style-card.selected')?.dataset.shot || '',
+            modelType: document.getElementById('modelType')?.value, // NEU: Geschlecht wird erfasst
             focusArea: document.getElementById('focusArea')?.value,
             skinType: document.getElementById('skinType')?.value,
             skinTone: document.getElementById('skinTone')?.value,
@@ -123,7 +122,7 @@ class BeautyModule {
             mood: document.getElementById('mood')?.value,
             props: document.getElementById('props')?.value,
             specialRequirements: document.getElementById('specialRequirements')?.value,
-            variations: parseInt(document.getElementById('variations')?.value, 10) || 1,
+            variations: parseInt(document.getElementById('variationCount')?.value, 10) || 1,
         };
     }
 
@@ -132,9 +131,7 @@ class BeautyModule {
             if (this.currentStep < this.totalSteps) {
                 this.currentStep++;
                 this.updateStepDisplay();
-                if (this.currentStep === this.totalSteps) {
-                    this.updateSummary();
-                }
+                if (this.currentStep === this.totalSteps) this.updateSummary();
             }
         }
     }
@@ -149,7 +146,6 @@ class BeautyModule {
     updateStepDisplay() {
         document.querySelectorAll('.form-step').forEach(step => step.classList.remove('active'));
         document.querySelector(`[data-step="${this.currentStep}"]`)?.classList.add('active');
-        
         document.getElementById('prevBtn').style.display = this.currentStep === 1 ? 'none' : 'block';
         document.getElementById('nextBtn').style.display = this.currentStep === this.totalSteps ? 'none' : 'block';
         document.getElementById('submitBtn').style.display = this.currentStep === this.totalSteps ? 'block' : 'none';
@@ -187,7 +183,7 @@ class BeautyModule {
                 <h3>Zusammenfassung</h3>
                 <p><strong>Produkt:</strong> ${this.formData.category}</p>
                 <p><strong>Aufnahmetyp:</strong> ${this.formData.shotType}</p>
-                <p><strong>Fokus:</strong> ${this.formData.focusArea} auf ${this.formData.skinTone} Haut</p>
+                <p><strong>Model:</strong> ${this.formData.modelType}, Fokus auf ${this.formData.focusArea}</p>
                 <p><strong>Setting:</strong> ${this.formData.location} mit ${this.formData.lighting} Beleuchtung</p>
                 <p><strong>Variationen:</strong> ${this.formData.variations}</p>
             `;
@@ -196,10 +192,10 @@ class BeautyModule {
 
     async submit() {
         const submitBtn = document.getElementById('submitBtn');
-        if (submitBtn) {
-            submitBtn.disabled = true;
-            submitBtn.textContent = '⏳ Bild wird hochgeladen...';
-        }
+        if (!submitBtn) return;
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = '⏳ Bild wird hochgeladen...';
 
         try {
             if (!this.uploadedFile) throw new Error('Kein Bild zum Hochladen ausgewählt.');
@@ -211,9 +207,8 @@ class BeautyModule {
                 throw new Error(uploadResult.error || 'Bild-Upload fehlgeschlagen');
             }
             this.formData.imageUrl = uploadResult.imageUrl;
-            console.log('✅ Image uploaded:', this.formData.imageUrl);
 
-            if (submitBtn) submitBtn.textContent = '🚀 Daten werden gesendet...';
+            submitBtn.textContent = '🚀 Daten werden gesendet...';
             this.collectFormData();
 
             const projectData = {
@@ -235,11 +230,8 @@ class BeautyModule {
         } catch (error) {
             console.error('❌ Submit error:', error);
             alert('Fehler: ' + error.message);
-            
-            if (submitBtn) {
-                submitBtn.disabled = false;
-                submitBtn.textContent = '🚀 Bilder generieren';
-            }
+            submitBtn.disabled = false;
+            submitBtn.textContent = '🚀 Bilder generieren';
         }
     }
 }
