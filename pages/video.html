@@ -36,6 +36,12 @@
                 <h1>🎬 AI Video Generation</h1>
                 <p>Erstelle professionelle Videos mit Google Veo 3 - inklusive Audio!</p>
                 
+                <!-- Cost Warning Banner -->
+                <div style="background: #fef2f2; border: 2px solid #ef4444; padding: 16px; border-radius: 12px; margin: 16px 0;">
+                    <strong>⚠️ KOSTEN-WARNUNG:</strong> Video-Generierung kostet <strong>0.50 CHF pro Sekunde</strong>.<br>
+                    Ein 8-Sekunden-Video kostet 4.00 CHF. Bitte nutze diese Funktion sparsam!
+                </div>
+                
                 <!-- Veo 3 Info Banner -->
                 <div class="veo3-banner">
                     <div class="veo3-badge">Powered by Veo 3</div>
@@ -94,6 +100,17 @@
                             <span class="chip" onclick="document.getElementById('videoPrompt').value = this.textContent">Model läuft selbstbewusst und zeigt Outfit</span>
                             <span class="chip" onclick="document.getElementById('videoPrompt').value = this.textContent">Kamera zoomt auf Produktdetails</span>
                         </div>
+                    </div>
+                    
+                    <!-- Special section for custom/free video -->
+                    <div id="customVideoTips" style="display: none; margin-top: 20px; padding: 16px; background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%); border-radius: 8px;">
+                        <h4 style="color: #667eea; margin-bottom: 8px;">💡 Tipps für freie Videos:</h4>
+                        <ul style="margin: 0; padding-left: 20px; font-size: 14px;">
+                            <li>Beschreibe die Szene genau</li>
+                            <li>Erwähne gewünschte Kamerabewegungen</li>
+                            <li>Spezifiziere Lichtstimmung und Farben</li>
+                            <li>Füge Audio-Beschreibungen hinzu</li>
+                        </ul>
                     </div>
                 </div>
 
@@ -226,9 +243,10 @@
                             <h4>⏱️ Generierungszeit</h4>
                             <p>30-60 Sekunden</p>
                         </div>
-                        <div class="info-card">
-                            <h4>💰 Credits</h4>
-                            <p>5 Credits pro Video</p>
+                        <div class="info-card" style="border-color: #ef4444;">
+                            <h4>💰 Kosten</h4>
+                            <p style="color: #ef4444; font-weight: bold;">4.00 CHF</p>
+                            <small style="font-size: 11px; color: #666;">für 8 Sekunden</small>
                         </div>
                         <div class="info-card">
                             <h4>📁 Speicherort</h4>
