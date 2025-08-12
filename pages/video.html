@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Generation - AI Studio</title>
+    
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/components.css">
+    <link rel="stylesheet" href="../css/pages.css">
+    <link rel="stylesheet" href="../css/video.css">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+</head>
+<body data-page="video">
+    <div class="page-container">
+        <header class="main-header">
+            <div class="header-content">
+                <h1 class="logo" onclick="window.location.href='/dashboard.html'">
+                    Go 2 Flow<span>STUDIO</span>
+                </h1>
+                <div class="user-menu">
+                    <span id="userEmail">User</span>
+                </div>
+            </div>
+        </header>
+
+        <nav class="breadcrumb">
+            <a href="../dashboard.html">← Dashboard</a>
+            <span>/</span>
+            <span>Video Generation</span>
+        </nav>
+
+        <main class="container">
+            <div class="page-header">
+                <h1>🎬 AI Video Generation</h1>
+                <p>Erstelle professionelle Videos mit Google Veo 3 - inklusive Audio!</p>
+                
+                <!-- Veo 3 Info Banner -->
+                <div class="veo3-banner">
+                    <div class="veo3-badge">Powered by Veo 3</div>
+                    <div class="veo3-features">
+                        <span>✓ 8 Sekunden</span>
+                        <span>✓ 1080p HD</span>
+                        <span>✓ Native Audio</span>
+                        <span>✓ Realistische Physik</span>
+                    </div>
+                </div>
+            </div>
+
+            <form id="videoForm" class="multi-step-form">
+                <!-- Step 1: Upload & Basic Info -->
+                <div class="form-step active" data-step="1">
+                    <h2>Schritt 1: Ausgangsbild hochladen</h2>
+                    
+                    <div class="upload-area" id="uploadArea">
+                        <input type="file" id="imageFile" accept="image/*" style="display: none;">
+                        <div id="uploadPlaceholder">
+                            <div class="upload-icon">🎬</div>
+                            <div class="upload-text">Bild als Ausgangspunkt hochladen</div>
+                            <div class="upload-subtext">Das Bild wird als erste Frame des Videos verwendet</div>
+                        </div>
+                        <div id="imagePreview" style="display: none;">
+                            <img id="previewImg" style="max-width: 100%; max-height: 300px; border-radius: 8px;">
+                            <button type="button" id="removeImageBtn" class="btn btn-small" style="margin-top: 10px;">Entfernen</button>
+                        </div>
+                    </div>
+                    
+                    <div class="info-box" style="margin-top: 20px;">
+                        <p><strong>💡 Tipp:</strong> Lade ein hochwertiges Bild hoch, das als Startpunkt für dein Video dient. Veo 3 wird dieses Bild zum Leben erwecken!</p>
+                    </div>
+                </div>
+
+                <!-- Step 2: Video Description -->
+                <div class="form-step" data-step="2">
+                    <h2>Schritt 2: Video beschreiben</h2>
+                    
+                    <div class="form-group">
+                        <label for="videoPrompt">Video-Beschreibung *</label>
+                        <textarea id="videoPrompt" rows="4" class="form-control" 
+                                  placeholder="Beschreibe, was in deinem Video passieren soll..."></textarea>
+                        <small>Sei so detailliert wie möglich - beschreibe Bewegungen, Aktionen und gewünschte Effekte</small>
+                    </div>
+                    
+                    <button type="button" id="enhancePrompt" class="btn btn-outline" style="margin-top: 10px;">
+                        ✨ Prompt verbessern
+                    </button>
+                    
+                    <div class="prompt-suggestions" style="margin-top: 20px;">
+                        <p><strong>Prompt-Beispiele:</strong></p>
+                        <div class="suggestion-chips">
+                            <span class="chip" onclick="document.getElementById('videoPrompt').value = this.textContent">Produkt dreht sich langsam um 360 Grad</span>
+                            <span class="chip" onclick="document.getElementById('videoPrompt').value = this.textContent">Hände öffnen vorsichtig die Verpackung</span>
+                            <span class="chip" onclick="document.getElementById('videoPrompt').value = this.textContent">Model läuft selbstbewusst und zeigt Outfit</span>
+                            <span class="chip" onclick="document.getElementById('videoPrompt').value = this.textContent">Kamera zoomt auf Produktdetails</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3: Style & Motion -->
+                <div class="form-step" data-step="3">
+                    <h2>Schritt 3: Stil & Bewegung</h2>
+                    
+                    <h3 style="margin-bottom: 16px;">Video-Stil</h3>
+                    <div class="style-grid">
+                        <div class="video-style-card" data-style="professional">
+                            <div class="style-icon">💼</div>
+                            <h4>Professional</h4>
+                            <p>Sauber & poliert</p>
+                        </div>
+                        <div class="video-style-card" data-style="authentic">
+                            <div class="style-icon">📱</div>
+                            <h4>Authentic</h4>
+                            <p>UGC Style</p>
+                        </div>
+                        <div class="video-style-card" data-style="cinematic">
+                            <div class="style-icon">🎥</div>
+                            <h4>Cinematic</h4>
+                            <p>Film-Qualität</p>
+                        </div>
+                        <div class="video-style-card" data-style="trendy">
+                            <div class="style-icon">✨</div>
+                            <h4>Trendy</h4>
+                            <p>Social Media</p>
+                        </div>
+                        <div class="video-style-card" data-style="minimal">
+                            <div class="style-icon">⚪</div>
+                            <h4>Minimal</h4>
+                            <p>Clean & Simple</p>
+                        </div>
+                    </div>
+                    
+                    <h3 style="margin: 24px 0 16px 0;">Bewegungstyp</h3>
+                    <div class="motion-grid">
+                        <div class="motion-card" data-motion="smooth">
+                            <span>🌊</span> Smooth
+                        </div>
+                        <div class="motion-card" data-motion="dynamic">
+                            <span>⚡</span> Dynamic
+                        </div>
+                        <div class="motion-card" data-motion="slow-motion">
+                            <span>🐌</span> Slow-Motion
+                        </div>
+                        <div class="motion-card" data-motion="fast-paced">
+                            <span>🏃</span> Fast-Paced
+                        </div>
+                        <div class="motion-card" data-motion="steady">
+                            <span>📍</span> Steady
+                        </div>
+                    </div>
+                    
+                    <div class="form-grid" style="margin-top: 24px;">
+                        <div class="form-group">
+                            <label for="cameraMovement">Kamera-Bewegung</label>
+                            <select id="cameraMovement" class="form-control">
+                                <option value="static">Statisch</option>
+                                <option value="pan">Schwenk</option>
+                                <option value="zoom">Zoom</option>
+                                <option value="tracking">Tracking</option>
+                                <option value="360-rotation">360° Rotation</option>
+                                <option value="handheld">Handheld</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="aspectRatio">Seitenverhältnis</label>
+                            <select id="aspectRatio" class="form-control">
+                                <option value="16:9">16:9 (YouTube)</option>
+                                <option value="9:16">9:16 (TikTok/Reels)</option>
+                                <option value="1:1">1:1 (Instagram)</option>
+                                <option value="4:5">4:5 (Instagram Feed)</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Audio Settings -->
+                    <h3 style="margin: 24px 0 16px 0;">Audio-Einstellungen</h3>
+                    <div class="audio-settings">
+                        <div class="form-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="includeAudio" checked>
+                                <span>Audio generieren</span>
+                            </label>
+                        </div>
+                        
+                        <div id="audioDetails" class="audio-details">
+                            <div class="form-grid">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="soundEffects" checked>
+                                    <span>Soundeffekte</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="dialogue">
+                                    <span>Dialoge</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="backgroundMusic">
+                                    <span>Hintergrundmusik</span>
+                                </label>
+                            </div>
+                            <div class="form-group" style="margin-top: 16px;">
+                                <label for="audioDescription">Audio-Beschreibung (optional)</label>
+                                <input type="text" id="audioDescription" class="form-control" 
+                                       placeholder="z.B. ASMR sounds, upbeat music, voiceover...">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 4: Review & Generate -->
+                <div class="form-step" data-step="4">
+                    <h2>Schritt 4: Überprüfen & Generieren</h2>
+                    
+                    <div class="summary-review">
+                        <h3>Zusammenfassung</h3>
+                        <div id="summaryContent"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="additionalInstructions">Zusätzliche Anweisungen (optional)</label>
+                        <textarea id="additionalInstructions" rows="3" class="form-control" 
+                                  placeholder="Weitere spezifische Wünsche für dein Video..."></textarea>
+                    </div>
+                    
+                    <div class="generation-info">
+                        <div class="info-card">
+                            <h4>⏱️ Generierungszeit</h4>
+                            <p>30-60 Sekunden</p>
+                        </div>
+                        <div class="info-card">
+                            <h4>💰 Credits</h4>
+                            <p>5 Credits pro Video</p>
+                        </div>
+                        <div class="info-card">
+                            <h4>📁 Speicherort</h4>
+                            <p>Google Drive</p>
+                        </div>
+                    </div>
+                    
+                    <div class="veo3-notice">
+                        <p><strong>🎬 Veo 3 Features:</strong></p>
+                        <ul>
+                            <li>Realistische Physik-Simulation</li>
+                            <li>Native Audio-Generierung</li>
+                            <li>Konsistente Charaktere & Objekte</li>
+                            <li>Professionelle Kamera-Kontrolle</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Navigation -->
+                <div class="form-navigation">
+                    <button type="button" class="btn btn-outline" id="prevBtn" style="display: none;">
+                        ← Zurück
+                    </button>
+                    <button type="button" class="btn btn-primary" id="nextBtn">
+                        Weiter →
+                    </button>
+                    <button type="button" class="btn btn-accent" id="submitBtn" style="display: none;">
+                        🎬 Video generieren
+                    </button>
+                </div>
+            </form>
+        </main>
+    </div>
+
+    <script src="../js/config.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/modules/video.js"></script>
+</body>
+</html>
