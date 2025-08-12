@@ -44,7 +44,7 @@
             <!-- Welcome Section -->
             <section class="welcome-section">
                 <h2>Willkommen zurück!</h2>
-                <p>Was möchtest du heute fotografieren?</p>
+                <p>Was möchtest du heute erstellen?</p>
                 
                 <!-- Drive Status -->
                 <div id="driveStatus" class="drive-status" style="margin-top: 20px; padding: 15px; background: #f0f0f0; border-radius: 8px; display: none;">
@@ -52,9 +52,21 @@
                 </div>
             </section>
 
-            <!-- Use Cases -->
-            <section class="section">
-                <h3 class="section-title">Wähle deinen Use Case</h3>
+            <!-- NEW: Content Type Tabs -->
+            <section class="content-type-tabs" style="margin: 32px 0;">
+                <div style="display: flex; gap: 12px; border-bottom: 2px solid #e5e7eb; margin-bottom: 32px;">
+                    <button class="tab-button active" onclick="switchTab('images')" data-tab="images">
+                        📸 Bilder generieren
+                    </button>
+                    <button class="tab-button" onclick="switchTab('videos')" data-tab="videos">
+                        🎬 Videos generieren <span class="new-badge">NEU</span>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Image Generation Use Cases (Default) -->
+            <section id="imageSection" class="section tab-content active">
+                <h3 class="section-title">Wähle deinen Foto Use Case</h3>
                 <div class="use-case-grid">
                     <!-- Fashion -->
                     <div class="use-case-card" onclick="navigateTo('/pages/fashion.html')">
@@ -134,6 +146,101 @@
                     </div>
                 </div>
             </section>
+
+            <!-- NEW: Video Generation Section -->
+            <section id="videoSection" class="section tab-content" style="display: none;">
+                <h3 class="section-title">AI Video Generation mit Veo 3</h3>
+                
+                <!-- Video Info Banner -->
+                <div class="video-info-banner">
+                    <h4>🎬 Erstelle professionelle Videos mit Audio</h4>
+                    <p>Nutze Google's neueste Veo 3 API für realistische Videos mit nativen Soundeffekten, Dialogen und Hintergrundmusik. Perfekt für Produktdemos, Social Media Content und Werbung.</p>
+                    <div class="video-features">
+                        <span>✓ 8 Sekunden Länge</span>
+                        <span>✓ 1080p Auflösung</span>
+                        <span>✓ Native Audio-Generierung</span>
+                        <span>✓ Realistische Physik</span>
+                    </div>
+                </div>
+
+                <!-- Video Use Cases -->
+                <div class="use-case-grid">
+                    <!-- Product Demo Video -->
+                    <div class="use-case-card" onclick="navigateToVideo('product-demo')">
+                        <div class="card-badge veo3">VEO 3</div>
+                        <div class="card-icon">📱</div>
+                        <h4>Product Demo Video</h4>
+                        <p>Zeige dein Produkt in Aktion</p>
+                        <div class="card-features">
+                            <span>Produktfeatures</span>
+                            <span>Anwendung zeigen</span>
+                            <span>Mit Sound</span>
+                        </div>
+                    </div>
+
+                    <!-- Fashion Video -->
+                    <div class="use-case-card" onclick="navigateToVideo('fashion-video')">
+                        <div class="card-badge veo3">VEO 3</div>
+                        <div class="card-icon">👚</div>
+                        <h4>Fashion Video</h4>
+                        <p>Model zeigt Kleidung in Bewegung</p>
+                        <div class="card-features">
+                            <span>Catwalk</span>
+                            <span>360° Drehung</span>
+                            <span>Lifestyle Szenen</span>
+                        </div>
+                    </div>
+
+                    <!-- Unboxing Video -->
+                    <div class="use-case-card" onclick="navigateToVideo('unboxing')">
+                        <div class="card-badge veo3">VEO 3</div>
+                        <div class="card-icon">📦</div>
+                        <h4>Unboxing Video</h4>
+                        <p>Produkt auspacken & präsentieren</p>
+                        <div class="card-features">
+                            <span>ASMR Sound</span>
+                            <span>First Look</span>
+                            <span>Packaging Details</span>
+                        </div>
+                    </div>
+
+                    <!-- Beauty Tutorial -->
+                    <div class="use-case-card" onclick="navigateToVideo('beauty-tutorial')">
+                        <div class="card-icon">💅</div>
+                        <h4>Beauty Tutorial</h4>
+                        <p>Makeup/Skincare Anwendung</p>
+                        <div class="card-features">
+                            <span>Step-by-Step</span>
+                            <span>Before/After</span>
+                            <span>Application Sounds</span>
+                        </div>
+                    </div>
+
+                    <!-- Food Preparation -->
+                    <div class="use-case-card" onclick="navigateToVideo('food-prep')">
+                        <div class="card-icon">🍳</div>
+                        <h4>Food Preparation</h4>
+                        <p>Kochen & Zubereitung zeigen</p>
+                        <div class="card-features">
+                            <span>Sizzle Sounds</span>
+                            <span>Cooking Process</span>
+                            <span>Plating</span>
+                        </div>
+                    </div>
+
+                    <!-- Action Sports -->
+                    <div class="use-case-card" onclick="navigateToVideo('action-sports')">
+                        <div class="card-icon">🏃</div>
+                        <h4>Action & Sports</h4>
+                        <p>Dynamische Sport-Action</p>
+                        <div class="card-features">
+                            <span>Movement</span>
+                            <span>Energy</span>
+                            <span>Impact Sounds</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
         </main>
     </div>
 
@@ -141,7 +248,7 @@
     <div id="driveSettingsModal" class="modal">
         <div class="modal-content">
             <h3>Google Drive Einstellungen</h3>
-            <p>Gib den Link zu deinem Google Drive Ordner ein, in dem die generierten Bilder gespeichert werden sollen:</p>
+            <p>Gib den Link zu deinem Google Drive Ordner ein, in dem die generierten Bilder und Videos gespeichert werden sollen:</p>
             
             <div class="form-group" style="margin: 20px 0;">
                 <label>Google Drive Ordner Link:</label>
@@ -162,169 +269,84 @@
         </div>
     </div>
 
-    <script>
-        // Supabase Configuration
-        const SUPABASE_URL = 'https://vnodqwehipwpusrthurk.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZub2Rxd2VoaXB3cHVzcnRodXJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ3NTA5NTcsImV4cCI6MjA3MDMyNjk1N30.LSMyYLt7URx1G1NFKZAqXTrzVHwjtbvOzeuxLZy0u-Q';
-        
-        let supabase = null;
-        let isCheckingAuth = false;
-
-        async function checkAuth() {
-            if (isCheckingAuth) return;
-            isCheckingAuth = true;
-
-            console.log('🔒 Checking authentication...');
-
-            try {
-                // Initialize Supabase
-                if (!supabase && typeof window.supabase !== 'undefined') {
-                    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-                }
-
-                if (!supabase) {
-                    console.error('Supabase not initialized');
-                    showError();
-                    return;
-                }
-
-                // Check session
-                const { data: { session }, error } = await supabase.auth.getSession();
-
-                if (error) {
-                    console.error('Session check error:', error);
-                    showError();
-                    return;
-                }
-
-                if (session) {
-                    console.log('✅ User authenticated:', session.user.email);
-                    document.getElementById('userEmail').textContent = session.user.email;
-                    
-                    // Load Drive settings
-                    loadDriveSettings();
-                    
-                    // Setup auth listener for logout
-                    supabase.auth.onAuthStateChange((event, session) => {
-                        if (event === 'SIGNED_OUT') {
-                            window.location.href = '/';
-                        }
-                    });
-                } else {
-                    // Check localStorage as fallback
-                    const storedUser = localStorage.getItem('ai_studio_user');
-                    
-                    if (storedUser) {
-                        try {
-                            const user = JSON.parse(storedUser);
-                            console.log('📦 Using stored user:', user.email);
-                            document.getElementById('userEmail').textContent = user.email;
-                            loadDriveSettings();
-                        } catch (e) {
-                            console.error('Invalid stored user data');
-                            setTimeout(() => {
-                                window.location.href = '/';
-                            }, 1000);
-                        }
-                    } else {
-                        console.log('❌ No authentication found');
-                        setTimeout(() => {
-                            window.location.href = '/';
-                        }, 1000);
-                    }
-                }
-
-            } catch (error) {
-                console.error('Auth check error:', error);
-                showError();
-            } finally {
-                isCheckingAuth = false;
-            }
+    <!-- Custom Styles for Video Section -->
+    <style>
+        .tab-button {
+            padding: 12px 24px;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            font-weight: 600;
+            color: #6b7280;
+            cursor: pointer;
+            transition: all 0.3s ease;
         }
 
-        function showError() {
-            document.querySelector('.welcome-section').innerHTML = `
-                <h2 style="color: #ff6b6b;">Authentifizierungsfehler</h2>
-                <p>Bitte <a href="/" style="color: #667eea;">neu anmelden</a></p>
-            `;
+        .tab-button:hover {
+            background: #f9fafb;
         }
 
-        async function signOut() {
-            console.log('👋 Signing out...');
-            
-            if (supabase) {
-                await supabase.auth.signOut();
-            }
-            
-            localStorage.removeItem('ai_studio_user');
-            localStorage.removeItem('drive_folder_link');
-            window.location.href = '/';
+        .tab-button.active {
+            color: #1a1a2e;
+            border-bottom-color: #ff6b6b;
         }
 
-        function navigateTo(path) {
-            // Check if Drive is configured
-            const driveLink = localStorage.getItem('drive_folder_link');
-            if (!driveLink) {
-                if (confirm('Bitte konfiguriere zuerst deinen Google Drive Ordner. Jetzt einrichten?')) {
-                    openDriveSettings();
-                }
-                return;
-            }
-            
-            window.location.href = path;
+        .new-badge {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 11px;
+            margin-left: 4px;
+            font-weight: 700;
         }
 
-        // Google Drive Settings
-        function openDriveSettings() {
-            document.getElementById('driveSettingsModal').classList.add('show');
-            const savedLink = localStorage.getItem('drive_folder_link');
-            if (savedLink) {
-                document.getElementById('driveFolderLink').value = savedLink;
-            }
+        .tab-content {
+            animation: fadeIn 0.3s ease;
         }
 
-        function closeDriveSettings() {
-            document.getElementById('driveSettingsModal').classList.remove('show');
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        function saveDriveSettings() {
-            const link = document.getElementById('driveFolderLink').value.trim();
-            
-            if (!link) {
-                alert('Bitte gib einen gültigen Google Drive Link ein');
-                return;
-            }
-            
-            // Basic validation
-            if (!link.includes('drive.google.com')) {
-                alert('Bitte gib einen gültigen Google Drive Link ein');
-                return;
-            }
-            
-            // Save to localStorage
-            localStorage.setItem('drive_folder_link', link);
-            
-            // Update UI
-            loadDriveSettings();
-            closeDriveSettings();
-            
-            alert('✅ Drive Ordner gespeichert!');
+        .video-info-banner {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 24px;
+            border-radius: 16px;
+            margin-bottom: 32px;
         }
 
-        function loadDriveSettings() {
-            const savedLink = localStorage.getItem('drive_folder_link');
-            if (savedLink) {
-                document.getElementById('driveStatus').style.display = 'block';
-                // Extract folder name from link if possible
-                const folderName = savedLink.split('/').pop() || 'Konfiguriert';
-                document.getElementById('driveFolderPath').textContent = folderName;
-            }
+        .video-info-banner h4 {
+            margin: 0 0 8px 0;
+            font-size: 20px;
+            color: white;
         }
 
-        // Initialize on load
-        document.addEventListener('DOMContentLoaded', () => {
-            checkAuth();
-        });
-    </script>
+        .video-info-banner p {
+            margin: 0 0 16px 0;
+            opacity: 0.95;
+        }
+
+        .video-features {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .video-features span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 14px;
+        }
+
+        .card-badge.veo3 {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+    </style>
+
+    <!-- JavaScript -->
+    <script src="js/dashboard.js"></script>
 </body>
 </html>
