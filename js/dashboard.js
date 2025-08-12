@@ -144,10 +144,8 @@ function navigateTo(path) {
         return;
     }
     
-    // Check credits (optional - if you have a credit system)
-    const hasCredits = checkCredits();
-    if (!hasCredits) {
-        alert('Keine Credits verfügbar. Bitte lade dein Konto auf.');
+    // Show cost warning for images
+    if (!confirm('⚠️ Kosten-Hinweis:\n\nBildgenerierung ist kostenpflichtig.\nBitte nutze diese Funktion sparsam.\n\nMöchtest du fortfahren?')) {
         return;
     }
     
@@ -164,10 +162,19 @@ function navigateToVideo(videoType) {
         return;
     }
     
-    // Check credits for video (videos might cost more)
-    const hasCredits = checkCredits(5); // Videos cost 5 credits
-    if (!hasCredits) {
-        alert('Nicht genügend Credits für Video-Generierung (5 Credits benötigt).');
+    // Show cost warning for videos
+    const message = '⚠️ WICHTIGE KOSTEN-WARNUNG:\n\n' +
+                   'Video-Generierung kostet 0.50 CHF pro Sekunde!\n' +
+                   'Ein 8-Sekunden-Video kostet somit 4.00 CHF.\n\n' +
+                   'Bitte nutze diese Funktion sehr sparsam!\n\n' +
+                   'Möchtest du wirklich fortfahren?';
+    
+    if (!confirm(message)) {
+        return;
+    }
+    
+    // Double confirmation for videos due to high cost
+    if (!confirm('Bist du sicher? Die Kosten werden sofort berechnet.')) {
         return;
     }
     
@@ -247,20 +254,15 @@ function loadDriveSettings() {
 }
 
 // ============================================
-// CREDIT SYSTEM
+// CREDIT SYSTEM - REMOVED, ONLY COST WARNING
 // ============================================
-function checkCredits(required = 1) {
-    // This is a placeholder - implement your actual credit check
-    const credits = parseInt(localStorage.getItem('user_credits') || '100');
-    return credits >= required;
-}
-
-function updateCreditsDisplay() {
-    const credits = parseInt(localStorage.getItem('user_credits') || '100');
-    const creditsDisplay = document.getElementById('creditsDisplay');
-    if (creditsDisplay) {
-        creditsDisplay.textContent = `${credits} Credits`;
-    }
+function showCostWarning(type = 'image') {
+    const costs = {
+        image: 'Bildgenerierung ist kostenpflichtig.',
+        video: 'Video-Generierung kostet 0.50 CHF pro Sekunde!\nEin 8-Sekunden-Video = 4.00 CHF'
+    };
+    
+    return costs[type] || costs.image;
 }
 
 // ============================================
@@ -380,9 +382,6 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Check for URL parameters (e.g., coming back from video generation)
     checkURLParams();
-    
-    // Load credits display
-    updateCreditsDisplay();
     
     // Setup periodic session check
     setInterval(() => {
