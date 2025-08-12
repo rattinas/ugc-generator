@@ -1,0 +1,9 @@
+{
+  "name": "ai-studio-backend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Dependencies for the AI Studio.",
+  "dependencies": {
+    "openai": "^4.40.0"
+  }
+}
