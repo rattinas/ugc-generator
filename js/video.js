@@ -37,6 +37,16 @@ class VideoModule {
         this.updateStepDisplay();
         this.checkDriveConfiguration();
         this.initializeVideoTypeDefaults();
+        
+        // Show special tips for custom video
+        if (this.videoType === 'custom') {
+            const customTips = document.getElementById('customVideoTips');
+            if (customTips) customTips.style.display = 'block';
+            
+            // Update page title for custom
+            const pageTitle = document.querySelector('.page-header h1');
+            if (pageTitle) pageTitle.textContent = '✨ Freies Video erstellen';
+        }
     }
 
     getVideoTypeFromURL() {
@@ -432,6 +442,16 @@ class VideoModule {
     }
 
     async submit() {
+        // Cost warning before submission
+        const costWarning = 'LETZTE WARNUNG:\n\n' +
+                          'Dieses Video kostet 4.00 CHF (8 Sekunden × 0.50 CHF).\n\n' +
+                          'Die Kosten werden SOFORT berechnet.\n\n' +
+                          'Bist du absolut sicher?';
+        
+        if (!confirm(costWarning)) {
+            return;
+        }
+
         const submitBtn = document.getElementById('submitBtn');
         if (submitBtn) {
             submitBtn.disabled = true;
